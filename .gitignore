@@ -1,5 +1,7 @@
 # Created by https://www.gitignore.io/api/haskell
 
+*.swp
+
 ### Haskell ###
 dist
 cabal-dev

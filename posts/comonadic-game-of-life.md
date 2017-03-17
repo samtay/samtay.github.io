@@ -1,5 +1,7 @@
 ---
-title: example post
+title: Who needs HashLife when you have Comonads?
+description: Improving a naive implementation of the Game of Life with an elegant and performant solution.
+date: 2017-03-17
 ---
 
 Mauris in lorem nisl. Maecenas tempus facilisis ante, eget viverra nisl
