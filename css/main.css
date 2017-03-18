@@ -53,11 +53,11 @@ blockquote {
 }
 
 code, pre {
-  font-family: monospace;
+  font-family: 'Fira Mono', monospace;
 }
 
 pre {
-  background: #fdf6e3;
+  background: #ffffff;
   overflow-x: auto;
   padding: 8px 15px;
   font-size: 12px;
@@ -136,44 +136,71 @@ hr {
   }
 }
 
+.sourceCode {
+  color: #4d4d4c; /* default foreground */
+}
+
 .sourceCode .kw {
-  color: #268BD2;
+  color: #8959a8; /* purple */
 }
 
 .sourceCode .dt {
-  color: #268BD2;
-}
-
-.sourceCode .dv, .sourceCode .bn, .sourceCode .fl {
-  color: #D33682;
-}
-
-.sourceCode .ch {
-  color: #DC322F;
-}
-
-.sourceCode .st {
-  color: #2AA198;
-}
-
-.sourceCode .co {
-  color: #93A1A1;
-}
-
-.sourceCode .ot {
-  color: #A57800;
-}
-
-.sourceCode .al {
-  color: #CB4B16;
-  font-weight: bold;
+  color: #3e999f; /* aqua */
 }
 
 .sourceCode .fu {
-  color: #268BD2;
+  color: #4271ae; /* blue */
+}
+
+.sourceCode .ot {
+  color: #c82829; /* red */
+}
+
+.sourceCode .dv {
+  color: #f5871f; /* orange */
+}
+
+.sourceCode .st {
+  color: #718c00; /* green */
+}
+
+.sourceCode .co {
+  color: #8e908c; /* comment */
+}
+
+/* do these ever get used ?
+
+.sourceCode .bn, .sourceCode .fl {
+  color: #eeeeee;
+}
+
+.sourceCode .ch {
+  color: #eeeeee;
+}
+
+.sourceCode .al {
+  color: #eeeeee;
+  font-weight: bold;
 }
 
 .sourceCode .er {
-  color: #D30102;
+  color: #eeeeee;
   font-weight: bold;
 }
+
+*/
+/* Key
+
+#ffffff Background
+#efefef Current Line
+#d6d6d6 Selection
+#4d4d4c Foreground
+#8e908c Comment
+#c82829 Red -- packages
+#f5871f Orange -- constants, booleans, nums, etc
+#eab700 Yellow -- variables
+#718c00 Green -- strings
+#3e999f Aqua -- parenths
+#4271ae Blue -- conditions, funcs, operators
+#8959a8 Purple -- keyword, imports, defs
+*/
