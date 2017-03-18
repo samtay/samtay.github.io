@@ -1,6 +1,7 @@
 ---
 title: Who needs HashLife when you have Comonads?
 description: Improving a naive implementation of the Game of Life with an elegant and performant solution.
+toc: yes
 date: 2017-03-17
 ---
 
