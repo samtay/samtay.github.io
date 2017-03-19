@@ -20,6 +20,16 @@ p, ul, ol, table, pre, dl {
   margin: 0 0 20px;
 }
 
+#toc ul {
+  list-style-type: lower-decimal
+}
+#toc ul ul {
+  list-style-type: lower-latin
+}
+#toc ul ul ul {
+  list-style-type: lower-roman
+}
+
 h1, h2, h3 {
   line-height: 1.25;
 }
@@ -60,7 +70,7 @@ pre {
   background: #ffffff;
   overflow-x: auto;
   padding: 8px 15px;
-  font-size: 12px;
+  font-size: 16px;
 }
 
 code {
