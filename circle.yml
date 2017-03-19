@@ -29,11 +29,16 @@ deployment:
     commands:
       - git config --global user.email autodeploy@circleci.com
       - git config --global user.name CircleCI
-      - cd _site && git status
-      - cd _site && git add --all
-      - cd _site && git commit -m "Update build (`date '+%F %T %Z'`) [ci skip]"
-      - cd _site && git push origin master
-      - git status
-      - git add _site
-      - git commit -m "Update _site (`date '+%F %T %Z'`) [ci skip]"
-      - git push origin hakyll
+      - >
+        cd _site
+        if [[ $(git status --porcelain) ]] then;
+          git add --all
+          git commit -m "Update build (`date '+%F %T %Z'`) [ci skip]"
+          git push origin master
+        fi
+      - >
+        git add _site
+        if [[ $(git status --porcelain) ]] then;
+          git commit -m "Update _site (`date '+%F %T %Z'`) [ci skip]"
+          git push origin hakyll
+        fi
