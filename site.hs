@@ -36,10 +36,12 @@ main = hakyll $ do
 
   match "templates/*" $ compile templateCompiler
 
+customWriterOpts :: Maybe String -> WriterOptions
 customWriterOpts (Just "yes")  = writerWithToc
 customWriterOpts (Just "true") = writerWithToc
 customWriterOpts _             = defaultHakyllWriterOptions
 
+writerWithToc :: WriterOptions
 writerWithToc = defaultHakyllWriterOptions
                   { writerTableOfContents = True
                   , writerTemplate        = Just "<div id=\"toc\">$toc$</div>\n$body$"
