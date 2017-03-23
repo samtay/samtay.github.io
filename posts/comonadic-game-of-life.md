@@ -117,7 +117,7 @@ class Functor => Monad m where
 class Functor => Comonad m where
   extract   :: m a -> a       -- aka co-return
   duplicate :: m a -> m (m a) -- aka co-join
-  extend    :: (m b -> a) -> (m b -> m a)
+  extend    :: (m b -> a) -> (m b -> m a) -- aka co-bind
 ```
 As anyone else on the internet would say, the *dual* of something
 is when its "arrows are flipped around", which at first sounds like handwavey
@@ -250,9 +250,34 @@ to computing cellular autamata. Again, refer to [resources](#further-reading)
 if you are unsatisfied, as there's plenty of content to read up on.
 
 ### Applying to the Game of Life
+I want to change as little as possible from my current implementation -
+ideally just swap out the data structure and change very little in my frontend and test suite.
 
 ## Performance
-Profile both test suite and running brick app -- before and after comonads.
+### Initial
+Here are some profiling details from the first implementation,
+which mapped across the board while performing lookups to retrieve the neighborhood values:
+
+* Time: **13.87s**
+
+```bash
+$ time ./Spec +RTS -hc -p -K100M
+...
+... 13.87s user 0.02s system 100% cpu 13.875 total
+```
+
+* Memory:
+
+```bash
+# getting a web friendly view of heap profiler
+$ hp2ps -e8in -c Spec.hp
+$ convert Spec.ps initial-heap-profiling.png
+```
+![](/img/comonadic-gol/initial-heap.png)
+
+Quite a bit of memory spent in the `step` function.
+
+### Comonads to the rescue
 
 ## Further reading
 For more in-depth reading on category theory and comonads, here are my sources:
