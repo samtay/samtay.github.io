@@ -258,9 +258,10 @@ import qualified Data.Sequence as S
 
 -- | One dimensional finite list with cursor context
 --
--- The first element of the sequence at '_zl' can be thought of
--- as /to the left/ of the cursor, while the last element is /to the right/
--- of the cursor. The cursor value and index are '_zc' and '_zi' respectively.
+-- The first element of the sequence at '_zl' can be thought of as
+-- /to the left/ of the cursor, while the last element is
+-- /to the right/ of the cursor.
+-- The cursor value and index are '_zc' and '_zi' respectively.
 -- This can be thought of as a circle.
 -- Warning: must have length greater than zero!
 data Z a = Z { _zl :: S.Seq a
@@ -278,7 +279,8 @@ So the Game of Life is then implemented as a nested `Z (Z a)`:
 -- | A modular game of life board
 --
 -- With this interpretation, for a board of size @n x n@
--- the @(n + 1)@th column/row is the same as the boundary at the @1@st column/row.
+-- the @(n + 1)@th column/row is the same as the boundary
+-- at the @1@st column/row.
 type Board = ZZ St
 
 -- | Indexer for the 'Board'
