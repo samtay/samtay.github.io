@@ -22,9 +22,8 @@ It is one of many examples of [complex systems](https://en.wikipedia.org/wiki/Co
 
 In a nutshell, there is a 2D grid of cells, each of which has two possible states: alive or dead.
 The grid evolves in discrete steps of time `t`. At time `t = 0`,
-we give the board some initial state. We can pick certain cells to be alive or dead,
-or let a computer randomly decide what the grid should look like.
-For all `t > 0`, the grid evolves to step `t + 1` based on these simple rules:
+we give the board some initial state. For all `t > 0`,
+the grid evolves to step `t + 1` based on these simple rules:
 
 * Any live cell with exactly two or three live neighbours stays alive.
 * Any dead cell with exactly three live neighbours becomes alive.
@@ -78,9 +77,7 @@ step b = GM.mapWithKey rule b
           GM.filterWithKey (const . (`elem` neighbours b c)) $ b
 
 population :: Board -> Int
-population = sum . map fn . GM.elems
-  where fn Alive = 1
-        fn Dead  = 0
+population = length . filter (==Alive) . GM.elems
 ```
 Furthermore, using the toroidal style of grid allows modular boundaries
 which is how I wanted to implement this version.
@@ -150,10 +147,10 @@ instance Comonad Stream where
   extract (Cons x _) = x
 
   duplicate :: Stream a -> Stream (Stream a)
-  duplicate xxs@(Cons _ xs) = Cons xxs (duplicate xs)
+  duplicate s@(Cons _ xs) = Cons s (duplicate xs)
 
   extend :: (Stream a -> b) -> Stream a -> Stream b
-  extend f xxs@(Cons _ xs) = Cons (f xxs) (extend f xs)
+  extend f s@(Cons _ xs) = Cons (f s) (extend f xs)
 ```
 So `extract` is like `head` and `duplicate` is like `tails`.
 `extend` on the other hand looks a little `fmap`-y:
@@ -238,7 +235,7 @@ Zipper [-2,-4,-6,-8,-10] 0 [2,4,6,8,10]
 -- extend (looking to the immediate left and right)
 λ> take' 5 $ extend (\(Zipper (l:_) x (r:_)) -> l + 2 * x + r) z
 Zipper [-4,-8,-12,-16,-20] 0 [4,8,12,16,20]
-λ> take' 5 $ extend (\(Zipper (l:_) x (r:_)) -> concat . intersperse "," . map show $ [l,x,r]) z
+λ> take' 5 $ extend (\(Zipper (l:_) x (r:_)) -> intercalate "," . map show $ [l,x,r]) z
 Zipper
   ["-2,-1,0","-3,-2,-1","-4,-3,-2","-5,-4,-3","-6,-5,-4"]
   "-1,0,1"
@@ -252,32 +249,221 @@ if you are unsatisfied, as there's plenty of content to read up on.
 ### Applying to the Game of Life
 I want to change as little as possible from my current implementation -
 ideally just swap out the data structure and change very little in my frontend and test suite.
+I hit this mark fairly well, as my commit updating the executable only diffs by +15/-17.
+
+My implementation is similar to my sources, but unique in the toroidal aspect.
+My base 1-dimensional zipper is defined as
+```haskell
+import qualified Data.Sequence as S
+
+-- | One dimensional finite list with cursor context
+--
+-- The first element of the sequence at '_zl' can be thought of
+-- as /to the left/ of the cursor, while the last element is /to the right/
+-- of the cursor. The cursor value and index are '_zc' and '_zi' respectively.
+-- This can be thought of as a circle.
+-- Warning: must have length greater than zero!
+data Z a = Z { _zl :: S.Seq a
+             , _zc :: a
+             , _zi :: Int
+             } deriving (Eq, Show)
+```
+So "shifting left" will focus the first element of `_zl` and snoc `_zc` to `_zl`,
+while "shifting right" will focus the last element of `_zl` and cons `_zc` to `_zl`.
+I chose `Data.Sequence` because it has a nice API and is symmetric in
+time complexities when viewing either end of the sequence.
+
+So the Game of Life is then implemented as a nested `Z (Z a)`:
+```haskell
+-- | A modular game of life board
+--
+-- With this interpretation, for a board of size @n x n@
+-- the @(n + 1)@th column/row is the same as the boundary at the @1@st column/row.
+type Board = ZZ St
+
+-- | Indexer for the 'Board'
+type Cell = (Int, Int)
+
+-- | Possible cell states
+data St = Alive | Dead
+  deriving (Eq)
+
+newtype ZZ a = ZZ { _unzz :: Z (Z a) }
+  deriving (Eq)
+```
+
+You might be wondering where that `Cell` indexer comes into play.
+I ended up creating a `Zipper` class, which was a nice pattern because
+once `Z` had a `Zipper` instance, I could easily polymorphically use those
+class functions when writing the instance for the newtype `ZZ`. The class
+is larger than it needs to be, as I'm not even currently using all of its methods,
+but I think it is fairly future proof if I want to add more features to the app:
+```haskell
+-- | Class for a modular bounded container
+--
+-- Examples of functions provided for a simple one dimensional list, where appropriate
+class Zipper z where
+  type Index z
+  data Direction z
+
+  -- | Shift in a direction
+  shift :: Direction z -> z a -> z a
+
+  -- | Retrieve current cursor value
+  cursor :: z a -> a
+
+  -- | Retrieve current index value
+  index :: z a -> Index z
+
+  -- | Retrieve neighborhood of current cursor.
+  neighborhood :: z a -> [a]
+
+  -- | Destruct to list maintaining order of @(Index z)@, e.g. @(Z ls c rs) -> ls ++ [c] ++ rs@.
+  toList :: z a -> [a]
+
+  -- | Destruct a list into a mapping with indices
+  toMap :: (Comonad z) => z a -> [(Index z, a)]
+  toMap = toList . extend ((,) <$> index <*> cursor)
+
+  -- | Construct zipper from mapping (provide default value so this is always safe, no bottoms)
+  fromMap :: Ord (Index z) => a -> [(Index z, a)] -> z a
+
+  -- | Lookup by possibly denormalised index (still safe from modularity).
+  --
+  -- e.g. [1,2] ! 2 == 1
+  (!) :: z a -> (Index z) -> a
+
+  -- | Adjust value at specified index
+  adjust :: (a -> a) -> Index z -> z a -> z a
+
+  -- | Update value at specified index
+  update :: a -> Index z -> z a -> z a
+  update = adjust . const
+
+  -- | Normalize @Index z@ value with respect to modular boundaries
+  normalize :: z a -> (Index z) -> (Index z)
+
+  -- | Get size (maximum of @Index z@).
+  size :: z a -> (Index z)
+```
+
+I don't want there to be a billion lines of code in this article, so feel free to check out the
+[source](https://github.com/samtay/conway/blob/master/src/Life.hs)
+if you want to see how those instances are defined for `Z` and `ZZ`.
+Once they are defined, writing the `Comonad` instance is much easier:
+```haskell
+instance Comonad Z where
+  extract = cursor
+  duplicate z = Z (S.fromFunction (size z - 1) fn) z (z ^. zi)
+    where fn k = compose (k + 1) (shift L) $ z
+
+instance Comonad ZZ where
+  extract = cursor
+  duplicate z = ZZ $ Z
+    (fromF (xT - 1) mkCol) (Z (fromF (yT - 1) (mkRow z)) z y) x
+    where
+      mkRow zx j = compose (j + 1) (shift S) zx
+      mkCol i    = let zx = compose (i + 1) (shift W) z
+                    in Z (fromF (yT - 1) (mkRow zx)) zx (zx ^. to index  ^. _2)
+      (xT,yT)    = size z
+      (x,y)      = index z
+      fromF      = S.fromFunction
+
+compose :: Int -> (a -> a) -> (a -> a)
+compose = (foldr (.) id .) . replicate
+```
+It looks a little messy, but that's probably just me being an amateur.
+Really all that `duplicate` needs to do is, for all indices `(i,j)`,
+replace the element at `(i,j)` with the argument `z` shifted west `i` times
+and shifted south `j` times; that is, the argument `z` with cursor/index focused
+at `(i,j)`.
+
+Finally, with `Zipper` and `Comonad` instances in place, here is the new `step`:
+```haskell
+step :: Board -> Board
+step = extend rule
+  where p = length . filter (==Alive) . neighborhood
+        rule z = case (cursor z, p z) of
+                   (Alive, 2) -> Alive
+                   (Alive, 3) -> Alive
+                   (Dead, 3)  -> Alive
+                   _          -> Dead
+```
 
 ## Performance
+My profiling methodology for each of the scenarios below is to simply measure against the test suite,
+which does quite a bit of computing and comparison of evolved games. Below are the commands
+I used to generate the results:
+```bash
+$ stack ghc -- test/Spec.hs -prof -fprof-auto -rtsopts -O2
+$ cd test
+$ ./Spec +RTS -hc -p -K100M
+# getting a web friendly view of heap profiler
+$ hp2ps -e8in -c Spec.hp
+$ convert Spec.ps heap.png
+```
 ### Initial
 Here are some profiling details from the first implementation,
 which mapped across the board while performing lookups to retrieve the neighborhood values:
 
-* Time: **13.87s**
+* Time: 13.22 secs
+* Memory: 5.50 GB
+* Spec.prof & Spec.ps
 
-```bash
-$ time ./Spec +RTS -hc -p -K100M
-...
-... 13.87s user 0.02s system 100% cpu 13.875 total
 ```
+	   Spec +RTS -hc -p -K100M -RTS
 
-* Memory:
+	total time  =       13.22 secs   (13219 ticks @ 1000 us, 1 processor)
+	total alloc = 5,495,113,024 bytes  (excludes profiling overheads)
 
-```bash
-# getting a web friendly view of heap profiler
-$ hp2ps -e8in -c Spec.hp
-$ convert Spec.ps initial-heap-profiling.png
+COST CENTRE              MODULE                               SRC                                                           %time %alloc
+
+filterWithKey            Math.Geometry.GridMap.Lazy           src/Math/Geometry/GridMap/Lazy.hs:117:3-67                     94.9   75.5
+neighboursWrappedBasedOn Math.Geometry.GridInternal           src/Math/Geometry/GridInternal.hs:(295,1)-(296,64)              2.5   11.4
+normalise                Math.Geometry.Grid.OctagonalInternal src/Math/Geometry/Grid/OctagonalInternal.hs:(132,3)-(133,25)    1.0    4.3
+population               Life                                 src/Life.hs:(120,1)-(122,20)                                    0.6    4.7
+elems                    Math.Geometry.GridMap                src/Math/Geometry/GridMap.hs:266:3-25                           0.2    1.7
 ```
-![](/img/comonadic-gol/initial-heap.png)
+<p align="center">![](/img/comonadic-gol/initial-heap.png)</p>
 
 Quite a bit of memory spent in the `step` function.
 
 ### Comonads to the rescue
+Now that the function evolving the game has cursor context
+and easy access to each cursor's neighborhood,
+just a few `O(1)` lookups at the front and back of `Data.Sequence.Seq a` containers,
+performance improves drammatically.
+
+* Time: 1.08 secs
+* Memory: 3.95 GB
+* Spec.prof & Spec.ps
+
+```
+	   Spec +RTS -hc -p -K100M -RTS
+
+	total time  =        1.08 secs   (1079 ticks @ 1000 us, 1 processor)
+	total alloc = 3,946,769,872 bytes  (excludes profiling overheads)
+
+COST CENTRE     MODULE SRC                           %time %alloc
+
+fmap            Life   src/Life.hs:158:3-41           27.1   22.9
+shift           Life   src/Life.hs:(147,3)-(155,38)   25.3   42.1
+shift.(...)     Life   src/Life.hs:152:7-27           13.6   22.1
+compose         Life   src/Life.hs:298:1-38           10.5    5.4
+neighborhood    Life   src/Life.hs:(136,3)-(138,59)    4.3    1.5
+step.p          Life   src/Life.hs:256:9-52            3.2    0.4
+neighborhood.ew Life   src/Life.hs:196:11-43           2.8    2.7
+==              Life   src/Life.hs:70:26-27            2.2    0.7
+shift.xs        Life   src/Life.hs:152:7-27            1.7    0.0
+duplicate.mkRow Life   src/Life.hs:215:7-47            1.4    0.2
+cursor          Life   src/Life.hs:174:3-28            1.2    0.2
+duplicate.mkCol Life   src/Life.hs:(216,7)-(217,80)    1.2    0.5
+```
+<p align="center">![](/img/comonadic-gol/comonadic-heap.png)</p>
+
+### Comparison
+Running the test suite with the second data structure decreased the overall time by **92%**
+and the overall memory allocation by **28%**.
 
 ## Further reading
 For more in-depth reading on category theory and comonads, here are my sources:
