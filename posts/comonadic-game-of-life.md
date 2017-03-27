@@ -1,5 +1,5 @@
 ---
-title: Who needs HashLife when you have Comonads?
+title: Who needs HashLife when you have comonads?
 description: Improving a naive implementation of the Game of Life with an elegant and performant solution.
 toc: yes
 date: 2017-03-17
@@ -8,7 +8,7 @@ date: 2017-03-17
 ## Introduction
 
 I'm going to talk a little bit about Conway's Game of Life,
-Comonads in practical use,
+comonads in practical use,
 and the performance improvement that they have to offer.
 If you already know what the GoL is, skip the introduction,
 and if you're already familiar with comonads and how they
