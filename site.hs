@@ -13,21 +13,21 @@ main = hakyll $ do
     route   idRoute
     compile compressCssCompiler
 
-  match "posts/*" $ do
+  match "articles/*" $ do
     route $ setExtension "html"
     compile $
       customWriterOpts <$> (getUnderlying >>= (`getMetadataField` "toc"))
         >>= pandocCompilerWith defaultHakyllReaderOptions
-        >>= loadAndApplyTemplate "templates/post.html"    postCtx
+        >>= loadAndApplyTemplate "templates/article.html"    articleCtx
         >>= saveSnapshot "content"
-        >>= loadAndApplyTemplate "templates/default.html" postCtx
+        >>= loadAndApplyTemplate "templates/default.html" articleCtx
         >>= relativizeUrls
 
   match "index.html" $ do
     route idRoute
     compile $ do
-      posts <- recentFirst =<< loadAllSnapshots "posts/*" "content"
-      let indexCtx = listField "posts" postCtx (return posts)
+      articles <- recentFirst =<< loadAllSnapshots "articles/*" "content"
+      let indexCtx = listField "articles" articleCtx (return articles)
                        <> defaultContext
       getResourceBody
           >>= applyAsTemplate indexCtx
@@ -47,7 +47,7 @@ writerWithToc = defaultHakyllWriterOptions
                   , writerTemplate        = Just "<div id=\"toc\">$toc$</div>\n$body$"
                   }
 
-postCtx :: Context String
-postCtx =
+articleCtx :: Context String
+articleCtx =
   dateField "date" "%B %e, %Y" <> defaultContext
 
