@@ -41,7 +41,9 @@ app state. *That's pretty much it.*
 ## `snake`
 We're going to build the [classic snake](https://en.wikipedia.org/wiki/Snake_(video_game))
 game that you might recall from arcades or the first cell phones.
-The full source code is [here](https://github.com/samtay/snake).
+The full source code is [here](https://github.com/samtay/snake). This is the end product:
+
+<p align="center">![](/img/brick/snake-demo.gif)</p>
 
 ### Structure of the app
 The library makes it easy to separate the concerns of your application and the interface;
