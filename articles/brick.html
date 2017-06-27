@@ -75,9 +75,9 @@
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE TemplateHaskell, FlexibleContexts #-}</span>
 <span class="kw">module</span> <span class="dt">Snake</span> <span class="kw">where</span>
 
-<span class="kw">import </span><span class="dt">Control.Monad</span> (join)
+<span class="kw">import </span><span class="dt">Control.Applicative</span> ((&lt;|&gt;))
+<span class="kw">import </span><span class="dt">Control.Monad</span> (guard)
 <span class="kw">import </span><span class="dt">Data.Maybe</span> (fromMaybe)
-<span class="kw">import </span><span class="dt">Data.Monoid</span> (getFirst, <span class="dt">First</span>(..))
 
 <span class="kw">import </span><span class="dt">Data.Sequence</span> (<span class="dt">Seq</span>, <span class="dt">ViewL</span>(..), <span class="dt">ViewR</span>(..), (&lt;|))
 <span class="kw">import qualified</span> <span class="dt">Data.Sequence</span> <span class="kw">as</span> <span class="dt">S</span>
@@ -111,11 +111,10 @@
 <p>Here are the core functions for playing the game:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- | Step forward in time</span>
 <span class="ot">step ::</span> <span class="dt">Game</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">Game</span>
-step g <span class="fu">=</span> fromMaybe (return g)
-  <span class="fu">$</span> join
-  <span class="fu">$</span> ifThenJust (not <span class="fu">$</span> g <span class="fu">^.</span> paused <span class="fu">||</span> g <span class="fu">^.</span> dead)
-  <span class="fu">$</span> getFirst <span class="fu">.</span> mconcat <span class="fu">.</span> fmap (<span class="dt">First</span>)
-  <span class="fu">$</span> [die, eatFood, move] <span class="fu">&lt;*&gt;</span> [g <span class="fu">&amp;</span> frozen <span class="fu">.~</span> <span class="dt">False</span>]
+step g <span class="fu">=</span> fromMaybe (return g) <span class="fu">$</span> <span class="kw">do</span>
+  guard (not <span class="fu">$</span> g <span class="fu">^.</span> paused <span class="fu">||</span> g <span class="fu">^.</span> dead)
+  <span class="kw">let</span> g' <span class="fu">=</span> g <span class="fu">&amp;</span> frozen <span class="fu">.~</span> <span class="dt">False</span>
+  die g' <span class="fu">&lt;|&gt;</span> eatFood g' <span class="fu">&lt;|&gt;</span> move g'
 
 <span class="co">-- | Possibly die if next head position is disallowed</span>
 <span class="ot">die ::</span> <span class="dt">Game</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> (<span class="dt">IO</span> <span class="dt">Game</span>)
