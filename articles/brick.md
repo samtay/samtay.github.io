@@ -86,9 +86,9 @@ of the actual game, but here are some of the key types and scaffolding:
 {-# LANGUAGE TemplateHaskell, FlexibleContexts #-}
 module Snake where
 
-import Control.Monad (join)
+import Control.Applicative ((<|>))
+import Control.Monad (guard)
 import Data.Maybe (fromMaybe)
-import Data.Monoid (getFirst, First(..))
 
 import Data.Sequence (Seq, ViewL(..), ViewR(..), (<|))
 import qualified Data.Sequence as S
@@ -129,11 +129,10 @@ Here are the core functions for playing the game:
 ```haskell
 -- | Step forward in time
 step :: Game -> IO Game
-step g = fromMaybe (return g)
-  $ join
-  $ ifThenJust (not $ g ^. paused || g ^. dead)
-  $ getFirst . mconcat . fmap (First)
-  $ [die, eatFood, move] <*> [g & frozen .~ False]
+step g = fromMaybe (return g) $ do
+  guard (not $ g ^. paused || g ^. dead)
+  let g' = g & frozen .~ False
+  die g' <|> eatFood g' <|> move g'
 
 -- | Possibly die if next head position is disallowed
 die :: Game -> Maybe (IO Game)
