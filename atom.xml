@@ -1,17 +1,384 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Who needs HashLife when you have comonads?</title>
-    <link href="../css/main.css" rel="stylesheet" type="text/css" />
-    <link href="https://fonts.googleapis.com/css?family=Fira+Mono" rel="stylesheet">
-    <link rel="alternate" type="application/rss+xml" title="Sam Tay's FP dabbles" href="./feed.xml">
-    <link rel="alternate" type="application/atom+xml" title="Sam Tay's FP dabbles" href="./atom.xml">
-  </head>
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title>A heaping teaspon of Haskell</title>
+    <link href="https://samtay.github.io//atom.xml" rel="self" />
+    <link href="https://samtay.github.io/" />
+    <id>https://samtay.github.io//atom.xml</id>
+    <author>
+        <name>Sam Tay</name>
+        <email>sam.chong.tay@gmail.com</email>
+    </author>
+    <updated>2017-06-28T00:00:00Z</updated>
+    <entry>
+    <title>Introduction to Brick</title>
+    <link href="https://samtay.github.io//articles/brick.html" />
+    <id>https://samtay.github.io//articles/brick.html</id>
+    <published>2017-06-28T00:00:00Z</published>
+    <updated>2017-06-28T00:00:00Z</updated>
+    <summary type="html"><![CDATA[<h1>Introduction to Brick</h1>
 
-  <body>
-      <h1>Who needs HashLife when you have comonads?</h1>
+<div id="content">
+<div id="toc"><ul>
+<li><a href="#introduction">Introduction</a><ul>
+<li><a href="#the-basic-idea">The basic idea</a></li>
+</ul></li>
+<li><a href="#snake"><code>snake</code></a><ul>
+<li><a href="#structure-of-the-app">Structure of the app</a></li>
+<li><a href="#snake-1"><code>Snake</code></a></li>
+<li><a href="#ui"><code>UI</code></a></li>
+</ul></li>
+<li><a href="#variable-speed">Variable speed</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+<li><a href="#links">Links</a></li>
+</ul></div>
+<h2 id="introduction">Introduction</h2>
+<p>I’m going to give a short introduction to <a href="https://hackage.haskell.org/package/brick-0.18">brick</a>, a Haskell library for building terminal user interfaces. So far I’ve used <code>brick</code> to implement <a href="https://github.com/samtay/conway">Conway’s Game of Life</a> and a <a href="https://github.com/samtay/tetris">Tetris clone</a>. I’ll explain the basics, walk through an example <a href="https://github.com/samtay/snake">snake</a> application, and then explain some more complicated scenarios.</p>
+<p>The first thing I’ll say is that this package has some of the most impressive documentation and resources, which makes it easy to figure out pretty much anything you need to do. I’ll try to make this useful, but I imagine if you’re reading this then it is mostly being used as a reference in addition to the existing resources:</p>
+<ol style="list-style-type: decimal">
+<li><a href="https://github.com/jtdaugherty/brick/tree/master/programs">Demo programs</a> (clone down to explore the code and run them locally)</li>
+<li><a href="https://github.com/jtdaugherty/brick/blob/master/docs/guide.rst">User guide</a></li>
+<li><a href="https://hackage.haskell.org/package/brick-0.18">Haddock docs</a></li>
+<li><a href="https://groups.google.com/forum/#!forum/brick-users">Google group</a></li>
+</ol>
+<h3 id="the-basic-idea">The basic idea</h3>
+<p><code>brick</code> is very declarative. Once your base application logic is in place, the interface is generally built by two functions: drawing and handling events. The drawing function</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">appDraw ::</span> s <span class="ot">-&gt;</span> [<span class="dt">Widget</span> n]</code></pre></div>
+<p>takes your app state <code>s</code> and produces the visuals <code>[Widget n]</code>. The handler</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">appHandleEvent ::</span> s <span class="ot">-&gt;</span> <span class="dt">BrickEvent</span> n e <span class="ot">-&gt;</span> <span class="dt">EventM</span> n (<span class="dt">Next</span> s)</code></pre></div>
+<p>takes your app state, an event (e.g. user presses the <code>'m'</code> key), and produces the resulting app state. <em>That’s pretty much it.</em></p>
+<h2 id="snake"><code>snake</code></h2>
+<p>We’re going to build the <a href="https://en.wikipedia.org/wiki/Snake_(video_game)">classic snake</a> game that you might recall from arcades or the first cell phones. The full source code is <a href="https://github.com/samtay/snake">here</a>. This is the end product:</p>
+<p align="center">
+<img src="/img/brick/snake-demo.gif" />
+</p>
+<h3 id="structure-of-the-app">Structure of the app</h3>
+<p>The library makes it easy to separate the concerns of your application and the interface; I like to have a module with all of the core business logic that exports the core state of the app and functions for modifying it, and then have an interface module that just handles the setup, drawing, and handling events. So let’s just use the <code>simple</code> stack template and add two modules</p>
+<pre><code>├── LICENSE
+├── README.md
+├── Setup.hs
+├── snake.cabal
+├── src
+│   ├── Main.hs
+│   ├── Snake.hs
+│   └── UI.hs
+└── stack.yaml</code></pre>
+<p>and our dependencies to <code>test.cabal</code></p>
+<div class="sourceCode"><pre class="sourceCode yaml"><code class="sourceCode yaml">executable snake
+  <span class="fu">hs-source-dirs:</span><span class="at">      src</span>
+  <span class="fu">main-is:</span><span class="at">             Main.hs</span>
+  <span class="fu">exposed-modules:</span><span class="at">     Snake</span>
+                     , UI
+  <span class="fu">default-language:</span><span class="at">    Haskell2010</span>
+  <span class="fu">build-depends:</span><span class="at">       base &gt;= 4.7 &amp;&amp; &lt; 5</span>
+                     , brick
+                     , containers
+                     , linear
+                     , microlens
+                     , microlens-th
+                     , random</code></pre></div>
+<h3 id="snake-1"><code>Snake</code></h3>
+<p>Since this tutorial is about <code>brick</code>, I’ll elide most of the implementation details of the actual game, but here are some of the key types and scaffolding:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE TemplateHaskell, FlexibleContexts #-}</span>
+<span class="kw">module</span> <span class="dt">Snake</span> <span class="kw">where</span>
+
+<span class="kw">import </span><span class="dt">Control.Applicative</span> ((&lt;|&gt;))
+<span class="kw">import </span><span class="dt">Control.Monad</span> (guard)
+<span class="kw">import </span><span class="dt">Data.Maybe</span> (fromMaybe)
+
+<span class="kw">import </span><span class="dt">Data.Sequence</span> (<span class="dt">Seq</span>, <span class="dt">ViewL</span>(..), <span class="dt">ViewR</span>(..), (&lt;|))
+<span class="kw">import qualified</span> <span class="dt">Data.Sequence</span> <span class="kw">as</span> <span class="dt">S</span>
+<span class="kw">import </span><span class="dt">Lens.Micro.TH</span> (makeLenses)
+<span class="kw">import </span><span class="dt">Lens.Micro</span> ((&amp;), (.~), (%~), (^.))
+<span class="kw">import </span><span class="dt">Linear.V2</span> (<span class="dt">V2</span>(..), _x, _y)
+<span class="kw">import </span><span class="dt">System.Random</span> (randomRIO)
+
+<span class="co">-- Types</span>
+
+<span class="kw">data</span> <span class="dt">Game</span> <span class="fu">=</span> <span class="dt">Game</span>
+  {<span class="ot"> _snake  ::</span> <span class="dt">Snake</span>     <span class="co">-- ^ snake as a sequence of points in R2</span>
+  ,<span class="ot"> _dir    ::</span> <span class="dt">Direction</span> <span class="co">-- ^ direction</span>
+  ,<span class="ot"> _food   ::</span> <span class="dt">Coord</span>     <span class="co">-- ^ location of the food</span>
+  ,<span class="ot"> _dead   ::</span> <span class="dt">Bool</span>      <span class="co">-- ^ game over flag</span>
+  ,<span class="ot"> _paused ::</span> <span class="dt">Bool</span>      <span class="co">-- ^ paused flag</span>
+  ,<span class="ot"> _score  ::</span> <span class="dt">Int</span>       <span class="co">-- ^ score</span>
+  ,<span class="ot"> _frozen ::</span> <span class="dt">Bool</span>      <span class="co">-- ^ freeze to disallow duplicate turns</span>
+  } <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Show</span>)
+
+<span class="kw">type</span> <span class="dt">Coord</span> <span class="fu">=</span> <span class="dt">V2</span> <span class="dt">Int</span>
+<span class="kw">type</span> <span class="dt">Snake</span> <span class="fu">=</span> <span class="dt">Seq</span> <span class="dt">Coord</span>
+
+<span class="kw">data</span> <span class="dt">Direction</span>
+  <span class="fu">=</span> <span class="dt">North</span>
+  <span class="fu">|</span> <span class="dt">South</span>
+  <span class="fu">|</span> <span class="dt">East</span>
+  <span class="fu">|</span> <span class="dt">West</span>
+  <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Show</span>)</code></pre></div>
+<p>All of this is pretty self-explanatory, with the possible exception of lenses if you haven’t seen them. At first glance they may seem complicated (and the underlying theory arguably is), but using them as getters and setters is very straightforward. So, if you are following along because you are writing a terminal app like this, I’d recommend using them, but they are not required to use <code>brick</code>.</p>
+<p>Here are the core functions for playing the game:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- | Step forward in time</span>
+<span class="ot">step ::</span> <span class="dt">Game</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">Game</span>
+step g <span class="fu">=</span> fromMaybe (return g) <span class="fu">$</span> <span class="kw">do</span>
+  guard (not <span class="fu">$</span> g <span class="fu">^.</span> paused <span class="fu">||</span> g <span class="fu">^.</span> dead)
+  <span class="kw">let</span> g&#39; <span class="fu">=</span> g <span class="fu">&amp;</span> frozen <span class="fu">.~</span> <span class="dt">False</span>
+  die g&#39; <span class="fu">&lt;|&gt;</span> eatFood g&#39; <span class="fu">&lt;|&gt;</span> move g&#39;
+
+<span class="co">-- | Possibly die if next head position is disallowed</span>
+<span class="ot">die ::</span> <span class="dt">Game</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> (<span class="dt">IO</span> <span class="dt">Game</span>)
+
+<span class="co">-- | Possibly eat food if next head position is food</span>
+<span class="ot">eatFood ::</span> <span class="dt">Game</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> (<span class="dt">IO</span> <span class="dt">Game</span>)
+
+<span class="co">-- | Move snake along in a marquee fashion</span>
+<span class="ot">move ::</span> <span class="dt">Game</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> (<span class="dt">IO</span> <span class="dt">Game</span>)
+
+<span class="co">-- | Turn game direction (only turns orthogonally)</span>
+<span class="co">--</span>
+<span class="co">-- Implicitly unpauses yet freezes game</span>
+<span class="ot">turn ::</span> <span class="dt">Direction</span> <span class="ot">-&gt;</span> <span class="dt">Game</span> <span class="ot">-&gt;</span> <span class="dt">Game</span>
+
+<span class="co">-- | Initialize a paused game with random food location</span>
+<span class="ot">initGame ::</span> <span class="dt">IO</span> <span class="dt">Game</span></code></pre></div>
+<h3 id="ui"><code>UI</code></h3>
+<p>To start, we need to determine what our <code>App s e n</code> type parameters are. This will completely describe the interface application and be passed to one of the library’s <code>main</code> style functions for execution. Note that <code>s</code> is the app state, <code>e</code> is an event type, and <code>n</code> is a resource name. The <code>e</code> is abstracted so that we can provide custom events. The <code>n</code> is usually a custom sum type called <code>Name</code> which allows us to <em>name</em> particular viewports. This is important so that we can keep track of where the user currently has <em>focus</em>, such as typing in one of two textboxes; however, for this simple snake game we don’t need to worry about that.</p>
+<p>In simpler cases, the state <code>s</code> can directly coincide with a core datatype such as our <code>Snake.Game</code>. In many cases however, it will be necessary to wrap the core state within the ui state <code>s</code> to keep track of things that are interface specific (more on this later).</p>
+<p>Let’s write out our app definition and leave some undefined functions:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE OverloadedStrings #-}</span>
+<span class="kw">module</span> <span class="dt">UI</span> <span class="kw">where</span>
+
+<span class="kw">import </span><span class="dt">Control.Monad</span> (forever, void)
+<span class="kw">import </span><span class="dt">Control.Monad.IO.Class</span> (liftIO)
+<span class="kw">import </span><span class="dt">Control.Concurrent</span> (threadDelay, forkIO)
+<span class="kw">import </span><span class="dt">Data.Maybe</span> (fromMaybe)
+
+<span class="kw">import </span><span class="dt">Snake</span>
+
+<span class="kw">import </span><span class="dt">Brick</span>
+  ( <span class="dt">App</span>(<span class="fu">..</span>), <span class="dt">AttrMap</span>, <span class="dt">BrickEvent</span>(<span class="fu">..</span>), <span class="dt">EventM</span>, <span class="dt">Next</span>, <span class="dt">Widget</span>
+  , customMain, neverShowCursor
+  , continue, halt
+  , hLimit, vLimit, vBox, hBox
+  , padRight, padLeft, padTop, padAll, <span class="dt">Padding</span>(<span class="fu">..</span>)
+  , withBorderStyle
+  , str
+  , attrMap, withAttr, emptyWidget, <span class="dt">AttrName</span>, on, fg
+  , (<span class="fu">&lt;+&gt;</span>)
+  )
+<span class="kw">import </span><span class="dt">Brick.BChan</span> (newBChan, writeBChan)
+<span class="kw">import qualified</span> <span class="dt">Brick.Widgets.Border</span> <span class="kw">as</span> <span class="dt">B</span>
+<span class="kw">import qualified</span> <span class="dt">Brick.Widgets.Border.Style</span> <span class="kw">as</span> <span class="dt">BS</span>
+<span class="kw">import qualified</span> <span class="dt">Brick.Widgets.Center</span> <span class="kw">as</span> <span class="dt">C</span>
+<span class="kw">import qualified</span> <span class="dt">Graphics.Vty</span> <span class="kw">as</span> <span class="dt">V</span>
+<span class="kw">import </span><span class="dt">Data.Sequence</span> (<span class="dt">Seq</span>)
+<span class="kw">import qualified</span> <span class="dt">Data.Sequence</span> <span class="kw">as</span> <span class="dt">S</span>
+<span class="kw">import </span><span class="dt">Linear.V2</span> (<span class="dt">V2</span>(..))
+<span class="kw">import </span><span class="dt">Lens.Micro</span> ((^.))
+
+<span class="co">-- Types</span>
+
+<span class="co">-- | Ticks mark passing of time</span>
+<span class="co">--</span>
+<span class="co">-- This is our custom event that will be constantly fed into the app.</span>
+<span class="kw">data</span> <span class="dt">Tick</span> <span class="fu">=</span> <span class="dt">Tick</span>
+
+<span class="co">-- | Named resources</span>
+<span class="co">--</span>
+<span class="co">-- Not currently used, but will be easier to refactor</span>
+<span class="co">-- if we call this &quot;Name&quot; now.</span>
+<span class="kw">type</span> <span class="dt">Name</span> <span class="fu">=</span> ()
+
+<span class="kw">data</span> <span class="dt">Cell</span> <span class="fu">=</span> <span class="dt">Snake</span> <span class="fu">|</span> <span class="dt">Food</span> <span class="fu">|</span> <span class="dt">Empty</span>
+
+<span class="co">-- App definition</span>
+
+<span class="ot">app ::</span> <span class="dt">App</span> <span class="dt">Game</span> <span class="dt">Tick</span> <span class="dt">Name</span>
+app <span class="fu">=</span> <span class="dt">App</span> { appDraw <span class="fu">=</span> drawUI
+          , appChooseCursor <span class="fu">=</span> neverShowCursor
+          , appHandleEvent <span class="fu">=</span> handleEvent
+          , appStartEvent <span class="fu">=</span> return
+          , appAttrMap <span class="fu">=</span> const theMap
+          }
+
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> undefined
+
+<span class="co">-- Handling events</span>
+
+<span class="ot">handleEvent ::</span> <span class="dt">Game</span> <span class="ot">-&gt;</span> <span class="dt">BrickEvent</span> <span class="dt">Name</span> <span class="dt">Tick</span> <span class="ot">-&gt;</span> <span class="dt">EventM</span> <span class="dt">Name</span> (<span class="dt">Next</span> <span class="dt">Game</span>)
+handleEvent <span class="fu">=</span> undefined
+
+<span class="co">-- Drawing</span>
+
+<span class="ot">drawUI ::</span> <span class="dt">Game</span> <span class="ot">-&gt;</span> [<span class="dt">Widget</span> <span class="dt">Name</span>]
+drawUI <span class="fu">=</span> undefined
+
+<span class="ot">theMap ::</span> <span class="dt">AttrMap</span>
+theMap <span class="fu">=</span> undefined</code></pre></div>
+<h4 id="custom-events">Custom Events</h4>
+<p>So far I’ve only used <code>brick</code> to make games which need to be redrawn as time passes, with or without user input. This requires using <code>Brick.customMain</code> with that <code>Tick</code> event type, and opening a forked process to <code>forever</code> feed that event type into the channel. Since this is a common scenario, there is a <code>Brick.BChan</code> module that makes this pretty quick:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> <span class="kw">do</span>
+  chan <span class="ot">&lt;-</span> newBChan <span class="dv">10</span>
+  forkIO <span class="fu">$</span> forever <span class="fu">$</span> <span class="kw">do</span>
+    writeBChan chan <span class="dt">Tick</span>
+    threadDelay <span class="dv">100000</span> <span class="co">-- decides how fast your game moves</span>
+  g <span class="ot">&lt;-</span> initGame
+  void <span class="fu">$</span> customMain (V.mkVty V.defaultConfig) (<span class="dt">Just</span> chan) app g</code></pre></div>
+<p>We do need to import <code>Vty.Graphics</code> since <code>customMain</code> allows us to specify a custom <code>IO Vty.Graphics.Vty</code> handle, but we’re only customizing the existence of the event channel <code>BChan Tick</code>. The app is now bootstrapped, and all we need to do is implement <code>handleEvent</code>, <code>drawUI</code>, and <code>theMap</code> (handles styling).</p>
+<h4 id="handling-events">Handling events</h4>
+<p>Handling events is largely straightforward, and can be very clean when your underlying application logic is taken care of in a core module. All we do is essentially map events to the proper state modifiers.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">handleEvent ::</span> <span class="dt">Game</span> <span class="ot">-&gt;</span> <span class="dt">BrickEvent</span> <span class="dt">Name</span> <span class="dt">Tick</span> <span class="ot">-&gt;</span> <span class="dt">EventM</span> <span class="dt">Name</span> (<span class="dt">Next</span> <span class="dt">Game</span>)
+handleEvent g (<span class="dt">AppEvent</span> <span class="dt">Tick</span>)                       <span class="fu">=</span> liftIO (step g) <span class="fu">&gt;&gt;=</span> continue
+handleEvent g (<span class="dt">VtyEvent</span> (<span class="dt">V.EvKey</span> <span class="dt">V.KUp</span> []))         <span class="fu">=</span> continue <span class="fu">$</span> turn <span class="dt">North</span> g
+handleEvent g (<span class="dt">VtyEvent</span> (<span class="dt">V.EvKey</span> <span class="dt">V.KDown</span> []))       <span class="fu">=</span> continue <span class="fu">$</span> turn <span class="dt">South</span> g
+handleEvent g (<span class="dt">VtyEvent</span> (<span class="dt">V.EvKey</span> <span class="dt">V.KRight</span> []))      <span class="fu">=</span> continue <span class="fu">$</span> turn <span class="dt">East</span> g
+handleEvent g (<span class="dt">VtyEvent</span> (<span class="dt">V.EvKey</span> <span class="dt">V.KLeft</span> []))       <span class="fu">=</span> continue <span class="fu">$</span> turn <span class="dt">West</span> g
+handleEvent g (<span class="dt">VtyEvent</span> (<span class="dt">V.EvKey</span> (<span class="dt">V.KChar</span> <span class="ch">&#39;k&#39;</span>) [])) <span class="fu">=</span> continue <span class="fu">$</span> turn <span class="dt">North</span> g
+handleEvent g (<span class="dt">VtyEvent</span> (<span class="dt">V.EvKey</span> (<span class="dt">V.KChar</span> <span class="ch">&#39;j&#39;</span>) [])) <span class="fu">=</span> continue <span class="fu">$</span> turn <span class="dt">South</span> g
+handleEvent g (<span class="dt">VtyEvent</span> (<span class="dt">V.EvKey</span> (<span class="dt">V.KChar</span> <span class="ch">&#39;l&#39;</span>) [])) <span class="fu">=</span> continue <span class="fu">$</span> turn <span class="dt">East</span> g
+handleEvent g (<span class="dt">VtyEvent</span> (<span class="dt">V.EvKey</span> (<span class="dt">V.KChar</span> <span class="ch">&#39;h&#39;</span>) [])) <span class="fu">=</span> continue <span class="fu">$</span> turn <span class="dt">West</span> g
+handleEvent g (<span class="dt">VtyEvent</span> (<span class="dt">V.EvKey</span> (<span class="dt">V.KChar</span> <span class="ch">&#39;r&#39;</span>) [])) <span class="fu">=</span> liftIO (initGame) <span class="fu">&gt;&gt;=</span> continue
+handleEvent g (<span class="dt">VtyEvent</span> (<span class="dt">V.EvKey</span> (<span class="dt">V.KChar</span> <span class="ch">&#39;q&#39;</span>) [])) <span class="fu">=</span> halt g
+handleEvent g (<span class="dt">VtyEvent</span> (<span class="dt">V.EvKey</span> <span class="dt">V.KEsc</span> []))        <span class="fu">=</span> halt g
+handleEvent g _                                     <span class="fu">=</span> continue g</code></pre></div>
+<p>It’s probably obvious, but <code>continue</code> will continue execution with the supplied state value, which is then drawn. We can also <code>halt</code> to stop execution, which will essentially finish the evaluation of our <code>customMain</code> and result in <code>IO Game</code>, where the resulting game is the last value that we supplied to <code>halt</code>.</p>
+<h4 id="drawing">Drawing</h4>
+<p>Drawing is fairly simple as well but can require a good amount of code to position things how you want them. I like to break up the visual space into regions with drawing functions for each one.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">drawUI ::</span> <span class="dt">Game</span> <span class="ot">-&gt;</span> [<span class="dt">Widget</span> <span class="dt">Name</span>]
+drawUI g <span class="fu">=</span>
+  [ C.center <span class="fu">$</span> padRight (<span class="dt">Pad</span> <span class="dv">2</span>) (drawStats g) <span class="fu">&lt;+&gt;</span> drawGrid g ]
+
+<span class="ot">drawStats ::</span> <span class="dt">Game</span> <span class="ot">-&gt;</span> <span class="dt">Widget</span> <span class="dt">Name</span>
+drawStats <span class="fu">=</span> undefined
+
+<span class="ot">drawGrid ::</span> <span class="dt">Game</span> <span class="ot">-&gt;</span> <span class="dt">Widget</span> <span class="dt">Name</span>
+drawGrid <span class="fu">=</span> undefined</code></pre></div>
+<p>This will center the overall interface (<code>C.center</code>), put the stats and grid widgets horizontally side by side (<code>&lt;+&gt;</code>), and separate them by a 2-character width (<code>padRight (Pad 2)</code>).</p>
+<p>Let’s move forward with the stats column:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">drawStats ::</span> <span class="dt">Game</span> <span class="ot">-&gt;</span> <span class="dt">Widget</span> <span class="dt">Name</span>
+drawStats g <span class="fu">=</span> hLimit <span class="dv">11</span>
+  <span class="fu">$</span> vBox [ drawScore (g <span class="fu">^.</span> score)
+         , padTop (<span class="dt">Pad</span> <span class="dv">2</span>) <span class="fu">$</span> drawGameOver (g <span class="fu">^.</span> dead)
+         ]
+
+<span class="ot">drawScore ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Widget</span> <span class="dt">Name</span>
+drawScore n <span class="fu">=</span> withBorderStyle BS.unicodeBold
+  <span class="fu">$</span> B.borderWithLabel (str <span class="st">&quot;Score&quot;</span>)
+  <span class="fu">$</span> C.hCenter
+  <span class="fu">$</span> padAll <span class="dv">1</span>
+  <span class="fu">$</span> str <span class="fu">$</span> show n
+
+<span class="ot">drawGameOver ::</span> <span class="dt">Bool</span> <span class="ot">-&gt;</span> <span class="dt">Widget</span> <span class="dt">Name</span>
+drawGameOver dead <span class="fu">=</span>
+  <span class="kw">if</span> dead
+     <span class="kw">then</span> withAttr gameOverAttr <span class="fu">$</span> C.hCenter <span class="fu">$</span> str <span class="st">&quot;GAME OVER&quot;</span>
+     <span class="kw">else</span> emptyWidget
+
+<span class="ot">gameOverAttr ::</span> <span class="dt">AttrName</span>
+gameOverAttr <span class="fu">=</span> <span class="st">&quot;gameOver&quot;</span></code></pre></div>
+<p>I’m throwing in that <code>hLimit 11</code> to prevent the widget greediness caused by the outer <code>C.center</code>. I’m also using <code>vBox</code> to show some other options of aligning widgets; <code>vBox</code> and <code>hBox</code> align a list of widgets vertically and horizontally, respectfully. They can be thought of as folds over the binary <code>&lt;=&gt;</code> and <code>&lt;+&gt;</code> operations.</p>
+<p>The score is straightforward, but it is the first border in this tutorial. Borders are well documented in the <a href="https://github.com/jtdaugherty/brick/blob/56133bb0c6352f2995c3a48995a7c35a1941bc1a/programs/BorderDemo.hs">border demo</a> and the Haddocks for that matter.</p>
+<p>We also only show the “game over” widget if the game is actually over. In that case, we are rendering the string widget with the <code>gameOverAttr</code> attribute name. Attribute names are basically type safe <em>names</em> that we can assign to widgets to apply predetermined styles, similar to assigning a class name to a div in HTML and defining the CSS styles for that class elsewhere.</p>
+<p>Attribute names implement <code>IsString</code>, so they are easy to construct with the <code>OverloadedStrings</code> pragma.</p>
+<p>Now for the main event:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">drawGrid ::</span> <span class="dt">Game</span> <span class="ot">-&gt;</span> <span class="dt">Widget</span> <span class="dt">Name</span>
+drawGrid g <span class="fu">=</span> withBorderStyle BS.unicodeBold
+  <span class="fu">$</span> B.borderWithLabel (str <span class="st">&quot;Snake&quot;</span>)
+  <span class="fu">$</span> vBox rows
+  <span class="kw">where</span>
+    rows         <span class="fu">=</span> [hBox <span class="fu">$</span> cellsInRow r <span class="fu">|</span> r <span class="ot">&lt;-</span> [height,height<span class="fu">-</span><span class="dv">1</span><span class="fu">..</span><span class="dv">1</span>]]
+    cellsInRow y <span class="fu">=</span> [drawCoord (<span class="dt">V2</span> x y) <span class="fu">|</span> x <span class="ot">&lt;-</span> [<span class="dv">1</span><span class="fu">..</span>width]]
+    drawCoord    <span class="fu">=</span> drawCell <span class="fu">.</span> cellAt
+    cellAt c
+      <span class="fu">|</span> c <span class="ot">`elem`</span> g <span class="fu">^.</span> snake <span class="fu">=</span> <span class="dt">Snake</span>
+      <span class="fu">|</span> c <span class="fu">==</span> g <span class="fu">^.</span> food      <span class="fu">=</span> <span class="dt">Food</span>
+      <span class="fu">|</span> otherwise           <span class="fu">=</span> <span class="dt">Empty</span>
+
+<span class="ot">drawCell ::</span> <span class="dt">Cell</span> <span class="ot">-&gt;</span> <span class="dt">Widget</span> <span class="dt">Name</span>
+drawCell <span class="dt">Snake</span> <span class="fu">=</span> withAttr snakeAttr cw
+drawCell <span class="dt">Food</span>  <span class="fu">=</span> withAttr foodAttr cw
+drawCell <span class="dt">Empty</span> <span class="fu">=</span> withAttr emptyAttr cw
+
+<span class="ot">cw ::</span> <span class="dt">Widget</span> <span class="dt">Name</span>
+cw <span class="fu">=</span> str <span class="st">&quot;  &quot;</span>
+
+snakeAttr, foodAttr,<span class="ot"> emptyAttr ::</span> <span class="dt">AttrName</span>
+snakeAttr <span class="fu">=</span> <span class="st">&quot;snakeAttr&quot;</span>
+foodAttr <span class="fu">=</span> <span class="st">&quot;foodAttr&quot;</span>
+emptyAttr <span class="fu">=</span> <span class="st">&quot;emptyAttr&quot;</span></code></pre></div>
+<p>There’s actually nothing new here! We’ve already covered all the <code>brick</code> functions necessary to draw the grid. My approach to grids is to render a square cell widget <code>cw</code> with different colors depending on the cell state. The easiest way to draw a colored square is to stick two characters side by side. If we assign an attribute with a matching foreground and background, then it doesn’t matter what the two characters are (provided that they aren’t some crazy Unicode characters that might render to an unexpected size). However, if we want empty cells to render with the same color as the user’s default background color, then spaces are a good choice.</p>
+<p>Finally, we’ll define the attribute map:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">theMap ::</span> <span class="dt">AttrMap</span>
+theMap <span class="fu">=</span> attrMap V.defAttr
+  [ (snakeAttr, V.blue <span class="ot">`on`</span> V.blue)
+  , (foodAttr, V.red <span class="ot">`on`</span> V.red)
+  , (gameOverAttr, fg V.red <span class="ot">`V.withStyle`</span> V.bold)
+  ]</code></pre></div>
+<p>Again, styles aren’t terribly complicated, but it will be one area where you might have to look in the <a href="http://hackage.haskell.org/package/vty">vty</a> package (specifically <a href="http://hackage.haskell.org/package/vty-5.15.1/docs/Graphics-Vty-Attributes.html">Graphics.Vty.Attributes</a>) to find what you need.</p>
+<p>Another thing to mention is that the attributes form a hierarchy and can be combined in a parent-child relationship via <code>mappend</code>. I haven’t actually used this feature, but it does sound quite handy. For a more detailed discussion see the <a href="https://hackage.haskell.org/package/brick-0.18/docs/Brick-AttrMap.html">Brick.AttrMap</a> haddocks.</p>
+<h2 id="variable-speed">Variable speed</h2>
+<p>One difficult problem I encountered was implementing a variable speed in the GoL. I could have just used the same approach above with the minimum thread delay (corresponding to the maximum speed) and counted <code>Tick</code> events, only issuing an actual <code>step</code> in the game when the modular count of <code>Tick</code>s reached an amount corresponding to the current game speed, but that’s kind of an ugly approach.</p>
+<p>Instead, I reached out to the author and he advised me to use a <code>TVar</code> within the app state. I had never used <code>TVar</code>, but it’s pretty easy!</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> <span class="kw">do</span>
+  chan <span class="ot">&lt;-</span> newBChan <span class="dv">10</span>
+  tv   <span class="ot">&lt;-</span> atomically <span class="fu">$</span> newTVar (spToInt initialSpeed)
+  forkIO <span class="fu">$</span> forever <span class="fu">$</span> <span class="kw">do</span>
+    writeBChan chan <span class="dt">Tick</span>
+    int <span class="ot">&lt;-</span> atomically <span class="fu">$</span> readTVar tv
+    threadDelay int
+  customMain (V.mkVty V.defaultConfig) (<span class="dt">Just</span> chan) app (initialGame tv)
+    <span class="fu">&gt;&gt;=</span> printResult</code></pre></div>
+<p>The <code>tv &lt;- atomically $ newTVar (value :: a)</code> creates a new mutable reference to a value of type <code>a</code>, i.e. <code>TVar a</code>, and returns it in <code>IO</code>. In this case <code>value</code> is an <code>Int</code> which represents the delay between game steps. Then in the forked process, we read the delay from the <code>TVar</code> reference and use that to space out the calls to <code>writeBChan chan Tick</code>.</p>
+<p>I store that same <code>tv :: TVar Int</code> in the brick app state, so that the user can change the speed:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">handleEvent ::</span> <span class="dt">Game</span> <span class="ot">-&gt;</span> <span class="dt">BrickEvent</span> <span class="dt">Name</span> <span class="dt">Tick</span> <span class="ot">-&gt;</span> <span class="dt">EventM</span> <span class="dt">Name</span> (<span class="dt">Next</span> <span class="dt">Game</span>)
+handleEvent g (<span class="dt">VtyEvent</span> (<span class="dt">V.EvKey</span> <span class="dt">V.KRight</span> [<span class="dt">V.MCtrl</span>])) <span class="fu">=</span> handleSpeed g (<span class="fu">+</span>)
+handleEvent g (<span class="dt">VtyEvent</span> (<span class="dt">V.EvKey</span> <span class="dt">V.KLeft</span> [<span class="dt">V.MCtrl</span>]))  <span class="fu">=</span> handleSpeed g (<span class="fu">-</span>)
+
+<span class="ot">handleSpeed ::</span> <span class="dt">Game</span> <span class="ot">-&gt;</span> (<span class="dt">Float</span> <span class="ot">-&gt;</span> <span class="dt">Float</span> <span class="ot">-&gt;</span> <span class="dt">Float</span>) <span class="ot">-&gt;</span> <span class="dt">EventM</span> n (<span class="dt">Next</span> <span class="dt">Game</span>)
+handleSpeed g (<span class="fu">+/-</span>) <span class="fu">=</span> <span class="kw">do</span>
+  <span class="kw">let</span> newSp <span class="fu">=</span> validS <span class="fu">$</span> (g <span class="fu">^.</span> speed) <span class="fu">+/-</span> speedInc
+  liftIO <span class="fu">$</span> atomically <span class="fu">$</span> writeTVar (g <span class="fu">^.</span> interval) (spToInt newSp)
+  continue <span class="fu">$</span> g <span class="fu">&amp;</span> speed <span class="fu">.~</span> newSp
+
+<span class="co">-- where</span>
+
+<span class="co">-- | Speed increments = 0.01 gives 100 discrete speed settings</span>
+<span class="ot">speedInc ::</span> <span class="dt">Float</span>
+speedInc <span class="fu">=</span> <span class="fl">0.01</span>
+
+<span class="co">-- | Game state</span>
+<span class="kw">data</span> <span class="dt">Game</span> <span class="fu">=</span> <span class="dt">Game</span> {<span class="ot"> _board    ::</span> <span class="dt">Board</span> <span class="co">-- ^ Board state</span>
+                 ,<span class="ot"> _time     ::</span> <span class="dt">Int</span>   <span class="co">-- ^ Time elapsed</span>
+                 ,<span class="ot"> _paused   ::</span> <span class="dt">Bool</span>  <span class="co">-- ^ Playing vs. paused</span>
+                 ,<span class="ot"> _speed    ::</span> <span class="dt">Float</span> <span class="co">-- ^ Speed in [0..1]</span>
+                 ,<span class="ot"> _interval ::</span> <span class="dt">TVar</span> <span class="dt">Int</span> <span class="co">-- ^ Interval kept in TVar</span>
+                 ,<span class="ot"> _focus    ::</span> <span class="dt">F.FocusRing</span> <span class="dt">Name</span> <span class="co">-- ^ Keeps track of grid focus</span>
+                 ,<span class="ot"> _selected ::</span> <span class="dt">Cell</span> <span class="co">-- ^ Keeps track of cell focus</span>
+                 }</code></pre></div>
+<h2 id="conclusion">Conclusion</h2>
+<p><code>brick</code> let’s you build TUIs very quickly. I was able to write <code>snake</code> along with this tutorial within a few hours. More complicated interfaces can be tougher, but if you can successfully separate the interface and core functionality, you’ll have an easier time tacking on the frontend.</p>
+<p>Lastly, let me remind you to look in the <a href="https://github.com/jtdaugherty/brick/tree/master/programs">demo programs</a> to figure stuff out, as <em>many</em> scenarios are covered throughout them.</p>
+<h2 id="links">Links</h2>
+<ul>
+<li><a href="https://hackage.haskell.org/package/brick-0.18">brick</a></li>
+<li><a href="https://github.com/samtay/snake">snake</a></li>
+<li><a href="https://github.com/samtay/tetris">tetris</a></li>
+<li><a href="https://github.com/samtay/conway">conway</a></li>
+</ul>
+</div>
+
+<hr />
+
+<p>You can see other articles <a href="/">here</a>.</p>
+]]></summary>
+</entry>
+<entry>
+    <title>Who needs HashLife when you have comonads?</title>
+    <link href="https://samtay.github.io//articles/comonadic-game-of-life.html" />
+    <id>https://samtay.github.io//articles/comonadic-game-of-life.html</id>
+    <published>2017-03-17T00:00:00Z</published>
+    <updated>2017-03-17T00:00:00Z</updated>
+    <summary type="html"><![CDATA[<h1>Who needs HashLife when you have comonads?</h1>
 
 <div id="content">
 <div id="toc"><ul>
@@ -132,16 +499,16 @@ right (<span class="dt">Zipper</span> ls x (r<span class="fu">:</span>rs)) <span
 
 <span class="kw">instance</span> <span class="dt">Comonad</span> <span class="dt">Zipper</span> <span class="kw">where</span>
   extract (<span class="dt">Zipper</span> _ x _) <span class="fu">=</span> x
-  duplicate z <span class="fu">=</span> <span class="dt">Zipper</span> (iterate' left z) z (iterate' right z)
-    <span class="kw">where</span> iterate' f <span class="fu">=</span> drop <span class="dv">1</span> <span class="fu">.</span> iterate f</code></pre></div>
+  duplicate z <span class="fu">=</span> <span class="dt">Zipper</span> (iterate&#39; left z) z (iterate&#39; right z)
+    <span class="kw">where</span> iterate&#39; f <span class="fu">=</span> drop <span class="dv">1</span> <span class="fu">.</span> iterate f</code></pre></div>
 <p>Here’s what this looks like in practice:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">λ<span class="fu">&gt;</span> <span class="kw">let</span> z <span class="fu">=</span> <span class="dt">Zipper</span> [(<span class="fu">-</span><span class="dv">1</span>),(<span class="fu">-</span><span class="dv">2</span>)<span class="fu">..</span>] <span class="dv">0</span> [<span class="dv">1</span><span class="fu">..</span>]
-λ<span class="fu">&gt;</span> <span class="kw">let</span> take' n (<span class="dt">Zipper</span> l x r) <span class="fu">=</span> (<span class="dt">Zipper</span> (take n l) x (take n r))
-λ<span class="fu">&gt;</span> take' <span class="dv">5</span> z
+λ<span class="fu">&gt;</span> <span class="kw">let</span> take&#39; n (<span class="dt">Zipper</span> l x r) <span class="fu">=</span> (<span class="dt">Zipper</span> (take n l) x (take n r))
+λ<span class="fu">&gt;</span> take&#39; <span class="dv">5</span> z
 <span class="dt">Zipper</span> [<span class="fu">-</span><span class="dv">1</span>,<span class="fu">-</span><span class="dv">2</span>,<span class="fu">-</span><span class="dv">3</span>,<span class="fu">-</span><span class="dv">4</span>,<span class="fu">-</span><span class="dv">5</span>] <span class="dv">0</span> [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>]
 
 <span class="co">-- duplicate</span>
-λ<span class="fu">&gt;</span> take' <span class="dv">5</span> <span class="fu">$</span> fmap (take' <span class="dv">5</span>) <span class="fu">$</span> duplicate <span class="fu">$</span> z
+λ<span class="fu">&gt;</span> take&#39; <span class="dv">5</span> <span class="fu">$</span> fmap (take&#39; <span class="dv">5</span>) <span class="fu">$</span> duplicate <span class="fu">$</span> z
 <span class="dt">Zipper</span>
   [ <span class="dt">Zipper</span> [<span class="fu">-</span><span class="dv">2</span>,<span class="fu">-</span><span class="dv">3</span>,<span class="fu">-</span><span class="dv">4</span>,<span class="fu">-</span><span class="dv">5</span>,<span class="fu">-</span><span class="dv">6</span>] (<span class="fu">-</span><span class="dv">1</span>) [<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>]
   , <span class="dt">Zipper</span> [<span class="fu">-</span><span class="dv">3</span>,<span class="fu">-</span><span class="dv">4</span>,<span class="fu">-</span><span class="dv">5</span>,<span class="fu">-</span><span class="dv">6</span>,<span class="fu">-</span><span class="dv">7</span>] (<span class="fu">-</span><span class="dv">2</span>) [<span class="fu">-</span><span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>]
@@ -158,17 +525,17 @@ right (<span class="dt">Zipper</span> ls x (r<span class="fu">:</span>rs)) <span
   ]
 
 <span class="co">-- extend . extract</span>
-λ<span class="fu">&gt;</span> take' <span class="dv">5</span> <span class="fu">$</span> extend extract z
+λ<span class="fu">&gt;</span> take&#39; <span class="dv">5</span> <span class="fu">$</span> extend extract z
 <span class="dt">Zipper</span> [<span class="fu">-</span><span class="dv">1</span>,<span class="fu">-</span><span class="dv">2</span>,<span class="fu">-</span><span class="dv">3</span>,<span class="fu">-</span><span class="dv">4</span>,<span class="fu">-</span><span class="dv">5</span>] <span class="dv">0</span> [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>] <span class="co">-- this makes sense, also is a law!</span>
 
 <span class="co">-- extend (without leveraging context)</span>
-λ<span class="fu">&gt;</span> take' <span class="dv">5</span> <span class="fu">$</span> extend (\(<span class="dt">Zipper</span> _ x _) <span class="ot">-&gt;</span> <span class="dv">2</span> <span class="fu">*</span> x) z
+λ<span class="fu">&gt;</span> take&#39; <span class="dv">5</span> <span class="fu">$</span> extend (\(<span class="dt">Zipper</span> _ x _) <span class="ot">-&gt;</span> <span class="dv">2</span> <span class="fu">*</span> x) z
 <span class="dt">Zipper</span> [<span class="fu">-</span><span class="dv">2</span>,<span class="fu">-</span><span class="dv">4</span>,<span class="fu">-</span><span class="dv">6</span>,<span class="fu">-</span><span class="dv">8</span>,<span class="fu">-</span><span class="dv">10</span>] <span class="dv">0</span> [<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">6</span>,<span class="dv">8</span>,<span class="dv">10</span>]
 
 <span class="co">-- extend (looking to the immediate left and right)</span>
-λ<span class="fu">&gt;</span> take' <span class="dv">5</span> <span class="fu">$</span> extend (\(<span class="dt">Zipper</span> (l<span class="fu">:</span>_) x (r<span class="fu">:</span>_)) <span class="ot">-&gt;</span> l <span class="fu">+</span> <span class="dv">2</span> <span class="fu">*</span> x <span class="fu">+</span> r) z
+λ<span class="fu">&gt;</span> take&#39; <span class="dv">5</span> <span class="fu">$</span> extend (\(<span class="dt">Zipper</span> (l<span class="fu">:</span>_) x (r<span class="fu">:</span>_)) <span class="ot">-&gt;</span> l <span class="fu">+</span> <span class="dv">2</span> <span class="fu">*</span> x <span class="fu">+</span> r) z
 <span class="dt">Zipper</span> [<span class="fu">-</span><span class="dv">4</span>,<span class="fu">-</span><span class="dv">8</span>,<span class="fu">-</span><span class="dv">12</span>,<span class="fu">-</span><span class="dv">16</span>,<span class="fu">-</span><span class="dv">20</span>] <span class="dv">0</span> [<span class="dv">4</span>,<span class="dv">8</span>,<span class="dv">12</span>,<span class="dv">16</span>,<span class="dv">20</span>]
-λ<span class="fu">&gt;</span> take' <span class="dv">5</span> <span class="fu">$</span> extend (\(<span class="dt">Zipper</span> (l<span class="fu">:</span>_) x (r<span class="fu">:</span>_)) <span class="ot">-&gt;</span> intercalate <span class="st">&quot;,&quot;</span> <span class="fu">.</span> map show <span class="fu">$</span> [l,x,r]) z
+λ<span class="fu">&gt;</span> take&#39; <span class="dv">5</span> <span class="fu">$</span> extend (\(<span class="dt">Zipper</span> (l<span class="fu">:</span>_) x (r<span class="fu">:</span>_)) <span class="ot">-&gt;</span> intercalate <span class="st">&quot;,&quot;</span> <span class="fu">.</span> map show <span class="fu">$</span> [l,x,r]) z
 <span class="dt">Zipper</span>
   [<span class="st">&quot;-2,-1,0&quot;</span>,<span class="st">&quot;-3,-2,-1&quot;</span>,<span class="st">&quot;-4,-3,-2&quot;</span>,<span class="st">&quot;-5,-4,-3&quot;</span>,<span class="st">&quot;-6,-5,-4&quot;</span>]
   <span class="st">&quot;-1,0,1&quot;</span>
@@ -181,10 +548,10 @@ right (<span class="dt">Zipper</span> ls x (r<span class="fu">:</span>rs)) <span
 
 <span class="co">-- | One dimensional finite list with cursor context</span>
 <span class="co">--</span>
-<span class="co">-- The first element of the sequence at '_zl' can be thought of as</span>
+<span class="co">-- The first element of the sequence at &#39;_zl&#39; can be thought of as</span>
 <span class="co">-- /to the left/ of the cursor, while the last element is</span>
 <span class="co">-- /to the right/ of the cursor.</span>
-<span class="co">-- The cursor value and index are '_zc' and '_zi' respectively.</span>
+<span class="co">-- The cursor value and index are &#39;_zc&#39; and &#39;_zi&#39; respectively.</span>
 <span class="co">-- This can be thought of as a circle.</span>
 <span class="co">-- Warning: must have length greater than zero!</span>
 <span class="kw">data</span> <span class="dt">Z</span> a <span class="fu">=</span> <span class="dt">Z</span> {<span class="ot"> _zl ::</span> <span class="dt">S.Seq</span> a
@@ -200,7 +567,7 @@ right (<span class="dt">Zipper</span> ls x (r<span class="fu">:</span>rs)) <span
 <span class="co">-- at the @1@st column/row.</span>
 <span class="kw">type</span> <span class="dt">Board</span> <span class="fu">=</span> <span class="dt">ZZ</span> <span class="dt">St</span>
 
-<span class="co">-- | Indexer for the 'Board'</span>
+<span class="co">-- | Indexer for the &#39;Board&#39;</span>
 <span class="kw">type</span> <span class="dt">Cell</span> <span class="fu">=</span> (<span class="dt">Int</span>, <span class="dt">Int</span>)
 
 <span class="co">-- | Possible cell states</span>
@@ -314,7 +681,7 @@ normalise                Math.Geometry.Grid.OctagonalInternal src/Math/Geometry/
 population               Life                                 src/Life.hs:(120,1)-(122,20)                                    0.6    4.7
 elems                    Math.Geometry.GridMap                src/Math/Geometry/GridMap.hs:266:3-25                           0.2    1.7</code></pre>
 <p align="center">
-<img src="../img/comonadic-gol/initial-heap.png" />
+<img src="/img/comonadic-gol/initial-heap.png" />
 </p>
 <p>Quite a bit of memory spent in the <code>step</code> function.</p>
 <h3 id="comonads-to-the-rescue">Comonads to the rescue</h3>
@@ -344,7 +711,7 @@ duplicate.mkRow Life   src/Life.hs:215:7-47            1.4    0.2
 cursor          Life   src/Life.hs:174:3-28            1.2    0.2
 duplicate.mkCol Life   src/Life.hs:(216,7)-(217,80)    1.2    0.5</code></pre>
 <p align="center">
-<img src="../img/comonadic-gol/comonadic-heap.png" />
+<img src="/img/comonadic-gol/comonadic-heap.png" />
 </p>
 <h3 id="comparison">Comparison</h3>
 <p>Running the test suite with the second data structure decreased the overall time by <strong>92%</strong> and the overall memory allocation by <strong>28%</strong>.</p>
@@ -361,7 +728,8 @@ duplicate.mkCol Life   src/Life.hs:(216,7)-(217,80)    1.2    0.5</code></pre>
 
 <hr />
 
-<p>You can see other articles <a href="../">here</a>.</p>
+<p>You can see other articles <a href="/">here</a>.</p>
+]]></summary>
+</entry>
 
-  </body>
-</html>
+</feed>
