@@ -41,7 +41,10 @@
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">appHandleEvent ::</span> s <span class="ot">-&gt;</span> <span class="dt">BrickEvent</span> n e <span class="ot">-&gt;</span> <span class="dt">EventM</span> n (<span class="dt">Next</span> s)</code></pre></div>
 <p>takes your app state, an event (e.g. user presses the <code>'m'</code> key), and produces the resulting app state. <em>That’s pretty much it.</em></p>
 <h2 id="snake"><code>snake</code></h2>
-<p>We’re going to build the <a href="https://en.wikipedia.org/wiki/Snake_(video_game)">classic snake</a> game that you might recall from arcades or the first cell phones. The full source code is <a href="https://github.com/samtay/snake">here</a>.</p>
+<p>We’re going to build the <a href="https://en.wikipedia.org/wiki/Snake_(video_game)">classic snake</a> game that you might recall from arcades or the first cell phones. The full source code is <a href="https://github.com/samtay/snake">here</a>. This is the end product:</p>
+<p align="center">
+<img src="../img/brick/snake-demo.gif" />
+</p>
 <h3 id="structure-of-the-app">Structure of the app</h3>
 <p>The library makes it easy to separate the concerns of your application and the interface; I like to have a module with all of the core business logic that exports the core state of the app and functions for modifying it, and then have an interface module that just handles the setup, drawing, and handling events. So let’s just use the <code>simple</code> stack template and add two modules</p>
 <pre><code>├── LICENSE
@@ -228,6 +231,7 @@ handleEvent g (<span class="dt">VtyEvent</span> (<span class="dt">V.EvKey</span>
 handleEvent g (<span class="dt">VtyEvent</span> (<span class="dt">V.EvKey</span> (<span class="dt">V.KChar</span> <span class="ch">'j'</span>) [])) <span class="fu">=</span> continue <span class="fu">$</span> turn <span class="dt">South</span> g
 handleEvent g (<span class="dt">VtyEvent</span> (<span class="dt">V.EvKey</span> (<span class="dt">V.KChar</span> <span class="ch">'l'</span>) [])) <span class="fu">=</span> continue <span class="fu">$</span> turn <span class="dt">East</span> g
 handleEvent g (<span class="dt">VtyEvent</span> (<span class="dt">V.EvKey</span> (<span class="dt">V.KChar</span> <span class="ch">'h'</span>) [])) <span class="fu">=</span> continue <span class="fu">$</span> turn <span class="dt">West</span> g
+handleEvent g (<span class="dt">VtyEvent</span> (<span class="dt">V.EvKey</span> (<span class="dt">V.KChar</span> <span class="ch">'r'</span>) [])) <span class="fu">=</span> liftIO (initGame) <span class="fu">&gt;&gt;=</span> continue
 handleEvent g (<span class="dt">VtyEvent</span> (<span class="dt">V.EvKey</span> (<span class="dt">V.KChar</span> <span class="ch">'q'</span>) [])) <span class="fu">=</span> halt g
 handleEvent g (<span class="dt">VtyEvent</span> (<span class="dt">V.EvKey</span> <span class="dt">V.KEsc</span> []))        <span class="fu">=</span> halt g
 handleEvent g _                                     <span class="fu">=</span> continue g</code></pre></div>
