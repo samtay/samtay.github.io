@@ -3,6 +3,11 @@ import Data.Monoid ((<>))
 import Hakyll
 import Text.Pandoc (WriterOptions(..))
 
+type RenderingFunction = FeedConfiguration
+           -> Context String
+           -> [Item String]
+           -> Compiler (Item String)
+
 main :: IO ()
 main = hakyll $ do
   match "img/**" $ do
@@ -18,7 +23,7 @@ main = hakyll $ do
     compile $
       customWriterOpts <$> (getUnderlying >>= (`getMetadataField` "toc"))
         >>= pandocCompilerWith defaultHakyllReaderOptions
-        >>= loadAndApplyTemplate "templates/article.html"    articleCtx
+        >>= loadAndApplyTemplate "templates/article.html" articleCtx
         >>= saveSnapshot "content"
         >>= loadAndApplyTemplate "templates/default.html" articleCtx
         >>= relativizeUrls
@@ -36,6 +41,11 @@ main = hakyll $ do
 
   match "templates/*" $ compile templateCompiler
 
+  createFeed "atom.xml" renderAtom
+
+  createFeed "feed.xml" renderRss
+
+
 customWriterOpts :: Maybe String -> WriterOptions
 customWriterOpts (Just "yes")  = writerWithToc
 customWriterOpts (Just "true") = writerWithToc
@@ -51,3 +61,20 @@ articleCtx :: Context String
 articleCtx =
   dateField "date" "%B %e, %Y" <> defaultContext
 
+feedConfig :: FeedConfiguration
+feedConfig = FeedConfiguration
+  { feedTitle       = "A heaping teaspon of Haskell"
+  , feedDescription = "Articles from an aspiring functional programmer"
+  , feedAuthorName  = "Sam Tay"
+  , feedAuthorEmail = "sam.chong.tay@gmail.com"
+  , feedRoot        = "https://samtay.github.io/"
+  }
+
+createFeed :: Identifier -> RenderingFunction -> Rules ()
+createFeed name renderFunc = create [name] $ do
+  route idRoute
+  compile $ do
+    let feedCtx = articleCtx <> bodyField "description"
+    articles <- fmap (take 10) . recentFirst
+      =<< loadAllSnapshots "articles/*" "content"
+    renderFunc feedConfig feedCtx articles

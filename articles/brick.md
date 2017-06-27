@@ -1,6 +1,6 @@
 ---
 title: Introduction to Brick
-description: A small introduction to the terminal user interface framework.
+summary: A small introduction to the terminal user interface framework.
 toc: yes
 date: 2017-06-28
 ---
