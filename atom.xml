@@ -98,11 +98,11 @@
   {<span class="ot"> _snake  ::</span> <span class="dt">Snake</span>        <span class="co">-- ^ snake as a sequence of points in R2</span>
   ,<span class="ot"> _dir    ::</span> <span class="dt">Direction</span>    <span class="co">-- ^ direction</span>
   ,<span class="ot"> _food   ::</span> <span class="dt">Coord</span>        <span class="co">-- ^ location of the food</span>
-  ,<span class="ot"> _foods  ::</span> <span class="dt">Stream</span> <span class="dt">Coord</span> <span class="co">-- ^ infinite list of random next food locations</span>
+  ,<span class="ot"> _foods  ::</span> <span class="dt">Stream</span> <span class="dt">Coord</span> <span class="co">-- ^ infinite list of random food locations</span>
   ,<span class="ot"> _dead   ::</span> <span class="dt">Bool</span>         <span class="co">-- ^ game over flag</span>
   ,<span class="ot"> _paused ::</span> <span class="dt">Bool</span>         <span class="co">-- ^ paused flag</span>
   ,<span class="ot"> _score  ::</span> <span class="dt">Int</span>          <span class="co">-- ^ score</span>
-  ,<span class="ot"> _frozen ::</span> <span class="dt">Bool</span>         <span class="co">-- ^ freeze to disallow duplicate turns between time steps</span>
+  ,<span class="ot"> _frozen ::</span> <span class="dt">Bool</span>         <span class="co">-- ^ freeze to disallow duplicate turns</span>
   } <span class="kw">deriving</span> (<span class="dt">Show</span>)
 
 <span class="kw">type</span> <span class="dt">Coord</span> <span class="fu">=</span> <span class="dt">V2</span> <span class="dt">Int</span>
@@ -351,14 +351,15 @@ handleSpeed g (<span class="fu">+/-</span>) <span class="fu">=</span> <span clas
 speedInc <span class="fu">=</span> <span class="fl">0.01</span>
 
 <span class="co">-- | Game state</span>
-<span class="kw">data</span> <span class="dt">Game</span> <span class="fu">=</span> <span class="dt">Game</span> {<span class="ot"> _board    ::</span> <span class="dt">Board</span> <span class="co">-- ^ Board state</span>
-                 ,<span class="ot"> _time     ::</span> <span class="dt">Int</span>   <span class="co">-- ^ Time elapsed</span>
-                 ,<span class="ot"> _paused   ::</span> <span class="dt">Bool</span>  <span class="co">-- ^ Playing vs. paused</span>
-                 ,<span class="ot"> _speed    ::</span> <span class="dt">Float</span> <span class="co">-- ^ Speed in [0..1]</span>
-                 ,<span class="ot"> _interval ::</span> <span class="dt">TVar</span> <span class="dt">Int</span> <span class="co">-- ^ Interval kept in TVar</span>
-                 ,<span class="ot"> _focus    ::</span> <span class="dt">F.FocusRing</span> <span class="dt">Name</span> <span class="co">-- ^ Keeps track of grid focus</span>
-                 ,<span class="ot"> _selected ::</span> <span class="dt">Cell</span> <span class="co">-- ^ Keeps track of cell focus</span>
-                 }</code></pre></div>
+<span class="kw">data</span> <span class="dt">Game</span> <span class="fu">=</span> <span class="dt">Game</span>
+  {<span class="ot"> _board    ::</span> <span class="dt">Board</span> <span class="co">-- ^ Board state</span>
+  ,<span class="ot"> _time     ::</span> <span class="dt">Int</span>   <span class="co">-- ^ Time elapsed</span>
+  ,<span class="ot"> _paused   ::</span> <span class="dt">Bool</span>  <span class="co">-- ^ Playing vs. paused</span>
+  ,<span class="ot"> _speed    ::</span> <span class="dt">Float</span> <span class="co">-- ^ Speed in [0..1]</span>
+  ,<span class="ot"> _interval ::</span> <span class="dt">TVar</span> <span class="dt">Int</span> <span class="co">-- ^ Interval kept in TVar</span>
+  ,<span class="ot"> _focus    ::</span> <span class="dt">F.FocusRing</span> <span class="dt">Name</span> <span class="co">-- ^ Keeps track of grid focus</span>
+  ,<span class="ot"> _selected ::</span> <span class="dt">Cell</span> <span class="co">-- ^ Keeps track of cell focus</span>
+  }</code></pre></div>
 <h2 id="conclusion">Conclusion</h2>
 <p><code>brick</code> let’s you build TUIs very quickly. I was able to write <code>snake</code> along with this tutorial within a few hours. More complicated interfaces can be tougher, but if you can successfully separate the interface and core functionality, you’ll have an easier time tacking on the frontend.</p>
 <p>Lastly, let me remind you to look in the <a href="https://github.com/jtdaugherty/brick/tree/master/programs">demo programs</a> to figure stuff out, as <em>many</em> scenarios are covered throughout them.</p>
