@@ -103,11 +103,11 @@ data Game = Game
   { _snake  :: Snake        -- ^ snake as a sequence of points in R2
   , _dir    :: Direction    -- ^ direction
   , _food   :: Coord        -- ^ location of the food
-  , _foods  :: Stream Coord -- ^ infinite list of random next food locations
+  , _foods  :: Stream Coord -- ^ infinite list of random food locations
   , _dead   :: Bool         -- ^ game over flag
   , _paused :: Bool         -- ^ paused flag
   , _score  :: Int          -- ^ score
-  , _frozen :: Bool         -- ^ freeze to disallow duplicate turns between time steps
+  , _frozen :: Bool         -- ^ freeze to disallow duplicate turns
   } deriving (Show)
 
 type Coord = V2 Int
@@ -459,14 +459,15 @@ speedInc :: Float
 speedInc = 0.01
 
 -- | Game state
-data Game = Game { _board    :: Board -- ^ Board state
-                 , _time     :: Int   -- ^ Time elapsed
-                 , _paused   :: Bool  -- ^ Playing vs. paused
-                 , _speed    :: Float -- ^ Speed in [0..1]
-                 , _interval :: TVar Int -- ^ Interval kept in TVar
-                 , _focus    :: F.FocusRing Name -- ^ Keeps track of grid focus
-                 , _selected :: Cell -- ^ Keeps track of cell focus
-                 }
+data Game = Game
+  { _board    :: Board -- ^ Board state
+  , _time     :: Int   -- ^ Time elapsed
+  , _paused   :: Bool  -- ^ Playing vs. paused
+  , _speed    :: Float -- ^ Speed in [0..1]
+  , _interval :: TVar Int -- ^ Interval kept in TVar
+  , _focus    :: F.FocusRing Name -- ^ Keeps track of grid focus
+  , _selected :: Cell -- ^ Keeps track of cell focus
+  }
 ```
 
 ## Conclusion
