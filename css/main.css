@@ -24,6 +24,12 @@ footer {
   width: 100%;
 }
 
+.footer-icon {
+  position: inherit;
+  margin-top: -2px;
+  margin-left: 5px;
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-family: "Georgia", serif;
   font-weight: 200;
