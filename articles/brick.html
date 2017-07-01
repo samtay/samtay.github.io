@@ -88,22 +88,26 @@
 <span class="kw">import </span><span class="dt">Lens.Micro.TH</span> (makeLenses)
 <span class="kw">import </span><span class="dt">Lens.Micro</span> ((&amp;), (.~), (%~), (^.))
 <span class="kw">import </span><span class="dt">Linear.V2</span> (<span class="dt">V2</span>(..), _x, _y)
-<span class="kw">import </span><span class="dt">System.Random</span> (randomRIO)
+<span class="kw">import </span><span class="dt">System.Random</span> (<span class="dt">Random</span>(..), newStdGen)
 
 <span class="co">-- Types</span>
 
 <span class="kw">data</span> <span class="dt">Game</span> <span class="fu">=</span> <span class="dt">Game</span>
-  {<span class="ot"> _snake  ::</span> <span class="dt">Snake</span>     <span class="co">-- ^ snake as a sequence of points in R2</span>
-  ,<span class="ot"> _dir    ::</span> <span class="dt">Direction</span> <span class="co">-- ^ direction</span>
-  ,<span class="ot"> _food   ::</span> <span class="dt">Coord</span>     <span class="co">-- ^ location of the food</span>
-  ,<span class="ot"> _dead   ::</span> <span class="dt">Bool</span>      <span class="co">-- ^ game over flag</span>
-  ,<span class="ot"> _paused ::</span> <span class="dt">Bool</span>      <span class="co">-- ^ paused flag</span>
-  ,<span class="ot"> _score  ::</span> <span class="dt">Int</span>       <span class="co">-- ^ score</span>
-  ,<span class="ot"> _frozen ::</span> <span class="dt">Bool</span>      <span class="co">-- ^ freeze to disallow duplicate turns</span>
-  } <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Show</span>)
+  {<span class="ot"> _snake  ::</span> <span class="dt">Snake</span>        <span class="co">-- ^ snake as a sequence of points in R2</span>
+  ,<span class="ot"> _dir    ::</span> <span class="dt">Direction</span>    <span class="co">-- ^ direction</span>
+  ,<span class="ot"> _food   ::</span> <span class="dt">Coord</span>        <span class="co">-- ^ location of the food</span>
+  ,<span class="ot"> _foods  ::</span> <span class="dt">Stream</span> <span class="dt">Coord</span> <span class="co">-- ^ infinite list of random next food locations</span>
+  ,<span class="ot"> _dead   ::</span> <span class="dt">Bool</span>         <span class="co">-- ^ game over flag</span>
+  ,<span class="ot"> _paused ::</span> <span class="dt">Bool</span>         <span class="co">-- ^ paused flag</span>
+  ,<span class="ot"> _score  ::</span> <span class="dt">Int</span>          <span class="co">-- ^ score</span>
+  ,<span class="ot"> _frozen ::</span> <span class="dt">Bool</span>         <span class="co">-- ^ freeze to disallow duplicate turns between time steps</span>
+  } <span class="kw">deriving</span> (<span class="dt">Show</span>)
 
 <span class="kw">type</span> <span class="dt">Coord</span> <span class="fu">=</span> <span class="dt">V2</span> <span class="dt">Int</span>
 <span class="kw">type</span> <span class="dt">Snake</span> <span class="fu">=</span> <span class="dt">Seq</span> <span class="dt">Coord</span>
+
+<span class="kw">data</span> <span class="dt">Stream</span> a <span class="fu">=</span> a <span class="fu">:|</span> <span class="dt">Stream</span> a
+  <span class="kw">deriving</span> (<span class="dt">Show</span>)
 
 <span class="kw">data</span> <span class="dt">Direction</span>
   <span class="fu">=</span> <span class="dt">North</span>
@@ -114,20 +118,20 @@
 <p>All of this is pretty self-explanatory, with the possible exception of lenses if you haven’t seen them. At first glance they may seem complicated (and the underlying theory arguably is), but using them as getters and setters is very straightforward. So, if you are following along because you are writing a terminal app like this, I’d recommend using them, but they are not required to use <code>brick</code>.</p>
 <p>Here are the core functions for playing the game:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- | Step forward in time</span>
-<span class="ot">step ::</span> <span class="dt">Game</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">Game</span>
-step g <span class="fu">=</span> fromMaybe (return g) <span class="fu">$</span> <span class="kw">do</span>
+<span class="ot">step ::</span> <span class="dt">Game</span> <span class="ot">-&gt;</span> <span class="dt">Game</span>
+step g <span class="fu">=</span> fromMaybe g <span class="fu">$</span> <span class="kw">do</span>
   guard (not <span class="fu">$</span> g <span class="fu">^.</span> paused <span class="fu">||</span> g <span class="fu">^.</span> dead)
   <span class="kw">let</span> g' <span class="fu">=</span> g <span class="fu">&amp;</span> frozen <span class="fu">.~</span> <span class="dt">False</span>
-  die g' <span class="fu">&lt;|&gt;</span> eatFood g' <span class="fu">&lt;|&gt;</span> move g'
+  return <span class="fu">.</span> fromMaybe (move g') <span class="fu">$</span> die g' <span class="fu">&lt;|&gt;</span> eatFood g'
 
 <span class="co">-- | Possibly die if next head position is disallowed</span>
-<span class="ot">die ::</span> <span class="dt">Game</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> (<span class="dt">IO</span> <span class="dt">Game</span>)
+<span class="ot">die ::</span> <span class="dt">Game</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">Game</span>
 
 <span class="co">-- | Possibly eat food if next head position is food</span>
-<span class="ot">eatFood ::</span> <span class="dt">Game</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> (<span class="dt">IO</span> <span class="dt">Game</span>)
+<span class="ot">eatFood ::</span> <span class="dt">Game</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">Game</span>
 
 <span class="co">-- | Move snake along in a marquee fashion</span>
-<span class="ot">move ::</span> <span class="dt">Game</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> (<span class="dt">IO</span> <span class="dt">Game</span>)
+<span class="ot">move ::</span> <span class="dt">Game</span> <span class="ot">-&gt;</span> <span class="dt">Game</span>
 
 <span class="co">-- | Turn game direction (only turns orthogonally)</span>
 <span class="co">--</span>
@@ -225,7 +229,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <h4 id="handling-events">Handling events</h4>
 <p>Handling events is largely straightforward, and can be very clean when your underlying application logic is taken care of in a core module. All we do is essentially map events to the proper state modifiers.</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">handleEvent ::</span> <span class="dt">Game</span> <span class="ot">-&gt;</span> <span class="dt">BrickEvent</span> <span class="dt">Name</span> <span class="dt">Tick</span> <span class="ot">-&gt;</span> <span class="dt">EventM</span> <span class="dt">Name</span> (<span class="dt">Next</span> <span class="dt">Game</span>)
-handleEvent g (<span class="dt">AppEvent</span> <span class="dt">Tick</span>)                       <span class="fu">=</span> liftIO (step g) <span class="fu">&gt;&gt;=</span> continue
+handleEvent g (<span class="dt">AppEvent</span> <span class="dt">Tick</span>)                       <span class="fu">=</span> continue <span class="fu">$</span> step g
 handleEvent g (<span class="dt">VtyEvent</span> (<span class="dt">V.EvKey</span> <span class="dt">V.KUp</span> []))         <span class="fu">=</span> continue <span class="fu">$</span> turn <span class="dt">North</span> g
 handleEvent g (<span class="dt">VtyEvent</span> (<span class="dt">V.EvKey</span> <span class="dt">V.KDown</span> []))       <span class="fu">=</span> continue <span class="fu">$</span> turn <span class="dt">South</span> g
 handleEvent g (<span class="dt">VtyEvent</span> (<span class="dt">V.EvKey</span> <span class="dt">V.KRight</span> []))      <span class="fu">=</span> continue <span class="fu">$</span> turn <span class="dt">East</span> g
@@ -283,8 +287,8 @@ drawGrid g <span class="fu">=</span> withBorderStyle BS.unicodeBold
   <span class="fu">$</span> B.borderWithLabel (str <span class="st">&quot;Snake&quot;</span>)
   <span class="fu">$</span> vBox rows
   <span class="kw">where</span>
-    rows         <span class="fu">=</span> [hBox <span class="fu">$</span> cellsInRow r <span class="fu">|</span> r <span class="ot">&lt;-</span> [height,height<span class="fu">-</span><span class="dv">1</span><span class="fu">..</span><span class="dv">1</span>]]
-    cellsInRow y <span class="fu">=</span> [drawCoord (<span class="dt">V2</span> x y) <span class="fu">|</span> x <span class="ot">&lt;-</span> [<span class="dv">1</span><span class="fu">..</span>width]]
+    rows         <span class="fu">=</span> [hBox <span class="fu">$</span> cellsInRow r <span class="fu">|</span> r <span class="ot">&lt;-</span> [height<span class="fu">-</span><span class="dv">1</span>,height<span class="fu">-</span><span class="dv">2</span><span class="fu">..</span><span class="dv">0</span>]]
+    cellsInRow y <span class="fu">=</span> [drawCoord (<span class="dt">V2</span> x y) <span class="fu">|</span> x <span class="ot">&lt;-</span> [<span class="dv">0</span><span class="fu">..</span>width<span class="fu">-</span><span class="dv">1</span>]]
     drawCoord    <span class="fu">=</span> drawCell <span class="fu">.</span> cellAt
     cellAt c
       <span class="fu">|</span> c <span class="ot">`elem`</span> g <span class="fu">^.</span> snake <span class="fu">=</span> <span class="dt">Snake</span>
