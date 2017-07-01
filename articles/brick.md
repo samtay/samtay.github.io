@@ -95,22 +95,26 @@ import qualified Data.Sequence as S
 import Lens.Micro.TH (makeLenses)
 import Lens.Micro ((&), (.~), (%~), (^.))
 import Linear.V2 (V2(..), _x, _y)
-import System.Random (randomRIO)
+import System.Random (Random(..), newStdGen)
 
 -- Types
 
 data Game = Game
-  { _snake  :: Snake     -- ^ snake as a sequence of points in R2
-  , _dir    :: Direction -- ^ direction
-  , _food   :: Coord     -- ^ location of the food
-  , _dead   :: Bool      -- ^ game over flag
-  , _paused :: Bool      -- ^ paused flag
-  , _score  :: Int       -- ^ score
-  , _frozen :: Bool      -- ^ freeze to disallow duplicate turns
-  } deriving (Eq, Show)
+  { _snake  :: Snake        -- ^ snake as a sequence of points in R2
+  , _dir    :: Direction    -- ^ direction
+  , _food   :: Coord        -- ^ location of the food
+  , _foods  :: Stream Coord -- ^ infinite list of random next food locations
+  , _dead   :: Bool         -- ^ game over flag
+  , _paused :: Bool         -- ^ paused flag
+  , _score  :: Int          -- ^ score
+  , _frozen :: Bool         -- ^ freeze to disallow duplicate turns between time steps
+  } deriving (Show)
 
 type Coord = V2 Int
 type Snake = Seq Coord
+
+data Stream a = a :| Stream a
+  deriving (Show)
 
 data Direction
   = North
@@ -128,20 +132,20 @@ recommend using them, but they are not required to use `brick`.
 Here are the core functions for playing the game:
 ```haskell
 -- | Step forward in time
-step :: Game -> IO Game
-step g = fromMaybe (return g) $ do
+step :: Game -> Game
+step g = fromMaybe g $ do
   guard (not $ g ^. paused || g ^. dead)
   let g' = g & frozen .~ False
-  die g' <|> eatFood g' <|> move g'
+  return . fromMaybe (move g') $ die g' <|> eatFood g'
 
 -- | Possibly die if next head position is disallowed
-die :: Game -> Maybe (IO Game)
+die :: Game -> Maybe Game
 
 -- | Possibly eat food if next head position is food
-eatFood :: Game -> Maybe (IO Game)
+eatFood :: Game -> Maybe Game
 
 -- | Move snake along in a marquee fashion
-move :: Game -> Maybe (IO Game)
+move :: Game -> Game
 
 -- | Turn game direction (only turns orthogonally)
 --
@@ -269,7 +273,7 @@ application logic is taken care of in a core module. All we do is essentially ma
 to the proper state modifiers.
 ```haskell
 handleEvent :: Game -> BrickEvent Name Tick -> EventM Name (Next Game)
-handleEvent g (AppEvent Tick)                       = liftIO (step g) >>= continue
+handleEvent g (AppEvent Tick)                       = continue $ step g
 handleEvent g (VtyEvent (V.EvKey V.KUp []))         = continue $ turn North g
 handleEvent g (VtyEvent (V.EvKey V.KDown []))       = continue $ turn South g
 handleEvent g (VtyEvent (V.EvKey V.KRight []))      = continue $ turn East g
@@ -358,8 +362,8 @@ drawGrid g = withBorderStyle BS.unicodeBold
   $ B.borderWithLabel (str "Snake")
   $ vBox rows
   where
-    rows         = [hBox $ cellsInRow r | r <- [height,height-1..1]]
-    cellsInRow y = [drawCoord (V2 x y) | x <- [1..width]]
+    rows         = [hBox $ cellsInRow r | r <- [height-1,height-2..0]]
+    cellsInRow y = [drawCoord (V2 x y) | x <- [0..width-1]]
     drawCoord    = drawCell . cellAt
     cellAt c
       | c `elem` g ^. snake = Snake
