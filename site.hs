@@ -63,7 +63,7 @@ articleCtx =
 
 feedConfig :: FeedConfiguration
 feedConfig = FeedConfiguration
-  { feedTitle       = "A heaping teaspon of Haskell"
+  { feedTitle       = "A heaping teaspoon of Haskell"
   , feedDescription = "Articles from an aspiring functional programmer"
   , feedAuthorName  = "Sam Tay"
   , feedAuthorEmail = "sam.chong.tay@gmail.com"
