@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <title>A heaping teaspon of Haskell</title>
+    <title>A heaping teaspoon of Haskell</title>
     <link href="https://samtay.github.io//atom.xml" rel="self" />
     <link href="https://samtay.github.io/" />
     <id>https://samtay.github.io//atom.xml</id>

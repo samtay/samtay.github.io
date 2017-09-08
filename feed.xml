@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"
     xmlns:dc="http://purl.org/dc/elements/1.1/">
     <channel>
-        <title>A heaping teaspon of Haskell</title>
+        <title>A heaping teaspoon of Haskell</title>
         <link>https://samtay.github.io/</link>
         <description><![CDATA[Articles from an aspiring functional programmer]]></description>
         <atom:link href="https://samtay.github.io//feed.xml" rel="self"
