@@ -38,7 +38,7 @@ appHandleEvent :: s -> BrickEvent n e -> EventM n (Next s)
 takes your app state, an event (e.g. user presses the `'m'` key), and produces the resulting
 app state. *That's pretty much it.*
 
-## `snake`
+## snake
 We're going to build the [classic snake](https://en.wikipedia.org/wiki/Snake_(video_game))
 game that you might recall from arcades or the first cell phones.
 The full source code is [here](https://github.com/samtay/snake). This is the end product:
@@ -79,7 +79,7 @@ executable snake
                      , random
 ```
 
-### `Snake`
+### Snake
 Since this tutorial is about `brick`, I'll elide most of the implementation details
 of the actual game, but here are some of the key types and scaffolding:
 ```haskell
@@ -156,7 +156,7 @@ turn :: Direction -> Game -> Game
 initGame :: IO Game
 ```
 
-### `UI`
+### UI
 To start, we need to determine what our `App s e n` type parameters are.
 This will completely describe the interface application and be passed to one of the library's
 `main` style functions for execution. Note that `s` is the app state, `e` is an event type,

@@ -14,6 +14,10 @@ main = hakyll $ do
     route idRoute
     compile copyFileCompiler
 
+  match "fonts/*" $ do
+    route idRoute
+    compile copyFileCompiler
+
   match "css/*" $ do
     route   idRoute
     compile compressCssCompiler
@@ -28,12 +32,21 @@ main = hakyll $ do
         >>= loadAndApplyTemplate "templates/default.html" articleCtx
         >>= relativizeUrls
 
+  match "pages/*" $ do
+    route $ gsubRoute "pages/" (const "") `composeRoutes` setExtension "html"
+    compile $
+      pandocCompiler
+        >>= loadAndApplyTemplate "templates/page.html" siteCtx
+        >>= saveSnapshot "content"
+        >>= loadAndApplyTemplate "templates/default.html" siteCtx
+        >>= relativizeUrls
+
   match "index.html" $ do
     route idRoute
     compile $ do
       articles <- recentFirst =<< loadAllSnapshots "articles/*" "content"
       let indexCtx = listField "articles" articleCtx (return articles)
-                       <> defaultContext
+                       <> siteCtx
       getResourceBody
           >>= applyAsTemplate indexCtx
           >>= loadAndApplyTemplate "templates/default.html" indexCtx
@@ -57,9 +70,16 @@ writerWithToc = defaultHakyllWriterOptions
                   , writerTemplate        = Just "<div id=\"toc\">$toc$</div>\n$body$"
                   }
 
+-- TODO - Load this via config.json ??
+siteCtx :: Context String
+siteCtx = mconcat
+  [ constField "baseurl" "samtay.github.io"
+  , defaultContext
+  ]
+
 articleCtx :: Context String
 articleCtx =
-  dateField "date" "%B %e, %Y" <> defaultContext
+  dateField "date" "%B %e, %Y" <> siteCtx
 
 feedConfig :: FeedConfiguration
 feedConfig = FeedConfiguration

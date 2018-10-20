@@ -1,14 +1,24 @@
 ---
-title: A heaping teaspoon of Haskell
+title: Home
+home: true
 ---
 
-<h1>A heaping teaspoon of Haskell</h1>
+<div class="posts">
+  $for(articles)$
+  <div class="post">
 
-<p>A small list of articles written by an aspiring functional programmer.</p>
+    <h1 class="post-title">
+      <a href="$url$">
+        $title$
+      </a>
+    </h1>
 
-<h3>Articles</h3>
-$for(articles)$
-  <p>
-    <a href="$url$">$title$</a>$if(summary)$ - $summary$ $endif$
-  </p>
-$endfor$
+    <span class="post-date">$date$</span>
+
+    $if(summary)$
+      $summary$
+    $endif$
+
+  </div>
+  $endfor$
+</div>

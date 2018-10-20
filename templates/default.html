@@ -2,31 +2,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>$title$</title>
-    <link href="/css/main.css" rel="stylesheet" type="text/css" />
-    <link href="https://fonts.googleapis.com/css?family=Fira+Mono" rel="stylesheet">
-    <link rel="alternate" type="application/rss+xml" title="Sam Tay's FP dabbles" href="./feed.xml">
-    <link rel="alternate" type="application/atom+xml" title="Sam Tay's FP dabbles" href="./atom.xml">
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
-      rel="stylesheet"
-      integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
-      crossorigin="anonymous">
-  </head>
 
-  <body>
-    $body$
-    <footer>
-      <a class="github-button" href="https://github.com/samtay" data-show-count="true"
-        aria-label="Follow @samtay on GitHub"></a>
-      <a class="github-button" href="https://github.com/samtay/samtay.github.io"
-        data-show-count="true" data-icon="octicon-star"
-        aria-label="Star samtay/samtay.github.io on GitHub"></a>
-      <a class="footer-icon last" href="/feed.xml" title=RSS">
-        <i class="fa fa-rss" aria-hidden="true"></i>
-      </a>
-    </footer>
+  $partial("templates/head.html")$
+
+  <body class="theme-base-08">
+
+    $partial("templates/sidebar.html")$
+
+    <div class="content container">$body$</div>
+
   </body>
 </html>

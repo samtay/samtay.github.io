@@ -1,0 +1,35 @@
+.sourceCode {
+  color: #4d4d4c; /* default foreground */
+}
+
+.sourceCode .kw {
+  color: #8959a8; /* purple */
+}
+
+.sourceCode .dt {
+  color: #3e999f; /* aqua */
+}
+
+.sourceCode .fu {
+  color: #4271ae; /* blue */
+}
+
+.sourceCode .ot {
+  color: #c82829; /* red */
+}
+
+.sourceCode .dv {
+  color: #f5871f; /* orange */
+}
+
+.sourceCode .st {
+  color: #718c00; /* green */
+}
+
+.sourceCode .co {
+  color: #8e908c; /* comment */
+}
+
+.css .o,
+.css .o + .nt,
+.css .nt + .nt { color: #999; }
