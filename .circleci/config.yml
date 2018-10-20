@@ -1,7 +1,12 @@
 version: 2
 jobs:
-  deploy:
-    machine: true
+  build:
+    working_directory: ~/samtay
+    docker:
+      - image: futtetennista/hakyll:latest
+    branches:
+      only:
+        - hakyll
     steps:
       - checkout
       - run:
@@ -12,35 +17,15 @@ jobs:
             cd _site && git checkout master
       - restore-cache:
           keys:
-            - stack-{{ checksum “stack.yaml” }}
-      - restore-cache:
-          keys:
-            - stack-{{checksum “stack.yaml”}}-{{checksum “samtay-github-io.cabal”}}
-      - run: wget https://github.com/commercialhaskell/stack/releases/download/v1.7.1/stack-1.7.1-linux-x86_64.tar.gz -O /tmp/stack.tar.gz
-      - run: sudo mkdir /tmp/stack-download
-      - run: sudo tar -xzf /tmp/stack.tar.gz -C /tmp/stack-download
-      - run: sudo chmod +x /tmp/stack-download/stack-1.7.1-linux-x86_64/stack
-      - run: sudo mv /tmp/stack-download/stack-1.7.1-linux-x86_64/stack /usr/bin/stack
+            - v1-stack-{{ checksum "samtay-github-io.cabal" }}
+            - stack-work-
       - run: stack setup
       - run: stack build
-      - run: stack exec samtay-github-io -- clean
-      - run: stack exec samtay-github-io -- build
-      - save-cache:
-          key: stack-{{ checksum “stack.yaml” }}
+      - save_cache:
           paths:
-            - “~/.stack”
-      - restore-cache:
-          keys: stack-{{checksum “stack.yaml”}}-{{checksum “project.cabal”}}
-          paths:
-            - “.stack-work”
+            - ~/samtay/.stack-work
+            - /root/.stack/
+          key: v1-stack-work-{{ checksum "samtay-github-io.cabal" }}
       - deploy:
           name: Deploy to samtay.github.io
-          command: |
-            if [ $CIRCLE_BRANCH == 'hakyll' ]; then
-              bash .circleci/deploy.sh
-            fi
-workflows:
-  version: 2
-  build:
-    jobs:
-      - deploy
+          command: bash .circleci/deploy.sh
