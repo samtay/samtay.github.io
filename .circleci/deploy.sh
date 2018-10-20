@@ -1,6 +1,10 @@
-stack exec samtay-github-io -- rebuild
 git config --global user.email autodeploy@circleci.com
 git config --global user.name CircleCI
+
+git submodule init
+git submodule update --remote
+
+stack exec samtay-github-io -- rebuild
 
 cd _site
 

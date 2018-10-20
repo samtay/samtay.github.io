@@ -1,3 +1,4 @@
 [submodule "_site"]
 	path = _site
 	url = git@github.com:samtay/samtay.github.io.git
+	branch = master

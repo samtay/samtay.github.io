@@ -9,12 +9,6 @@ jobs:
         - hakyll
     steps:
       - checkout
-      - run:
-          name: "Pull Submodules"
-          command: |
-            git submodule init
-            git submodule update
-            cd _site && git checkout master
       - restore-cache:
           keys:
             - v1-stack-{{ checksum "samtay-github-io.cabal" }}
