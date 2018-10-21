@@ -15,8 +15,9 @@ jobs:
             - stack-
       - run:
           name: Resolve dependencies
-          command: stack setup
-          command: stack build --dependencies-only
+          command: |
+            stack setup
+            stack build --dependencies-only
       - save_cache:
           name: Cache dependencies
           key: stack-work-{{ checksum "samtay-github-io.cabal" }}
@@ -25,8 +26,10 @@ jobs:
             - ~/.stack
             - /root/.stack/
       - run:
-          name: Build site
+          name: Build site generator
           command: stack build
+      - run:
+          name: Build site
           command: stack exec site rebuild
       - deploy:
           name: Deploy to samtay.github.io
