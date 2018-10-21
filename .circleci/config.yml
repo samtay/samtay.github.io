@@ -27,7 +27,7 @@ jobs:
       - run:
           name: Build site
           command: stack build
-          command: stack exec samtay-github-io rebuild
+          command: stack exec site rebuild
       - deploy:
           name: Deploy to samtay.github.io
           command: |
