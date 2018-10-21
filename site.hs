@@ -74,6 +74,7 @@ writerWithToc = defaultHakyllWriterOptions
 siteCtx :: Context String
 siteCtx = mconcat
   [ constField "baseurl" "samtay.github.io"
+  , constField "protocol" "https"
   , defaultContext
   ]
 
