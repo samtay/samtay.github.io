@@ -49,8 +49,8 @@ body {
 
 @font-face {
   font-family: 'Lee';
-  src: url('http://localhost:8000/fonts/lee.woff2') format('woff2'),
-       url('http://localhost:8000/fonts/lee.woff') format('woff');
+  src: url('/fonts/lee.woff2') format('woff2'),
+       url('/fonts/lee.woff') format('woff');
 }
 
 html {
