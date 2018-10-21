@@ -11,20 +11,26 @@ jobs:
       - checkout
       - restore-cache:
           keys:
-            - v1-stack-{{ checksum "samtay-github-io.cabal" }}
-            - stack-work-
-      - run: stack setup
-      - run: stack build
+            - stack-work-{{ checksum "samtay-github-io.cabal" }}
+            - stack-
+      - run:
+          name: Resolve dependencies
+          command: stack setup
+          command: stack build --dependencies-only
       - save_cache:
+          name: Cache dependencies
+          key: v1-stack-work-{{ checksum "samtay-github-io.cabal" }}
           paths:
             - ~/samtay/.stack-work
+            - ~/.stack
             - /root/.stack/
-          key: v1-stack-work-{{ checksum "samtay-github-io.cabal" }}
+      - run:
+          name: Build site
+          command: stack build
+          command: stack exec samtay-github-io rebuild
       - deploy:
           name: Deploy to samtay.github.io
           command: |
-            stack exec samtay-github-io -- rebuild
-
             tmpdir=$(mktemp -d)
             git config --global user.email autodeploy@circleci.com
             git config --global user.name CircleCI
