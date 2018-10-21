@@ -4,7 +4,7 @@ git config --global user.name CircleCI
 git submodule init
 git submodule update --remote
 
-stack exec samtay-github-io -- rebuild
+stack exec samtay-github-io -- build
 
 cd _site
 
