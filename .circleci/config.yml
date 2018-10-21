@@ -22,4 +22,23 @@ jobs:
           key: v1-stack-work-{{ checksum "samtay-github-io.cabal" }}
       - deploy:
           name: Deploy to samtay.github.io
-          command: bash .circleci/deploy.sh
+          command: |
+            stack exec samtay-github-io -- rebuild
+
+            tmpdir=$(mktemp -d)
+            git config --global user.email autodeploy@circleci.com
+            git config --global user.name CircleCI
+            git clone --single-branch --branch master \
+              git@github.com:samtay/samtay.github.io.git \
+              $tmpdir
+
+            cd $tmpdir
+
+            git rm -rf .
+            git clean -fxd
+            cp -r ~/samtay/_site/* .
+            if [[ $(git status --porcelain) ]]; then
+              git add --all
+              git commit -m "Update build (`date '+%F %T %Z'`) [ci skip]"
+              git push origin master
+            fi
