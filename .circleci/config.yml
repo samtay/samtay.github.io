@@ -19,7 +19,7 @@ jobs:
           command: stack build --dependencies-only
       - save_cache:
           name: Cache dependencies
-          key: v1-stack-work-{{ checksum "samtay-github-io.cabal" }}
+          key: stack-work-{{ checksum "samtay-github-io.cabal" }}
           paths:
             - ~/samtay/.stack-work
             - ~/.stack
