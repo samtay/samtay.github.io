@@ -15,17 +15,17 @@
     <id>https://samtay.github.io//articles/brick.html</id>
     <published>2017-06-28T00:00:00Z</published>
     <updated>2017-06-28T00:00:00Z</updated>
-    <summary type="html"><![CDATA[<h1>Introduction to Brick</h1>
-
-<div id="content">
-<div id="toc"><ul>
+    <summary type="html"><![CDATA[<div class="post">
+  <h1 class="post-title">Introduction to Brick</h1>
+  <span class="post-date">June 28, 2017</span>
+  <div id="toc"><ul>
 <li><a href="#introduction">Introduction</a><ul>
 <li><a href="#the-basic-idea">The basic idea</a></li>
 </ul></li>
-<li><a href="#snake"><code>snake</code></a><ul>
+<li><a href="#snake">snake</a><ul>
 <li><a href="#structure-of-the-app">Structure of the app</a></li>
-<li><a href="#snake-1"><code>Snake</code></a></li>
-<li><a href="#ui"><code>UI</code></a></li>
+<li><a href="#snake-1">Snake</a></li>
+<li><a href="#ui">UI</a></li>
 </ul></li>
 <li><a href="#variable-speed">Variable speed</a></li>
 <li><a href="#conclusion">Conclusion</a></li>
@@ -46,7 +46,7 @@
 <p>takes your app state <code>s</code> and produces the visuals <code>[Widget n]</code>. The handler</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">appHandleEvent ::</span> s <span class="ot">-&gt;</span> <span class="dt">BrickEvent</span> n e <span class="ot">-&gt;</span> <span class="dt">EventM</span> n (<span class="dt">Next</span> s)</code></pre></div>
 <p>takes your app state, an event (e.g. user presses the <code>'m'</code> key), and produces the resulting app state. <em>That’s pretty much it.</em></p>
-<h2 id="snake"><code>snake</code></h2>
+<h2 id="snake">snake</h2>
 <p>We’re going to build the <a href="https://en.wikipedia.org/wiki/Snake_(video_game)">classic snake</a> game that you might recall from arcades or the first cell phones. The full source code is <a href="https://github.com/samtay/snake">here</a>. This is the end product:</p>
 <p align="center">
 <img src="/img/brick/snake-demo.gif" />
@@ -76,7 +76,7 @@
                      , microlens
                      , microlens-th
                      , random</code></pre></div>
-<h3 id="snake-1"><code>Snake</code></h3>
+<h3 id="snake-1">Snake</h3>
 <p>Since this tutorial is about <code>brick</code>, I’ll elide most of the implementation details of the actual game, but here are some of the key types and scaffolding:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE TemplateHaskell, FlexibleContexts #-}</span>
 <span class="kw">module</span> <span class="dt">Snake</span> <span class="kw">where</span>
@@ -142,7 +142,7 @@ step g <span class="fu">=</span> fromMaybe g <span class="fu">$</span> <span cla
 
 <span class="co">-- | Initialize a paused game with random food location</span>
 <span class="ot">initGame ::</span> <span class="dt">IO</span> <span class="dt">Game</span></code></pre></div>
-<h3 id="ui"><code>UI</code></h3>
+<h3 id="ui">UI</h3>
 <p>To start, we need to determine what our <code>App s e n</code> type parameters are. This will completely describe the interface application and be passed to one of the library’s <code>main</code> style functions for execution. Note that <code>s</code> is the app state, <code>e</code> is an event type, and <code>n</code> is a resource name. The <code>e</code> is abstracted so that we can provide custom events. The <code>n</code> is usually a custom sum type called <code>Name</code> which allows us to <em>name</em> particular viewports. This is important so that we can keep track of where the user currently has <em>focus</em>, such as typing in one of two textboxes; however, for this simple snake game we don’t need to worry about that.</p>
 <p>In simpler cases, the state <code>s</code> can directly coincide with a core datatype such as our <code>Snake.Game</code>. In many cases however, it will be necessary to wrap the core state within the ui state <code>s</code> to keep track of things that are interface specific (more on this later).</p>
 <p>Let’s write out our app definition and leave some undefined functions:</p>
@@ -371,10 +371,6 @@ speedInc <span class="fu">=</span> <span class="fl">0.01</span>
 <li><a href="https://github.com/samtay/conway">conway</a></li>
 </ul>
 </div>
-
-<hr />
-
-<p>You can see other articles <a href="/">here</a>.</p>
 ]]></summary>
 </entry>
 <entry>
@@ -383,10 +379,10 @@ speedInc <span class="fu">=</span> <span class="fl">0.01</span>
     <id>https://samtay.github.io//articles/comonadic-game-of-life.html</id>
     <published>2017-03-17T00:00:00Z</published>
     <updated>2017-03-17T00:00:00Z</updated>
-    <summary type="html"><![CDATA[<h1>Who needs HashLife when you have comonads?</h1>
-
-<div id="content">
-<div id="toc"><ul>
+    <summary type="html"><![CDATA[<div class="post">
+  <h1 class="post-title">Who needs HashLife when you have comonads?</h1>
+  <span class="post-date">March 17, 2017</span>
+  <div id="toc"><ul>
 <li><a href="#introduction">Introduction</a><ul>
 <li><a href="#what-is-the-game-of-life">What is the Game of Life?</a></li>
 <li><a href="#a-naive-implementation">A naive implementation</a></li>
@@ -730,10 +726,6 @@ duplicate.mkCol Life   src/Life.hs:(216,7)-(217,80)    1.2    0.5</code></pre>
 <li><a href="https://www.slideshare.net/davidoverton/comonad">Another comonad presentation</a> - David Overton</li>
 </ul>
 </div>
-
-<hr />
-
-<p>You can see other articles <a href="/">here</a>.</p>
 ]]></summary>
 </entry>
 

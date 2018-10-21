@@ -1,29 +1,77 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Introduction to Brick</title>
-    <link href="../css/main.css" rel="stylesheet" type="text/css" />
-    <link href="https://fonts.googleapis.com/css?family=Fira+Mono" rel="stylesheet">
-    <link rel="alternate" type="application/rss+xml" title="Sam Tay's FP dabbles" href="./feed.xml">
-    <link rel="alternate" type="application/atom+xml" title="Sam Tay's FP dabbles" href="./atom.xml">
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-  </head>
+  <title>Sam Tay | Introduction to Brick</title>
 
-  <body>
-    <h1>Introduction to Brick</h1>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <link href="http://gmpg.org/xfn/11" rel="profile">
 
-<div id="content">
-<div id="toc"><ul>
+  <!-- CSS -->
+  <link href="../css/poole.css" rel="stylesheet" type="text/css" />
+  <link href="../css/syntax.css" rel="stylesheet" type="text/css" />
+  <link href="../css/hyde.css" rel="stylesheet" type="text/css" />
+  <link href="../css/font-awesome-animation.min.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="Sam Tay's FP dabbles" href="./feed.xml">
+  <link rel="alternate" type="application/atom+xml" title="Sam Tay's FP dabbles" href="./atom.xml">
+
+  <!-- External assets -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+</head>
+
+
+  <body class="theme-base-08">
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1>
+        <a href="../">Sam Tay</a>
+      </h1>
+      <p class="lead">The ramblings of an opinionated functional programmer.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <!-- TODO map over pages and each page has 'active' field %-->
+      <a class="sidebar-nav-item" href="../">Home</a>
+      <a class="sidebar-nav-item" href="../about.html">About</a>
+      <div class="sidebar-nav-external">
+        <a href="https://github.com/samtay" title="Github">
+          <i class="fa fa-github faa-shake animated-hover"></i>
+        </a>
+        <a href="mailto:sam.chong.tay@gmail.com" title="Email">
+          <i class="fa fa-envelope faa-shake animated-hover"></i>
+        </a>
+        <a href="../feed.xml" title="RSS">
+          <i class="fa fa-rss faa-shake animated-hover" aria-hidden="true"></i>
+        </a>
+      </div>
+    </nav>
+
+    <p>&copy; 2018. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container"><div class="post">
+  <h1 class="post-title">Introduction to Brick</h1>
+  <span class="post-date">June 28, 2017</span>
+  <div id="toc"><ul>
 <li><a href="#introduction">Introduction</a><ul>
 <li><a href="#the-basic-idea">The basic idea</a></li>
 </ul></li>
-<li><a href="#snake"><code>snake</code></a><ul>
+<li><a href="#snake">snake</a><ul>
 <li><a href="#structure-of-the-app">Structure of the app</a></li>
-<li><a href="#snake-1"><code>Snake</code></a></li>
-<li><a href="#ui"><code>UI</code></a></li>
+<li><a href="#snake-1">Snake</a></li>
+<li><a href="#ui">UI</a></li>
 </ul></li>
 <li><a href="#variable-speed">Variable speed</a></li>
 <li><a href="#conclusion">Conclusion</a></li>
@@ -44,7 +92,7 @@
 <p>takes your app state <code>s</code> and produces the visuals <code>[Widget n]</code>. The handler</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">appHandleEvent ::</span> s <span class="ot">-&gt;</span> <span class="dt">BrickEvent</span> n e <span class="ot">-&gt;</span> <span class="dt">EventM</span> n (<span class="dt">Next</span> s)</code></pre></div>
 <p>takes your app state, an event (e.g. user presses the <code>'m'</code> key), and produces the resulting app state. <em>That’s pretty much it.</em></p>
-<h2 id="snake"><code>snake</code></h2>
+<h2 id="snake">snake</h2>
 <p>We’re going to build the <a href="https://en.wikipedia.org/wiki/Snake_(video_game)">classic snake</a> game that you might recall from arcades or the first cell phones. The full source code is <a href="https://github.com/samtay/snake">here</a>. This is the end product:</p>
 <p align="center">
 <img src="../img/brick/snake-demo.gif" />
@@ -74,7 +122,7 @@
                      , microlens
                      , microlens-th
                      , random</code></pre></div>
-<h3 id="snake-1"><code>Snake</code></h3>
+<h3 id="snake-1">Snake</h3>
 <p>Since this tutorial is about <code>brick</code>, I’ll elide most of the implementation details of the actual game, but here are some of the key types and scaffolding:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE TemplateHaskell, FlexibleContexts #-}</span>
 <span class="kw">module</span> <span class="dt">Snake</span> <span class="kw">where</span>
@@ -140,7 +188,7 @@ step g <span class="fu">=</span> fromMaybe g <span class="fu">$</span> <span cla
 
 <span class="co">-- | Initialize a paused game with random food location</span>
 <span class="ot">initGame ::</span> <span class="dt">IO</span> <span class="dt">Game</span></code></pre></div>
-<h3 id="ui"><code>UI</code></h3>
+<h3 id="ui">UI</h3>
 <p>To start, we need to determine what our <code>App s e n</code> type parameters are. This will completely describe the interface application and be passed to one of the library’s <code>main</code> style functions for execution. Note that <code>s</code> is the app state, <code>e</code> is an event type, and <code>n</code> is a resource name. The <code>e</code> is abstracted so that we can provide custom events. The <code>n</code> is usually a custom sum type called <code>Name</code> which allows us to <em>name</em> particular viewports. This is important so that we can keep track of where the user currently has <em>focus</em>, such as typing in one of two textboxes; however, for this simple snake game we don’t need to worry about that.</p>
 <p>In simpler cases, the state <code>s</code> can directly coincide with a core datatype such as our <code>Snake.Game</code>. In many cases however, it will be necessary to wrap the core state within the ui state <code>s</code> to keep track of things that are interface specific (more on this later).</p>
 <p>Let’s write out our app definition and leave some undefined functions:</p>
@@ -369,17 +417,7 @@ speedInc <span class="fu">=</span> <span class="fl">0.01</span>
 <li><a href="https://github.com/samtay/conway">conway</a></li>
 </ul>
 </div>
+</div>
 
-<hr />
-
-<p>You can see other articles <a href="../">here</a>.</p>
-
-    <footer>
-      <a class="github-button" href="https://github.com/samtay" data-show-count="true" aria-label="Follow @samtay on GitHub"></a>
-      <a class="github-button" href="https://github.com/samtay/samtay.github.io" data-show-count="true" data-icon="octicon-star" aria-label="Star samtay/samtay.github.io on GitHub"></a>
-      <a class="footer-icon last" href="../feed.xml" title="RSS"">
-        <i class="fa fa-rss" aria-hidden="true"></i>
-      </a>
-    </footer>
   </body>
 </html>
