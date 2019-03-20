@@ -147,11 +147,11 @@ data NotFoundError = NotFoundError
 data UnauthorizedError = UnauthorizedError
   deriving Exception via (HttpException UnauthorizedError)
 ```
-The syntax is wonderfully clear here. Sometimes extensions can be opaque, but
-it is evident when reading the deriving clause above that the exception
-instance for `e` is precisely the one that we have defined for `HttpException e`.
-So our `SomeHttpException` handler will still catch both of these exceptions, but we get to
-remove our explicit typeclass implementations.
+The syntax is wonderfully clear here. It is evident when reading the deriving
+clause above that the exception instance for `e` is precisely the one that we
+have defined for `HttpException e`.  So our `SomeHttpException` handler will
+still catch both of these exceptions, but we get to remove our explicit
+typeclass implementations.
 
 ## Conclusion
 The lesson here is that if you find yourself writing identical typeclass intances over and

@@ -27,18 +27,18 @@ main = hakyll $ do
     compile $
       customWriterOpts <$> (getUnderlying >>= (`getMetadataField` "toc"))
         >>= pandocCompilerWith defaultHakyllReaderOptions
-        >>= loadAndApplyTemplate "templates/article.html" articleCtx
+        >>= loadAndApplyTemplate "layouts/article.html" articleCtx
         >>= saveSnapshot "content"
-        >>= loadAndApplyTemplate "templates/default.html" articleCtx
+        >>= loadAndApplyTemplate "layouts/default.html" articleCtx
         >>= relativizeUrls
 
   match "pages/*" $ do
     route $ gsubRoute "pages/" (const "") `composeRoutes` setExtension "html"
     compile $
       pandocCompiler
-        >>= loadAndApplyTemplate "templates/page.html" siteCtx
+        >>= loadAndApplyTemplate "layouts/page.html" siteCtx
         >>= saveSnapshot "content"
-        >>= loadAndApplyTemplate "templates/default.html" siteCtx
+        >>= loadAndApplyTemplate "layouts/default.html" siteCtx
         >>= relativizeUrls
 
   match "index.html" $ do
@@ -49,10 +49,11 @@ main = hakyll $ do
                        <> siteCtx
       getResourceBody
           >>= applyAsTemplate indexCtx
-          >>= loadAndApplyTemplate "templates/default.html" indexCtx
+          >>= loadAndApplyTemplate "layouts/default.html" indexCtx
           >>= relativizeUrls
 
-  match "templates/*" $ compile templateCompiler
+  match "layouts/*" $ compile templateCompiler
+  match "partials/*" $ compile templateCompiler
 
   createFeed "atom.xml" renderAtom
 
