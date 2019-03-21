@@ -69,7 +69,7 @@
 <li><a href="#conclusion">Conclusion</a></li>
 </ul></div>
 <h2 id="introduction">Introduction</h2>
-<p>I am going to show a small but pratical scenario for which <a href="https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/glasgow_exts.html#deriving-via">DerivingVia</a>, a language extension introduced in GHC 8.6, is a natural solution. The extension is aptly named, as it extends the customizability of deriving clauses, namely to allow you to specify that a type should derive a typeclass instance <em>via</em> another type’s instance.</p>
+<p>I am going to show a small but practical scenario for which <a href="https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/glasgow_exts.html#deriving-via">DerivingVia</a>, a language extension introduced in GHC 8.6, is a natural solution. The extension is aptly named, as it extends the customizability of deriving clauses, namely to allow you to specify that a type should derive a typeclass instance <em>via</em> another type’s instance.</p>
 <p>As is typical for me as a lowly software engineer that writes Haskell, as opposed to a computer scientist researching programming language theory, the description of the language extension initially seemed opaque. In hindsight, I would argue it is one of the simple-yet-still-incredibly-useful extensions.</p>
 <h2 id="motivation">Motivation</h2>
 <p>The motivating example that I recently came across at work is implementing an exception hierarchy. In fact, I wasn’t even writing a full blown exception hierarchy. All I wanted to do was have an exception handler that catches all exceptions that have a certain typeclass <code>HasHttpStatus</code> which looks like</p>
