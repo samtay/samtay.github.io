@@ -115,7 +115,7 @@ httpExceptionFromException e <span class="fu">=</span> <span class="kw">do</span
   <span class="kw">deriving</span> <span class="dt">Exception</span> via (<span class="dt">HttpException</span> <span class="dt">UnauthorizedError</span>)</code></pre></div>
 <p>The syntax is wonderfully clear here. It is evident when reading the deriving clause above that the exception instance for <code>e</code> is precisely the one that we have defined for <code>HttpException e</code>. So our <code>SomeHttpException</code> handler will still catch both of these exceptions, but we get to remove our explicit typeclass implementations.</p>
 <h2 id="conclusion">Conclusion</h2>
-<p>The lesson here is that if you find yourself writing identical typeclass intances over and over, possibly accumulating a mountain of boilerplate in your codebase: stop, drop, and derive via.</p>
+<p>The lesson here is that if you find yourself writing identical typeclass instances over and over, possibly accumulating a mountain of boilerplate in your codebase: stop, drop, and derive via.</p>
   <div id="disqus_thread"></div>
 <script>
 
