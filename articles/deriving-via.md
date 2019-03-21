@@ -154,6 +154,6 @@ still catch both of these exceptions, but we get to remove our explicit
 typeclass implementations.
 
 ## Conclusion
-The lesson here is that if you find yourself writing identical typeclass intances over and
+The lesson here is that if you find yourself writing identical typeclass instances over and
 over, possibly accumulating a mountain of boilerplate in your codebase: stop, drop, and
 derive via.
