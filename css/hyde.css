@@ -119,6 +119,10 @@ html {
   border-radius: 100%;
 }
 
+.nobreak {
+  white-space: nowrap;
+}
+
 /* Sidebar nav */
 .sidebar-nav {
   margin-bottom: 1rem;
