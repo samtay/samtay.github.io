@@ -76,6 +76,30 @@ html {
     text-align: left;
   }
 }
+@media (max-width: 48em) {
+  .sidebar .profile-picture img {
+    height: 180px;
+    width: 180px;
+  }
+}
+@media (min-width: 48em) {
+  .sidebar .profile-picture img {
+    height: 180px;
+    width: 180px;
+  }
+}
+@media (min-width: 58em) {
+  .sidebar .profile-picture img {
+    height: 200px;
+    width: 200px;
+  }
+}
+@media (min-width: 64em) {
+  .sidebar .profile-picture img {
+    height: 220px;
+    width: 220px;
+  }
+}
 
 /* Sidebar links */
 .sidebar a {
@@ -88,6 +112,11 @@ html {
   margin-top: 0;
   font-family: 'Lee', serif;
   font-size: 3.25rem;
+}
+
+.sidebar .profile-picture img {
+  object-fit: cover;
+  border-radius: 100%;
 }
 
 /* Sidebar nav */
