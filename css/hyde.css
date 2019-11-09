@@ -117,10 +117,25 @@ html {
 .sidebar .profile-picture img {
   object-fit: cover;
   border-radius: 100%;
+  margin: 0 auto 1rem;
 }
 
 .nobreak {
   white-space: nowrap;
+}
+
+.ramblings {
+  justify-content: center;
+  display:flex;
+  flex-direction:row;
+  flex-wrap: wrap;
+  padding-bottom: 0.5rem;
+}
+
+@media (min-width: 48em) {
+  .ramblings {
+    flex-direction:column;
+  }
 }
 
 /* Sidebar nav */

@@ -17,6 +17,6 @@ executable site
   main-is:             site.hs
   default-language:    Haskell2010
   ghc-options:         -threaded
-  build-depends:       base == 4.*
-                     , hakyll == 4.9.*
-                     , pandoc == 1.19.*
+  build-depends:       base
+                     , hakyll
+                     , pandoc
