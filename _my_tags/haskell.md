@@ -1,0 +1,4 @@
+---
+slug: haskell
+name: Haskell
+---

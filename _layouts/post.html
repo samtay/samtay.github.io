@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+{% include head.html %}
+<body>
+  <main>
+    <div class="grid grid-centered">
+      <div class="grid-cell">
+        {% include navigation.html %}
+        <article class="article {% if site.scrollappear_enabled %}scrollappear{% endif %}">
+          <header class="article-header">
+            <h1>{{ page.title }}</h1>
+            <p>{{ page.description }}</p>
+            {% include article/info-footer.html post=page %}
+          </header>
+
+          <div class="article-content">
+            {{ content }}
+          </div>
+
+          {% if site.discus_identifier %}
+            <div id="disqus_thread" class="article-comments"></div>
+            <script>
+              //  https://disqus.com/admin/universalcode/#configuration-variables
+              var disqus_config = function () {
+                this.page.url = '{{ site.url }}{{ page.url }}';
+                this.page.identifier = '{{ page.id }}';
+                this.page.title = '{{ page.title }}';
+              };
+              (function() {
+                var d = document, s = d.createElement('script');
+                s.src = '//{{ site.discus_identifier }}.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+              })();
+            </script>
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+          {% endif %}
+        </article>
+        {% include footer.html %}
+      </div>
+    </div>
+  </main>
+  {% include javascripts.html %}
+</body>
+</html>
