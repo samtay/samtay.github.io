@@ -25,6 +25,8 @@ jobs:
       - run:
           name: deploy
           command: |
+            cd ~/chalk
+            msg="$(git log -1 --pretty=%B) [ci skip]"
             tmpdir=$(mktemp -d)
             git config --global user.email autodeploy@circleci.com
             git config --global user.name CircleCI
@@ -37,6 +39,6 @@ jobs:
             cp -r ~/chalk/_site/* .
             if [[ $(git status --porcelain) ]]; then
               git add --all
-              git commit --allow-empty -m "$(git log -1 --pretty=%B) [ci skip]"
+              git commit --allow-empty -m "$msg"
               git push origin master
             fi
