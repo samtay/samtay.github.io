@@ -1,0 +1,42 @@
+version: 2.0
+
+jobs:
+  build:
+    working_directory: ~/chalk
+    branches:
+      only:
+        - chalk
+    docker:
+      - image: circleci/ruby:2.5.1-node
+    steps:
+      - checkout
+      - run:
+          name: ruby deps
+          command: |
+            gem install bundler --conservative
+            bundle check || bundle install
+            bundle update
+      - run:
+          name: js deps
+          command: yarn install --modules-folder ./_assets/yarn
+      - run:
+          name: build
+          command: bundle exec jekyll build
+      - run:
+          name: deploy
+          command: |
+            tmpdir=$(mktemp -d)
+            git config --global user.email autodeploy@circleci.com
+            git config --global user.name CircleCI
+            git clone --single-branch --branch master \
+              git@github.com:samtay/samtay.github.io.git \
+              $tmpdir
+            cd $tmpdir
+            git rm -rf .
+            git clean -fxd
+            cp -r ~/chalk/_site/* .
+            if [[ $(git status --porcelain) ]]; then
+              git add --all
+              git commit --allow-empty -m "$(git log -1 --pretty=%B) [ci skip]"
+              git push origin master
+            fi
