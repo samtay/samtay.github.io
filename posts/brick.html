@@ -1,0 +1,695 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Sam Tay | Introduction to Brick</title>
+  <meta name="description" content="A small introduction to the terminal user interface framework.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta property="og:title" content="Introduction to Brick">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://samtay.github.io/posts/brick">
+  <meta property="og:description" content="A small introduction to the terminal user interface framework.">
+  <meta property="og:site_name" content="Sam Tay">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:url" content="https://samtay.github.io/posts/brick">
+  <meta name="twitter:title" content="Introduction to Brick">
+  <meta name="twitter:description" content="A small introduction to the terminal user interface framework.">
+
+  
+    
+      <meta property="og:image" content="https://samtay.github.io/assets/brick/snake-demo-454e9705a38aa5dd540614559c89024609977c32dd63a0302949b3b05a903413.gif">
+      <meta name="twitter:image" content="https://samtay.github.io/assets/brick/snake-demo-454e9705a38aa5dd540614559c89024609977c32dd63a0302949b3b05a903413.gif">
+    
+  
+
+  <link href="https://samtay.github.io/feed.xml" type="application/rss+xml" rel="alternate" title="Sam Tay Last 10 blog posts" />
+
+  
+
+  
+
+    
+      <link rel="icon" type="image/x-icon" href="/assets/favicon-light-a98c41efc5ed9fcc06ac664c9e2f7a9b3c3b2e0a52357d221fe382f6f4abc8fc.ico">
+      <link rel="apple-touch-icon" href="/assets/apple-touch-icon-light-87d1f2a3a19b1500e5c1626a0492025ca5f7f97d24540dc5900288e92112925a.png">
+      <link rel="stylesheet" type="text/css" title="light" id="light" href="/assets/light-af52f56b3a679f934bebf56e4f95e0a8a3c3abd27c3392582c0fbb45382c3ace.css">
+      <link rel="stylesheet" type="text/css" title="dark" id="dark" href="/assets/dark-34cba75263d5af9704e21aa0f389e08da0d80fd7cac0f13fa474dfdee35ad73c.css" disabled="true">
+    
+
+  
+
+</head>
+
+<body>
+  <main>
+    <div class="grid grid-centered">
+      <div class="grid-cell">
+        <nav class="header-nav scrollappear">
+  <a href="/" class="header-logo" title="Sam Tay">Sam Tay</a>
+  <ul class="header-links">
+    
+      <li>
+        <a href="/about" title="About me">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-about">
+  <use href="/assets/about-ecf154b571ab8034ae00aeed91a3b7ad68db80b46d958753ad6216c919486e88.svg#icon-about" xlink:href="/assets/about-ecf154b571ab8034ae00aeed91a3b7ad68db80b46d958753ad6216c919486e88.svg#icon-about"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+    
+    
+    
+      <li>
+        <a href="https://github.com/samtay" rel="noreferrer noopener" target="_blank" title="GitHub">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-github">
+  <use href="/assets/github-094f81040819f34343ee6ffff0980f17e2807b08b595eaaf66ae3554934fd78d.svg#icon-github" xlink:href="/assets/github-094f81040819f34343ee6ffff0980f17e2807b08b595eaaf66ae3554934fd78d.svg#icon-github"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      <li>
+        <a href="mailto:sam.chong.tay@gmail.com" title="Email">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-email">
+  <use href="/assets/email-782473193bf750036fdb90e8daa075508a20509d01854c09f3237c144a3f0601.svg#icon-email" xlink:href="/assets/email-782473193bf750036fdb90e8daa075508a20509d01854c09f3237c144a3f0601.svg#icon-email"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+      <li>
+        <a href="/feed.xml" rel="noreferrer noopener" target="_blank" title="RSS">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-rss">
+  <use href="/assets/rss-541ec5cea9cefd10d2fcfec01888f3f231a8829940249835fa7b7b3a12ae0d0d.svg#icon-rss" xlink:href="/assets/rss-541ec5cea9cefd10d2fcfec01888f3f231a8829940249835fa7b7b3a12ae0d0d.svg#icon-rss"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+      <li>
+        <a onclick="toggle()" title="Toggle Theme">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-theme">
+  <use href="/assets/theme-66869e0bf8dab34bae1c86bda400327b772e0be69e8dc28d3ede896e771320ed.svg#icon-theme" xlink:href="/assets/theme-66869e0bf8dab34bae1c86bda400327b772e0be69e8dc28d3ede896e771320ed.svg#icon-theme"></use>
+</svg>
+
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+
+
+        <article class="article scrollappear">
+          <header class="article-header">
+            <h1>Introduction to Brick</h1>
+            <p>A small introduction to the terminal user interface framework.</p>
+            <div class="article-list-footer">
+  <span class="article-list-date">
+    June 29, 2017
+  </span>
+  <span class="article-list-divider">-</span>
+  <span class="article-list-minutes">
+    
+    
+      18 minute read
+    
+  </span>
+  <span class="article-list-divider">-</span>
+  <div class="article-list-tags">
+    
+      
+      <a href="/tag/haskell" title="See all posts with tag 'Haskell'">Haskell</a>
+    
+      
+      <a href="/tag/tui" title="See all posts with tag 'Terminal User Interface'">Terminal User Interface</a>
+    
+  </div>
+</div>
+          </header>
+
+          <div class="article-content">
+            <h2 id="introduction">Introduction</h2>
+
+<p>I’m going to give a short introduction to <a href="https://hackage.haskell.org/package/brick-0.18">brick</a>,
+a Haskell library for building terminal user interfaces. So far I’ve used <code class="highlighter-rouge">brick</code> to
+implement <a href="https://github.com/samtay/conway">Conway’s Game of Life</a> and a
+<a href="https://github.com/samtay/tetris">Tetris clone</a>. I’ll explain the basics,
+walk through an example <a href="https://github.com/samtay/snake">snake</a> application, and then explain some more complicated scenarios.</p>
+
+<p>The first thing I’ll say is that this package has some of the most impressive documentation
+and resources, which makes it easy to figure out pretty much anything you need to do.
+I’ll try to make this useful, but I imagine if you’re reading this then it is mostly being
+used as a reference in addition to the existing resources:</p>
+
+<ol>
+  <li><a href="https://github.com/jtdaugherty/brick/tree/master/programs">Demo programs</a>
+(clone down to explore the code and run them locally)</li>
+  <li><a href="https://github.com/jtdaugherty/brick/blob/master/docs/guide.rst">User guide</a></li>
+  <li><a href="https://hackage.haskell.org/package/brick-0.18">Haddock docs</a></li>
+  <li><a href="https://groups.google.com/forum/#!forum/brick-users">Google group</a></li>
+</ol>
+
+<h3 id="the-basic-idea">The basic idea</h3>
+
+<p><code class="highlighter-rouge">brick</code> is very declarative. Once your base application logic is in place, the interface
+is generally built by two functions: drawing and handling events. The drawing function</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">appDraw</span> <span class="o">::</span> <span class="n">s</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="kt">Widget</span> <span class="n">n</span><span class="p">]</span></code></pre></figure>
+
+<p>takes your app state <code class="highlighter-rouge">s</code> and produces the visuals <code class="highlighter-rouge">[Widget n]</code>.
+The handler</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">appHandleEvent</span> <span class="o">::</span> <span class="n">s</span> <span class="o">-&gt;</span> <span class="kt">BrickEvent</span> <span class="n">n</span> <span class="n">e</span> <span class="o">-&gt;</span> <span class="kt">EventM</span> <span class="n">n</span> <span class="p">(</span><span class="kt">Next</span> <span class="n">s</span><span class="p">)</span></code></pre></figure>
+
+<p>takes your app state, an event (e.g. user presses the <code class="highlighter-rouge">'m'</code> key), and produces the resulting
+app state. <em>That’s pretty much it.</em></p>
+
+<h2 id="snake">snake</h2>
+<p>We’re going to build the <a href="https://en.wikipedia.org/wiki/Snake_(video_game)">classic snake</a>
+game that you might recall from arcades or the first cell phones.
+The full source code is <a href="https://github.com/samtay/snake">here</a>. This is the end product:</p>
+
+<p><a href="/assets/brick/snake-demo-454e9705a38aa5dd540614559c89024609977c32dd63a0302949b3b05a903413.gif">
+  <img src="/assets/brick/snake-demo-454e9705a38aa5dd540614559c89024609977c32dd63a0302949b3b05a903413.gif" alt="Snake Demo" class="zooming" data-rjs="/assets/brick/snake-demo-454e9705a38aa5dd540614559c89024609977c32dd63a0302949b3b05a903413.gif" data-zooming-width="444" data-zooming-height="351" />
+</a></p>
+
+<h3 id="structure-of-the-app">Structure of the app</h3>
+
+<p>The library makes it easy to separate the concerns of your application and the interface;
+I like to have a module with all of the core business logic that exports the core state of the app
+and functions for modifying it, and then have an interface module that just handles the setup,
+drawing, and handling events. So let’s just use the <code class="highlighter-rouge">simple</code> stack template and add two
+modules</p>
+
+<figure class="highlight"><pre><code class="language-plaintext" data-lang="plaintext">├── LICENSE
+├── README.md
+├── Setup.hs
+├── snake.cabal
+├── src
+│   ├── Main.hs
+│   ├── Snake.hs
+│   └── UI.hs
+└── stack.yaml</code></pre></figure>
+
+<p>and our dependencies to <code class="highlighter-rouge">test.cabal</code></p>
+
+<figure class="highlight"><pre><code class="language-plaintext" data-lang="plaintext">executable snake
+  hs-source-dirs:      src
+  main-is:             Main.hs
+  exposed-modules:     Snake
+                     , UI
+  default-language:    Haskell2010
+  build-depends:       base &gt;= 4.7 &amp;&amp; &lt; 5
+                     , brick
+                     , containers
+                     , linear
+                     , microlens
+                     , microlens-th
+                     , random</code></pre></figure>
+
+<h3 id="snake-1">Snake</h3>
+<p>Since this tutorial is about <code class="highlighter-rouge">brick</code>, I’ll elide most of the implementation details
+of the actual game, but here are some of the key types and scaffolding:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="cp">{-# LANGUAGE TemplateHaskell, FlexibleContexts #-}</span>
+<span class="kr">module</span> <span class="nn">Snake</span> <span class="kr">where</span>
+
+<span class="kr">import</span> <span class="nn">Control.Applicative</span> <span class="p">((</span><span class="o">&lt;|&gt;</span><span class="p">))</span>
+<span class="kr">import</span> <span class="nn">Control.Monad</span> <span class="p">(</span><span class="nf">guard</span><span class="p">)</span>
+<span class="kr">import</span> <span class="nn">Data.Maybe</span> <span class="p">(</span><span class="nf">fromMaybe</span><span class="p">)</span>
+
+<span class="kr">import</span> <span class="nn">Data.Sequence</span> <span class="p">(</span><span class="kt">Seq</span><span class="p">,</span> <span class="kt">ViewL</span><span class="p">(</span><span class="o">..</span><span class="p">),</span> <span class="kt">ViewR</span><span class="p">(</span><span class="o">..</span><span class="p">),</span> <span class="p">(</span><span class="o">&lt;|</span><span class="p">))</span>
+<span class="kr">import</span> <span class="k">qualified</span> <span class="nn">Data.Sequence</span> <span class="k">as</span> <span class="n">S</span>
+<span class="kr">import</span> <span class="nn">Lens.Micro.TH</span> <span class="p">(</span><span class="nf">makeLenses</span><span class="p">)</span>
+<span class="kr">import</span> <span class="nn">Lens.Micro</span> <span class="p">((</span><span class="o">&amp;</span><span class="p">),</span> <span class="p">(</span><span class="o">.~</span><span class="p">),</span> <span class="p">(</span><span class="o">%~</span><span class="p">),</span> <span class="p">(</span><span class="o">^.</span><span class="p">))</span>
+<span class="kr">import</span> <span class="nn">Linear.V2</span> <span class="p">(</span><span class="kt">V2</span><span class="p">(</span><span class="o">..</span><span class="p">),</span> <span class="nf">_x</span><span class="p">,</span> <span class="nf">_y</span><span class="p">)</span>
+<span class="kr">import</span> <span class="nn">System.Random</span> <span class="p">(</span><span class="kt">Random</span><span class="p">(</span><span class="o">..</span><span class="p">),</span> <span class="nf">newStdGen</span><span class="p">)</span>
+
+<span class="c1">-- Types</span>
+
+<span class="kr">data</span> <span class="kt">Game</span> <span class="o">=</span> <span class="kt">Game</span>
+  <span class="p">{</span> <span class="n">_snake</span>  <span class="o">::</span> <span class="kt">Snake</span>        <span class="c1">-- ^ snake as a sequence of points in R2</span>
+  <span class="p">,</span> <span class="n">_dir</span>    <span class="o">::</span> <span class="kt">Direction</span>    <span class="c1">-- ^ direction</span>
+  <span class="p">,</span> <span class="n">_food</span>   <span class="o">::</span> <span class="kt">Coord</span>        <span class="c1">-- ^ location of the food</span>
+  <span class="p">,</span> <span class="n">_foods</span>  <span class="o">::</span> <span class="kt">Stream</span> <span class="kt">Coord</span> <span class="c1">-- ^ infinite list of random food locations</span>
+  <span class="p">,</span> <span class="n">_dead</span>   <span class="o">::</span> <span class="kt">Bool</span>         <span class="c1">-- ^ game over flag</span>
+  <span class="p">,</span> <span class="n">_paused</span> <span class="o">::</span> <span class="kt">Bool</span>         <span class="c1">-- ^ paused flag</span>
+  <span class="p">,</span> <span class="n">_score</span>  <span class="o">::</span> <span class="kt">Int</span>          <span class="c1">-- ^ score</span>
+  <span class="p">,</span> <span class="n">_frozen</span> <span class="o">::</span> <span class="kt">Bool</span>         <span class="c1">-- ^ freeze to disallow duplicate turns</span>
+  <span class="p">}</span> <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Show</span><span class="p">)</span>
+
+<span class="kr">type</span> <span class="kt">Coord</span> <span class="o">=</span> <span class="kt">V2</span> <span class="kt">Int</span>
+<span class="kr">type</span> <span class="kt">Snake</span> <span class="o">=</span> <span class="kt">Seq</span> <span class="kt">Coord</span>
+
+<span class="kr">data</span> <span class="kt">Stream</span> <span class="n">a</span> <span class="o">=</span> <span class="n">a</span> <span class="o">:|</span> <span class="kt">Stream</span> <span class="n">a</span>
+  <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Show</span><span class="p">)</span>
+
+<span class="kr">data</span> <span class="kt">Direction</span>
+  <span class="o">=</span> <span class="kt">North</span>
+  <span class="o">|</span> <span class="kt">South</span>
+  <span class="o">|</span> <span class="kt">East</span>
+  <span class="o">|</span> <span class="kt">West</span>
+  <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Eq</span><span class="p">,</span> <span class="kt">Show</span><span class="p">)</span></code></pre></figure>
+
+<p>All of this is pretty self-explanatory, with the possible exception of lenses if you
+haven’t seen them. At first glance they may seem complicated (and the underlying
+theory arguably is), but using them as getters and setters is very straightforward.
+So, if you are following along because you are writing a terminal app like this, I’d
+recommend using them, but they are not required to use <code class="highlighter-rouge">brick</code>.</p>
+
+<p>Here are the core functions for playing the game:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="cd">-- | Step forward in time</span>
+<span class="n">step</span> <span class="o">::</span> <span class="kt">Game</span> <span class="o">-&gt;</span> <span class="kt">Game</span>
+<span class="n">step</span> <span class="n">g</span> <span class="o">=</span> <span class="n">fromMaybe</span> <span class="n">g</span> <span class="o">$</span> <span class="kr">do</span>
+  <span class="n">guard</span> <span class="p">(</span><span class="n">not</span> <span class="o">$</span> <span class="n">g</span> <span class="o">^.</span> <span class="n">paused</span> <span class="o">||</span> <span class="n">g</span> <span class="o">^.</span> <span class="n">dead</span><span class="p">)</span>
+  <span class="kr">let</span> <span class="n">g'</span> <span class="o">=</span> <span class="n">g</span> <span class="o">&amp;</span> <span class="n">frozen</span> <span class="o">.~</span> <span class="kt">False</span>
+  <span class="n">return</span> <span class="o">.</span> <span class="n">fromMaybe</span> <span class="p">(</span><span class="n">move</span> <span class="n">g'</span><span class="p">)</span> <span class="o">$</span> <span class="n">die</span> <span class="n">g'</span> <span class="o">&lt;|&gt;</span> <span class="n">eatFood</span> <span class="n">g'</span>
+
+<span class="cd">-- | Possibly die if next head position is disallowed</span>
+<span class="n">die</span> <span class="o">::</span> <span class="kt">Game</span> <span class="o">-&gt;</span> <span class="kt">Maybe</span> <span class="kt">Game</span>
+
+<span class="cd">-- | Possibly eat food if next head position is food</span>
+<span class="n">eatFood</span> <span class="o">::</span> <span class="kt">Game</span> <span class="o">-&gt;</span> <span class="kt">Maybe</span> <span class="kt">Game</span>
+
+<span class="cd">-- | Move snake along in a marquee fashion</span>
+<span class="n">move</span> <span class="o">::</span> <span class="kt">Game</span> <span class="o">-&gt;</span> <span class="kt">Game</span>
+
+<span class="cd">-- | Turn game direction (only turns orthogonally)</span>
+<span class="c1">--</span>
+<span class="c1">-- Implicitly unpauses yet freezes game</span>
+<span class="n">turn</span> <span class="o">::</span> <span class="kt">Direction</span> <span class="o">-&gt;</span> <span class="kt">Game</span> <span class="o">-&gt;</span> <span class="kt">Game</span>
+
+<span class="cd">-- | Initialize a paused game with random food location</span>
+<span class="n">initGame</span> <span class="o">::</span> <span class="kt">IO</span> <span class="kt">Game</span></code></pre></figure>
+
+<h3 id="ui">UI</h3>
+<p>To start, we need to determine what our <code class="highlighter-rouge">App s e n</code> type parameters are.
+This will completely describe the interface application and be passed to one of the library’s
+<code class="highlighter-rouge">main</code> style functions for execution. Note that <code class="highlighter-rouge">s</code> is the app state, <code class="highlighter-rouge">e</code> is an event type,
+and <code class="highlighter-rouge">n</code> is a resource name. The <code class="highlighter-rouge">e</code> is abstracted so that we can provide custom events.
+The <code class="highlighter-rouge">n</code> is usually a custom sum type called <code class="highlighter-rouge">Name</code> which allows us to <em>name</em> particular viewports.
+This is important so that we can keep track of where the user currently has <em>focus</em>, such as
+typing in one of two textboxes; however, for this simple snake game we don’t need
+to worry about that.</p>
+
+<p>In simpler cases, the state <code class="highlighter-rouge">s</code> can directly coincide with a core datatype such as our <code class="highlighter-rouge">Snake.Game</code>.
+In many cases however, it will be necessary to
+wrap the core state within the ui state <code class="highlighter-rouge">s</code> to keep track of things
+that are interface specific (more on this later).</p>
+
+<p>Let’s write out our app definition and leave some undefined functions:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="cp">{-# LANGUAGE OverloadedStrings #-}</span>
+<span class="kr">module</span> <span class="nn">UI</span> <span class="kr">where</span>
+
+<span class="kr">import</span> <span class="nn">Control.Monad</span> <span class="p">(</span><span class="nf">forever</span><span class="p">,</span> <span class="nf">void</span><span class="p">)</span>
+<span class="kr">import</span> <span class="nn">Control.Monad.IO.Class</span> <span class="p">(</span><span class="nf">liftIO</span><span class="p">)</span>
+<span class="kr">import</span> <span class="nn">Control.Concurrent</span> <span class="p">(</span><span class="nf">threadDelay</span><span class="p">,</span> <span class="nf">forkIO</span><span class="p">)</span>
+<span class="kr">import</span> <span class="nn">Data.Maybe</span> <span class="p">(</span><span class="nf">fromMaybe</span><span class="p">)</span>
+
+<span class="kr">import</span> <span class="nn">Snake</span>
+
+<span class="kr">import</span> <span class="nn">Brick</span>
+  <span class="p">(</span> <span class="kt">App</span><span class="p">(</span><span class="o">..</span><span class="p">),</span> <span class="kt">AttrMap</span><span class="p">,</span> <span class="kt">BrickEvent</span><span class="p">(</span><span class="o">..</span><span class="p">),</span> <span class="kt">EventM</span><span class="p">,</span> <span class="kt">Next</span><span class="p">,</span> <span class="kt">Widget</span>
+  <span class="p">,</span> <span class="nf">customMain</span><span class="p">,</span> <span class="nf">neverShowCursor</span>
+  <span class="p">,</span> <span class="nf">continue</span><span class="p">,</span> <span class="nf">halt</span>
+  <span class="p">,</span> <span class="nf">hLimit</span><span class="p">,</span> <span class="nf">vLimit</span><span class="p">,</span> <span class="nf">vBox</span><span class="p">,</span> <span class="nf">hBox</span>
+  <span class="p">,</span> <span class="nf">padRight</span><span class="p">,</span> <span class="nf">padLeft</span><span class="p">,</span> <span class="nf">padTop</span><span class="p">,</span> <span class="nf">padAll</span><span class="p">,</span> <span class="kt">Padding</span><span class="p">(</span><span class="o">..</span><span class="p">)</span>
+  <span class="p">,</span> <span class="nf">withBorderStyle</span>
+  <span class="p">,</span> <span class="nf">str</span>
+  <span class="p">,</span> <span class="nf">attrMap</span><span class="p">,</span> <span class="nf">withAttr</span><span class="p">,</span> <span class="nf">emptyWidget</span><span class="p">,</span> <span class="kt">AttrName</span><span class="p">,</span> <span class="nf">on</span><span class="p">,</span> <span class="nf">fg</span>
+  <span class="p">,</span> <span class="p">(</span><span class="o">&lt;+&gt;</span><span class="p">)</span>
+  <span class="p">)</span>
+<span class="kr">import</span> <span class="nn">Brick.BChan</span> <span class="p">(</span><span class="nf">newBChan</span><span class="p">,</span> <span class="nf">writeBChan</span><span class="p">)</span>
+<span class="kr">import</span> <span class="k">qualified</span> <span class="nn">Brick.Widgets.Border</span> <span class="k">as</span> <span class="n">B</span>
+<span class="kr">import</span> <span class="k">qualified</span> <span class="nn">Brick.Widgets.Border.Style</span> <span class="k">as</span> <span class="n">BS</span>
+<span class="kr">import</span> <span class="k">qualified</span> <span class="nn">Brick.Widgets.Center</span> <span class="k">as</span> <span class="n">C</span>
+<span class="kr">import</span> <span class="k">qualified</span> <span class="nn">Graphics.Vty</span> <span class="k">as</span> <span class="n">V</span>
+<span class="kr">import</span> <span class="nn">Data.Sequence</span> <span class="p">(</span><span class="kt">Seq</span><span class="p">)</span>
+<span class="kr">import</span> <span class="k">qualified</span> <span class="nn">Data.Sequence</span> <span class="k">as</span> <span class="n">S</span>
+<span class="kr">import</span> <span class="nn">Linear.V2</span> <span class="p">(</span><span class="kt">V2</span><span class="p">(</span><span class="o">..</span><span class="p">))</span>
+<span class="kr">import</span> <span class="nn">Lens.Micro</span> <span class="p">((</span><span class="o">^.</span><span class="p">))</span>
+
+<span class="c1">-- Types</span>
+
+<span class="cd">-- | Ticks mark passing of time</span>
+<span class="c1">--</span>
+<span class="c1">-- This is our custom event that will be constantly fed into the app.</span>
+<span class="kr">data</span> <span class="kt">Tick</span> <span class="o">=</span> <span class="kt">Tick</span>
+
+<span class="cd">-- | Named resources</span>
+<span class="c1">--</span>
+<span class="c1">-- Not currently used, but will be easier to refactor</span>
+<span class="c1">-- if we call this "Name" now.</span>
+<span class="kr">type</span> <span class="kt">Name</span> <span class="o">=</span> <span class="nb">()</span>
+
+<span class="kr">data</span> <span class="kt">Cell</span> <span class="o">=</span> <span class="kt">Snake</span> <span class="o">|</span> <span class="kt">Food</span> <span class="o">|</span> <span class="kt">Empty</span>
+
+<span class="c1">-- App definition</span>
+
+<span class="n">app</span> <span class="o">::</span> <span class="kt">App</span> <span class="kt">Game</span> <span class="kt">Tick</span> <span class="kt">Name</span>
+<span class="n">app</span> <span class="o">=</span> <span class="kt">App</span> <span class="p">{</span> <span class="n">appDraw</span> <span class="o">=</span> <span class="n">drawUI</span>
+          <span class="p">,</span> <span class="n">appChooseCursor</span> <span class="o">=</span> <span class="n">neverShowCursor</span>
+          <span class="p">,</span> <span class="n">appHandleEvent</span> <span class="o">=</span> <span class="n">handleEvent</span>
+          <span class="p">,</span> <span class="n">appStartEvent</span> <span class="o">=</span> <span class="n">return</span>
+          <span class="p">,</span> <span class="n">appAttrMap</span> <span class="o">=</span> <span class="n">const</span> <span class="n">theMap</span>
+          <span class="p">}</span>
+
+<span class="n">main</span> <span class="o">::</span> <span class="kt">IO</span> <span class="nb">()</span>
+<span class="n">main</span> <span class="o">=</span> <span class="n">undefined</span>
+
+<span class="c1">-- Handling events</span>
+
+<span class="n">handleEvent</span> <span class="o">::</span> <span class="kt">Game</span> <span class="o">-&gt;</span> <span class="kt">BrickEvent</span> <span class="kt">Name</span> <span class="kt">Tick</span> <span class="o">-&gt;</span> <span class="kt">EventM</span> <span class="kt">Name</span> <span class="p">(</span><span class="kt">Next</span> <span class="kt">Game</span><span class="p">)</span>
+<span class="n">handleEvent</span> <span class="o">=</span> <span class="n">undefined</span>
+
+<span class="c1">-- Drawing</span>
+
+<span class="n">drawUI</span> <span class="o">::</span> <span class="kt">Game</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="kt">Widget</span> <span class="kt">Name</span><span class="p">]</span>
+<span class="n">drawUI</span> <span class="o">=</span> <span class="n">undefined</span>
+
+<span class="n">theMap</span> <span class="o">::</span> <span class="kt">AttrMap</span>
+<span class="n">theMap</span> <span class="o">=</span> <span class="n">undefined</span></code></pre></figure>
+
+<h4 id="custom-events">Custom Events</h4>
+
+<p>So far I’ve only used <code class="highlighter-rouge">brick</code> to make games which need to be redrawn as time passes,
+with or without user input. This requires using <code class="highlighter-rouge">Brick.customMain</code> with that <code class="highlighter-rouge">Tick</code>
+event type, and opening a forked process to <code class="highlighter-rouge">forever</code> feed that event type into
+the channel. Since this is a common scenario, there is a <code class="highlighter-rouge">Brick.BChan</code> module that makes
+this pretty quick:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">main</span> <span class="o">::</span> <span class="kt">IO</span> <span class="nb">()</span>
+<span class="n">main</span> <span class="o">=</span> <span class="kr">do</span>
+  <span class="n">chan</span> <span class="o">&lt;-</span> <span class="n">newBChan</span> <span class="mi">10</span>
+  <span class="n">forkIO</span> <span class="o">$</span> <span class="n">forever</span> <span class="o">$</span> <span class="kr">do</span>
+    <span class="n">writeBChan</span> <span class="n">chan</span> <span class="kt">Tick</span>
+    <span class="n">threadDelay</span> <span class="mi">100000</span> <span class="c1">-- decides how fast your game moves</span>
+  <span class="n">g</span> <span class="o">&lt;-</span> <span class="n">initGame</span>
+  <span class="n">void</span> <span class="o">$</span> <span class="n">customMain</span> <span class="p">(</span><span class="kt">V</span><span class="o">.</span><span class="n">mkVty</span> <span class="kt">V</span><span class="o">.</span><span class="n">defaultConfig</span><span class="p">)</span> <span class="p">(</span><span class="kt">Just</span> <span class="n">chan</span><span class="p">)</span> <span class="n">app</span> <span class="n">g</span></code></pre></figure>
+
+<p>We do need to import <code class="highlighter-rouge">Vty.Graphics</code> since <code class="highlighter-rouge">customMain</code> allows us to specify
+a custom <code class="highlighter-rouge">IO Vty.Graphics.Vty</code> handle, but we’re only customizing the existence of the
+event channel <code class="highlighter-rouge">BChan Tick</code>. The app is now bootstrapped, and all we need to do is
+implement <code class="highlighter-rouge">handleEvent</code>, <code class="highlighter-rouge">drawUI</code>, and <code class="highlighter-rouge">theMap</code> (handles styling).</p>
+
+<h4 id="handling-events">Handling events</h4>
+
+<p>Handling events is largely straightforward, and can be very clean when your underlying
+application logic is taken care of in a core module. All we do is essentially map events
+to the proper state modifiers.</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">handleEvent</span> <span class="o">::</span> <span class="kt">Game</span> <span class="o">-&gt;</span> <span class="kt">BrickEvent</span> <span class="kt">Name</span> <span class="kt">Tick</span> <span class="o">-&gt;</span> <span class="kt">EventM</span> <span class="kt">Name</span> <span class="p">(</span><span class="kt">Next</span> <span class="kt">Game</span><span class="p">)</span>
+<span class="n">handleEvent</span> <span class="n">g</span> <span class="p">(</span><span class="kt">AppEvent</span> <span class="kt">Tick</span><span class="p">)</span>                       <span class="o">=</span> <span class="n">continue</span> <span class="o">$</span> <span class="n">step</span> <span class="n">g</span>
+<span class="n">handleEvent</span> <span class="n">g</span> <span class="p">(</span><span class="kt">VtyEvent</span> <span class="p">(</span><span class="kt">V</span><span class="o">.</span><span class="kt">EvKey</span> <span class="kt">V</span><span class="o">.</span><span class="kt">KUp</span> <span class="kt">[]</span><span class="p">))</span>         <span class="o">=</span> <span class="n">continue</span> <span class="o">$</span> <span class="n">turn</span> <span class="kt">North</span> <span class="n">g</span>
+<span class="n">handleEvent</span> <span class="n">g</span> <span class="p">(</span><span class="kt">VtyEvent</span> <span class="p">(</span><span class="kt">V</span><span class="o">.</span><span class="kt">EvKey</span> <span class="kt">V</span><span class="o">.</span><span class="kt">KDown</span> <span class="kt">[]</span><span class="p">))</span>       <span class="o">=</span> <span class="n">continue</span> <span class="o">$</span> <span class="n">turn</span> <span class="kt">South</span> <span class="n">g</span>
+<span class="n">handleEvent</span> <span class="n">g</span> <span class="p">(</span><span class="kt">VtyEvent</span> <span class="p">(</span><span class="kt">V</span><span class="o">.</span><span class="kt">EvKey</span> <span class="kt">V</span><span class="o">.</span><span class="kt">KRight</span> <span class="kt">[]</span><span class="p">))</span>      <span class="o">=</span> <span class="n">continue</span> <span class="o">$</span> <span class="n">turn</span> <span class="kt">East</span> <span class="n">g</span>
+<span class="n">handleEvent</span> <span class="n">g</span> <span class="p">(</span><span class="kt">VtyEvent</span> <span class="p">(</span><span class="kt">V</span><span class="o">.</span><span class="kt">EvKey</span> <span class="kt">V</span><span class="o">.</span><span class="kt">KLeft</span> <span class="kt">[]</span><span class="p">))</span>       <span class="o">=</span> <span class="n">continue</span> <span class="o">$</span> <span class="n">turn</span> <span class="kt">West</span> <span class="n">g</span>
+<span class="n">handleEvent</span> <span class="n">g</span> <span class="p">(</span><span class="kt">VtyEvent</span> <span class="p">(</span><span class="kt">V</span><span class="o">.</span><span class="kt">EvKey</span> <span class="p">(</span><span class="kt">V</span><span class="o">.</span><span class="kt">KChar</span> <span class="sc">'k'</span><span class="p">)</span> <span class="kt">[]</span><span class="p">))</span> <span class="o">=</span> <span class="n">continue</span> <span class="o">$</span> <span class="n">turn</span> <span class="kt">North</span> <span class="n">g</span>
+<span class="n">handleEvent</span> <span class="n">g</span> <span class="p">(</span><span class="kt">VtyEvent</span> <span class="p">(</span><span class="kt">V</span><span class="o">.</span><span class="kt">EvKey</span> <span class="p">(</span><span class="kt">V</span><span class="o">.</span><span class="kt">KChar</span> <span class="sc">'j'</span><span class="p">)</span> <span class="kt">[]</span><span class="p">))</span> <span class="o">=</span> <span class="n">continue</span> <span class="o">$</span> <span class="n">turn</span> <span class="kt">South</span> <span class="n">g</span>
+<span class="n">handleEvent</span> <span class="n">g</span> <span class="p">(</span><span class="kt">VtyEvent</span> <span class="p">(</span><span class="kt">V</span><span class="o">.</span><span class="kt">EvKey</span> <span class="p">(</span><span class="kt">V</span><span class="o">.</span><span class="kt">KChar</span> <span class="sc">'l'</span><span class="p">)</span> <span class="kt">[]</span><span class="p">))</span> <span class="o">=</span> <span class="n">continue</span> <span class="o">$</span> <span class="n">turn</span> <span class="kt">East</span> <span class="n">g</span>
+<span class="n">handleEvent</span> <span class="n">g</span> <span class="p">(</span><span class="kt">VtyEvent</span> <span class="p">(</span><span class="kt">V</span><span class="o">.</span><span class="kt">EvKey</span> <span class="p">(</span><span class="kt">V</span><span class="o">.</span><span class="kt">KChar</span> <span class="sc">'h'</span><span class="p">)</span> <span class="kt">[]</span><span class="p">))</span> <span class="o">=</span> <span class="n">continue</span> <span class="o">$</span> <span class="n">turn</span> <span class="kt">West</span> <span class="n">g</span>
+<span class="n">handleEvent</span> <span class="n">g</span> <span class="p">(</span><span class="kt">VtyEvent</span> <span class="p">(</span><span class="kt">V</span><span class="o">.</span><span class="kt">EvKey</span> <span class="p">(</span><span class="kt">V</span><span class="o">.</span><span class="kt">KChar</span> <span class="sc">'r'</span><span class="p">)</span> <span class="kt">[]</span><span class="p">))</span> <span class="o">=</span> <span class="n">liftIO</span> <span class="p">(</span><span class="n">initGame</span><span class="p">)</span> <span class="o">&gt;&gt;=</span> <span class="n">continue</span>
+<span class="n">handleEvent</span> <span class="n">g</span> <span class="p">(</span><span class="kt">VtyEvent</span> <span class="p">(</span><span class="kt">V</span><span class="o">.</span><span class="kt">EvKey</span> <span class="p">(</span><span class="kt">V</span><span class="o">.</span><span class="kt">KChar</span> <span class="sc">'q'</span><span class="p">)</span> <span class="kt">[]</span><span class="p">))</span> <span class="o">=</span> <span class="n">halt</span> <span class="n">g</span>
+<span class="n">handleEvent</span> <span class="n">g</span> <span class="p">(</span><span class="kt">VtyEvent</span> <span class="p">(</span><span class="kt">V</span><span class="o">.</span><span class="kt">EvKey</span> <span class="kt">V</span><span class="o">.</span><span class="kt">KEsc</span> <span class="kt">[]</span><span class="p">))</span>        <span class="o">=</span> <span class="n">halt</span> <span class="n">g</span>
+<span class="n">handleEvent</span> <span class="n">g</span> <span class="kr">_</span>                                     <span class="o">=</span> <span class="n">continue</span> <span class="n">g</span></code></pre></figure>
+
+<p>It’s probably obvious, but <code class="highlighter-rouge">continue</code> will continue execution with the supplied state value,
+which is then drawn. We can also <code class="highlighter-rouge">halt</code> to stop execution, which will essentially
+finish the evaluation of our <code class="highlighter-rouge">customMain</code> and result in <code class="highlighter-rouge">IO Game</code>, where the resulting
+game is the last value that we supplied to <code class="highlighter-rouge">halt</code>.</p>
+
+<h4 id="drawing">Drawing</h4>
+
+<p>Drawing is fairly simple as well but can require a good amount of code
+to position things how you want them. I like to break up the visual space
+into regions with drawing functions for each one.</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">drawUI</span> <span class="o">::</span> <span class="kt">Game</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="kt">Widget</span> <span class="kt">Name</span><span class="p">]</span>
+<span class="n">drawUI</span> <span class="n">g</span> <span class="o">=</span>
+  <span class="p">[</span> <span class="kt">C</span><span class="o">.</span><span class="n">center</span> <span class="o">$</span> <span class="n">padRight</span> <span class="p">(</span><span class="kt">Pad</span> <span class="mi">2</span><span class="p">)</span> <span class="p">(</span><span class="n">drawStats</span> <span class="n">g</span><span class="p">)</span> <span class="o">&lt;+&gt;</span> <span class="n">drawGrid</span> <span class="n">g</span> <span class="p">]</span>
+
+<span class="n">drawStats</span> <span class="o">::</span> <span class="kt">Game</span> <span class="o">-&gt;</span> <span class="kt">Widget</span> <span class="kt">Name</span>
+<span class="n">drawStats</span> <span class="o">=</span> <span class="n">undefined</span>
+
+<span class="n">drawGrid</span> <span class="o">::</span> <span class="kt">Game</span> <span class="o">-&gt;</span> <span class="kt">Widget</span> <span class="kt">Name</span>
+<span class="n">drawGrid</span> <span class="o">=</span> <span class="n">undefined</span></code></pre></figure>
+
+<p>This will center the overall interface (<code class="highlighter-rouge">C.center</code>),
+put the stats and grid widgets horizontally side by side (<code class="highlighter-rouge">&lt;+&gt;</code>),
+and separate them by a 2-character width (<code class="highlighter-rouge">padRight (Pad 2)</code>).</p>
+
+<p>Let’s move forward with the stats column:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">drawStats</span> <span class="o">::</span> <span class="kt">Game</span> <span class="o">-&gt;</span> <span class="kt">Widget</span> <span class="kt">Name</span>
+<span class="n">drawStats</span> <span class="n">g</span> <span class="o">=</span> <span class="n">hLimit</span> <span class="mi">11</span>
+  <span class="o">$</span> <span class="n">vBox</span> <span class="p">[</span> <span class="n">drawScore</span> <span class="p">(</span><span class="n">g</span> <span class="o">^.</span> <span class="n">score</span><span class="p">)</span>
+         <span class="p">,</span> <span class="n">padTop</span> <span class="p">(</span><span class="kt">Pad</span> <span class="mi">2</span><span class="p">)</span> <span class="o">$</span> <span class="n">drawGameOver</span> <span class="p">(</span><span class="n">g</span> <span class="o">^.</span> <span class="n">dead</span><span class="p">)</span>
+         <span class="p">]</span>
+
+<span class="n">drawScore</span> <span class="o">::</span> <span class="kt">Int</span> <span class="o">-&gt;</span> <span class="kt">Widget</span> <span class="kt">Name</span>
+<span class="n">drawScore</span> <span class="n">n</span> <span class="o">=</span> <span class="n">withBorderStyle</span> <span class="kt">BS</span><span class="o">.</span><span class="n">unicodeBold</span>
+  <span class="o">$</span> <span class="kt">B</span><span class="o">.</span><span class="n">borderWithLabel</span> <span class="p">(</span><span class="n">str</span> <span class="s">"Score"</span><span class="p">)</span>
+  <span class="o">$</span> <span class="kt">C</span><span class="o">.</span><span class="n">hCenter</span>
+  <span class="o">$</span> <span class="n">padAll</span> <span class="mi">1</span>
+  <span class="o">$</span> <span class="n">str</span> <span class="o">$</span> <span class="n">show</span> <span class="n">n</span>
+
+<span class="n">drawGameOver</span> <span class="o">::</span> <span class="kt">Bool</span> <span class="o">-&gt;</span> <span class="kt">Widget</span> <span class="kt">Name</span>
+<span class="n">drawGameOver</span> <span class="n">dead</span> <span class="o">=</span>
+  <span class="kr">if</span> <span class="n">dead</span>
+     <span class="kr">then</span> <span class="n">withAttr</span> <span class="n">gameOverAttr</span> <span class="o">$</span> <span class="kt">C</span><span class="o">.</span><span class="n">hCenter</span> <span class="o">$</span> <span class="n">str</span> <span class="s">"GAME OVER"</span>
+     <span class="kr">else</span> <span class="n">emptyWidget</span>
+
+<span class="n">gameOverAttr</span> <span class="o">::</span> <span class="kt">AttrName</span>
+<span class="n">gameOverAttr</span> <span class="o">=</span> <span class="s">"gameOver"</span></code></pre></figure>
+
+<p>I’m throwing in that <code class="highlighter-rouge">hLimit 11</code> to prevent the widget greediness caused by the outer <code class="highlighter-rouge">C.center</code>.
+I’m also using <code class="highlighter-rouge">vBox</code> to show some other options of aligning widgets; <code class="highlighter-rouge">vBox</code> and <code class="highlighter-rouge">hBox</code> align
+a list of widgets vertically and horizontally, respectfully. They can be thought of as folds
+over the binary <code class="highlighter-rouge">&lt;=&gt;</code> and <code class="highlighter-rouge">&lt;+&gt;</code> operations.</p>
+
+<p>The score is straightforward, but it is the first border in this tutorial. Borders are well
+documented in the
+<a href="https://github.com/jtdaugherty/brick/blob/56133bb0c6352f2995c3a48995a7c35a1941bc1a/programs/BorderDemo.hs">border demo</a>
+and the Haddocks for that matter.</p>
+
+<p>We also only show the “game over” widget if the game is actually over.
+In that case, we are rendering the string widget with the <code class="highlighter-rouge">gameOverAttr</code> attribute name.
+Attribute names are basically type safe <em>names</em> that we can assign to widgets to apply
+predetermined styles, similar to assigning a class name to a div in HTML and defining the
+CSS styles for that class elsewhere.</p>
+
+<p>Attribute names implement <code class="highlighter-rouge">IsString</code>, so they are easy to construct with
+the <code class="highlighter-rouge">OverloadedStrings</code> pragma.</p>
+
+<p>Now for the main event:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">drawGrid</span> <span class="o">::</span> <span class="kt">Game</span> <span class="o">-&gt;</span> <span class="kt">Widget</span> <span class="kt">Name</span>
+<span class="n">drawGrid</span> <span class="n">g</span> <span class="o">=</span> <span class="n">withBorderStyle</span> <span class="kt">BS</span><span class="o">.</span><span class="n">unicodeBold</span>
+  <span class="o">$</span> <span class="kt">B</span><span class="o">.</span><span class="n">borderWithLabel</span> <span class="p">(</span><span class="n">str</span> <span class="s">"Snake"</span><span class="p">)</span>
+  <span class="o">$</span> <span class="n">vBox</span> <span class="n">rows</span>
+  <span class="kr">where</span>
+    <span class="n">rows</span>         <span class="o">=</span> <span class="p">[</span><span class="n">hBox</span> <span class="o">$</span> <span class="n">cellsInRow</span> <span class="n">r</span> <span class="o">|</span> <span class="n">r</span> <span class="o">&lt;-</span> <span class="p">[</span><span class="n">height</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">height</span><span class="o">-</span><span class="mi">2</span><span class="o">..</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="n">cellsInRow</span> <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="n">drawCoord</span> <span class="p">(</span><span class="kt">V2</span> <span class="n">x</span> <span class="n">y</span><span class="p">)</span> <span class="o">|</span> <span class="n">x</span> <span class="o">&lt;-</span> <span class="p">[</span><span class="mi">0</span><span class="o">..</span><span class="n">width</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">drawCoord</span>    <span class="o">=</span> <span class="n">drawCell</span> <span class="o">.</span> <span class="n">cellAt</span>
+    <span class="n">cellAt</span> <span class="n">c</span>
+      <span class="o">|</span> <span class="n">c</span> <span class="p">`</span><span class="n">elem</span><span class="p">`</span> <span class="n">g</span> <span class="o">^.</span> <span class="n">snake</span> <span class="o">=</span> <span class="kt">Snake</span>
+      <span class="o">|</span> <span class="n">c</span> <span class="o">==</span> <span class="n">g</span> <span class="o">^.</span> <span class="n">food</span>      <span class="o">=</span> <span class="kt">Food</span>
+      <span class="o">|</span> <span class="n">otherwise</span>           <span class="o">=</span> <span class="kt">Empty</span>
+
+<span class="n">drawCell</span> <span class="o">::</span> <span class="kt">Cell</span> <span class="o">-&gt;</span> <span class="kt">Widget</span> <span class="kt">Name</span>
+<span class="n">drawCell</span> <span class="kt">Snake</span> <span class="o">=</span> <span class="n">withAttr</span> <span class="n">snakeAttr</span> <span class="n">cw</span>
+<span class="n">drawCell</span> <span class="kt">Food</span>  <span class="o">=</span> <span class="n">withAttr</span> <span class="n">foodAttr</span> <span class="n">cw</span>
+<span class="n">drawCell</span> <span class="kt">Empty</span> <span class="o">=</span> <span class="n">withAttr</span> <span class="n">emptyAttr</span> <span class="n">cw</span>
+
+<span class="n">cw</span> <span class="o">::</span> <span class="kt">Widget</span> <span class="kt">Name</span>
+<span class="n">cw</span> <span class="o">=</span> <span class="n">str</span> <span class="s">"  "</span>
+
+<span class="n">snakeAttr</span><span class="p">,</span> <span class="n">foodAttr</span><span class="p">,</span> <span class="n">emptyAttr</span> <span class="o">::</span> <span class="kt">AttrName</span>
+<span class="n">snakeAttr</span> <span class="o">=</span> <span class="s">"snakeAttr"</span>
+<span class="n">foodAttr</span> <span class="o">=</span> <span class="s">"foodAttr"</span>
+<span class="n">emptyAttr</span> <span class="o">=</span> <span class="s">"emptyAttr"</span></code></pre></figure>
+
+<p>There’s actually nothing new here! We’ve already covered all the <code class="highlighter-rouge">brick</code> functions necessary
+to draw the grid. My approach to grids is to render a square cell widget <code class="highlighter-rouge">cw</code> with different
+colors depending on the cell state. The easiest way to draw a colored square is to stick
+two characters side by side. If we assign an attribute with a matching foreground and background,
+then it doesn’t matter what the two characters are (provided that they aren’t some crazy
+Unicode characters that might render to an unexpected size). However, if we want empty cells
+to render with the same color as the user’s default background color, then spaces are a good choice.</p>
+
+<p>Finally, we’ll define the attribute map:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">theMap</span> <span class="o">::</span> <span class="kt">AttrMap</span>
+<span class="n">theMap</span> <span class="o">=</span> <span class="n">attrMap</span> <span class="kt">V</span><span class="o">.</span><span class="n">defAttr</span>
+  <span class="p">[</span> <span class="p">(</span><span class="n">snakeAttr</span><span class="p">,</span> <span class="kt">V</span><span class="o">.</span><span class="n">blue</span> <span class="p">`</span><span class="n">on</span><span class="p">`</span> <span class="kt">V</span><span class="o">.</span><span class="n">blue</span><span class="p">)</span>
+  <span class="p">,</span> <span class="p">(</span><span class="n">foodAttr</span><span class="p">,</span> <span class="kt">V</span><span class="o">.</span><span class="n">red</span> <span class="p">`</span><span class="n">on</span><span class="p">`</span> <span class="kt">V</span><span class="o">.</span><span class="n">red</span><span class="p">)</span>
+  <span class="p">,</span> <span class="p">(</span><span class="n">gameOverAttr</span><span class="p">,</span> <span class="n">fg</span> <span class="kt">V</span><span class="o">.</span><span class="n">red</span> <span class="p">`</span><span class="kt">V</span><span class="o">.</span><span class="n">withStyle</span><span class="p">`</span> <span class="kt">V</span><span class="o">.</span><span class="n">bold</span><span class="p">)</span>
+  <span class="p">]</span></code></pre></figure>
+
+<p>Again, styles aren’t terribly complicated, but it will be one area where you might
+have to look in the <a href="http://hackage.haskell.org/package/vty">vty</a> package
+(specifically <a href="http://hackage.haskell.org/package/vty-5.15.1/docs/Graphics-Vty-Attributes.html">Graphics.Vty.Attributes</a>)
+to find what you need.</p>
+
+<p>Another thing to mention is that the attributes form a hierarchy and
+can be combined in a parent-child relationship via <code class="highlighter-rouge">mappend</code>. I haven’t
+actually used this feature, but it does sound quite handy. For a more
+detailed discussion see the
+<a href="https://hackage.haskell.org/package/brick-0.18/docs/Brick-AttrMap.html">Brick.AttrMap</a> haddocks.</p>
+
+<h2 id="variable-speed">Variable speed</h2>
+
+<p>One difficult problem I encountered was implementing a variable speed in the GoL.
+I could have just used the same approach above with the minimum thread delay
+(corresponding to the maximum speed) and counted <code class="highlighter-rouge">Tick</code> events, only issuing an actual
+<code class="highlighter-rouge">step</code> in the game when the modular count of <code class="highlighter-rouge">Tick</code>s reached an amount corresponding to the
+current game speed, but that’s kind of an ugly approach.</p>
+
+<p>Instead, I reached out to the author and he advised me to use a <code class="highlighter-rouge">TVar</code> within the app state.
+I had never used <code class="highlighter-rouge">TVar</code>, but it’s pretty easy!</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">main</span> <span class="o">::</span> <span class="kt">IO</span> <span class="nb">()</span>
+<span class="n">main</span> <span class="o">=</span> <span class="kr">do</span>
+  <span class="n">chan</span> <span class="o">&lt;-</span> <span class="n">newBChan</span> <span class="mi">10</span>
+  <span class="n">tv</span>   <span class="o">&lt;-</span> <span class="n">atomically</span> <span class="o">$</span> <span class="n">newTVar</span> <span class="p">(</span><span class="n">spToInt</span> <span class="n">initialSpeed</span><span class="p">)</span>
+  <span class="n">forkIO</span> <span class="o">$</span> <span class="n">forever</span> <span class="o">$</span> <span class="kr">do</span>
+    <span class="n">writeBChan</span> <span class="n">chan</span> <span class="kt">Tick</span>
+    <span class="n">int</span> <span class="o">&lt;-</span> <span class="n">atomically</span> <span class="o">$</span> <span class="n">readTVar</span> <span class="n">tv</span>
+    <span class="n">threadDelay</span> <span class="n">int</span>
+  <span class="n">customMain</span> <span class="p">(</span><span class="kt">V</span><span class="o">.</span><span class="n">mkVty</span> <span class="kt">V</span><span class="o">.</span><span class="n">defaultConfig</span><span class="p">)</span> <span class="p">(</span><span class="kt">Just</span> <span class="n">chan</span><span class="p">)</span> <span class="n">app</span> <span class="p">(</span><span class="n">initialGame</span> <span class="n">tv</span><span class="p">)</span>
+    <span class="o">&gt;&gt;=</span> <span class="n">printResult</span></code></pre></figure>
+
+<p>The <code class="highlighter-rouge">tv &lt;- atomically $ newTVar (value :: a)</code> creates a new mutable reference to a value
+of type <code class="highlighter-rouge">a</code>, i.e. <code class="highlighter-rouge">TVar a</code>, and returns it in <code class="highlighter-rouge">IO</code>. In this case <code class="highlighter-rouge">value</code> is an <code class="highlighter-rouge">Int</code>
+which represents the delay between game steps.
+Then in the forked process, we read the delay from the <code class="highlighter-rouge">TVar</code> reference and use that
+to space out the calls to <code class="highlighter-rouge">writeBChan chan Tick</code>.</p>
+
+<p>I store that same <code class="highlighter-rouge">tv :: TVar Int</code> in the brick app state, so that the user can change
+the speed:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">handleEvent</span> <span class="o">::</span> <span class="kt">Game</span> <span class="o">-&gt;</span> <span class="kt">BrickEvent</span> <span class="kt">Name</span> <span class="kt">Tick</span> <span class="o">-&gt;</span> <span class="kt">EventM</span> <span class="kt">Name</span> <span class="p">(</span><span class="kt">Next</span> <span class="kt">Game</span><span class="p">)</span>
+<span class="n">handleEvent</span> <span class="n">g</span> <span class="p">(</span><span class="kt">VtyEvent</span> <span class="p">(</span><span class="kt">V</span><span class="o">.</span><span class="kt">EvKey</span> <span class="kt">V</span><span class="o">.</span><span class="kt">KRight</span> <span class="p">[</span><span class="kt">V</span><span class="o">.</span><span class="kt">MCtrl</span><span class="p">]))</span> <span class="o">=</span> <span class="n">handleSpeed</span> <span class="n">g</span> <span class="p">(</span><span class="o">+</span><span class="p">)</span>
+<span class="n">handleEvent</span> <span class="n">g</span> <span class="p">(</span><span class="kt">VtyEvent</span> <span class="p">(</span><span class="kt">V</span><span class="o">.</span><span class="kt">EvKey</span> <span class="kt">V</span><span class="o">.</span><span class="kt">KLeft</span> <span class="p">[</span><span class="kt">V</span><span class="o">.</span><span class="kt">MCtrl</span><span class="p">]))</span>  <span class="o">=</span> <span class="n">handleSpeed</span> <span class="n">g</span> <span class="p">(</span><span class="o">-</span><span class="p">)</span>
+
+<span class="n">handleSpeed</span> <span class="o">::</span> <span class="kt">Game</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="kt">Float</span> <span class="o">-&gt;</span> <span class="kt">Float</span> <span class="o">-&gt;</span> <span class="kt">Float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">EventM</span> <span class="n">n</span> <span class="p">(</span><span class="kt">Next</span> <span class="kt">Game</span><span class="p">)</span>
+<span class="n">handleSpeed</span> <span class="n">g</span> <span class="p">(</span><span class="o">+/-</span><span class="p">)</span> <span class="o">=</span> <span class="kr">do</span>
+  <span class="kr">let</span> <span class="n">newSp</span> <span class="o">=</span> <span class="n">validS</span> <span class="o">$</span> <span class="p">(</span><span class="n">g</span> <span class="o">^.</span> <span class="n">speed</span><span class="p">)</span> <span class="o">+/-</span> <span class="n">speedInc</span>
+  <span class="n">liftIO</span> <span class="o">$</span> <span class="n">atomically</span> <span class="o">$</span> <span class="n">writeTVar</span> <span class="p">(</span><span class="n">g</span> <span class="o">^.</span> <span class="n">interval</span><span class="p">)</span> <span class="p">(</span><span class="n">spToInt</span> <span class="n">newSp</span><span class="p">)</span>
+  <span class="n">continue</span> <span class="o">$</span> <span class="n">g</span> <span class="o">&amp;</span> <span class="n">speed</span> <span class="o">.~</span> <span class="n">newSp</span>
+
+<span class="c1">-- where</span>
+
+<span class="cd">-- | Speed increments = 0.01 gives 100 discrete speed settings</span>
+<span class="n">speedInc</span> <span class="o">::</span> <span class="kt">Float</span>
+<span class="n">speedInc</span> <span class="o">=</span> <span class="mf">0.01</span>
+
+<span class="cd">-- | Game state</span>
+<span class="kr">data</span> <span class="kt">Game</span> <span class="o">=</span> <span class="kt">Game</span>
+  <span class="p">{</span> <span class="n">_board</span>    <span class="o">::</span> <span class="kt">Board</span> <span class="c1">-- ^ Board state</span>
+  <span class="p">,</span> <span class="n">_time</span>     <span class="o">::</span> <span class="kt">Int</span>   <span class="c1">-- ^ Time elapsed</span>
+  <span class="p">,</span> <span class="n">_paused</span>   <span class="o">::</span> <span class="kt">Bool</span>  <span class="c1">-- ^ Playing vs. paused</span>
+  <span class="p">,</span> <span class="n">_speed</span>    <span class="o">::</span> <span class="kt">Float</span> <span class="c1">-- ^ Speed in [0..1]</span>
+  <span class="p">,</span> <span class="n">_interval</span> <span class="o">::</span> <span class="kt">TVar</span> <span class="kt">Int</span> <span class="c1">-- ^ Interval kept in TVar</span>
+  <span class="p">,</span> <span class="n">_focus</span>    <span class="o">::</span> <span class="kt">F</span><span class="o">.</span><span class="kt">FocusRing</span> <span class="kt">Name</span> <span class="c1">-- ^ Keeps track of grid focus</span>
+  <span class="p">,</span> <span class="n">_selected</span> <span class="o">::</span> <span class="kt">Cell</span> <span class="c1">-- ^ Keeps track of cell focus</span>
+  <span class="p">}</span></code></pre></figure>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p><code class="highlighter-rouge">brick</code> let’s you build TUIs very quickly. I was able to write <code class="highlighter-rouge">snake</code> along with this
+tutorial within a few hours. More complicated interfaces can be tougher, but if you can
+successfully separate the interface and core functionality, you’ll have an easier time
+tacking on the frontend.</p>
+
+<p>Lastly, let me remind you to look in the
+<a href="https://github.com/jtdaugherty/brick/tree/master/programs">demo programs</a>
+to figure stuff out, as <em>many</em> scenarios are covered throughout them.</p>
+
+<h2 id="links">Links</h2>
+
+<ul>
+  <li><a href="https://hackage.haskell.org/package/brick-0.18">brick</a></li>
+  <li><a href="https://github.com/samtay/snake">snake</a></li>
+  <li><a href="https://github.com/samtay/tetris">tetris</a></li>
+  <li><a href="https://github.com/samtay/conway">conway</a></li>
+</ul>
+
+          </div>
+
+          
+            <div id="disqus_thread" class="article-comments"></div>
+            <script>
+              //  https://disqus.com/admin/universalcode/#configuration-variables
+              var disqus_config = function () {
+                this.page.url = 'https://samtay.github.io/posts/brick';
+                this.page.identifier = '/posts/brick';
+                this.page.title = 'Introduction to Brick';
+              };
+              (function() {
+                var d = document, s = d.createElement('script');
+                s.src = '//samtay.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+              })();
+            </script>
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+          
+        </article>
+        <footer class="footer scrollappear">
+  <p>
+    Ramblings &straightepsilon; &lcub;Mathematics, Statistics, Haskell&rcub;.
+    &copy; 2020. All rights reserved.
+    <!--<a href="/about" title="About me">Nielsen Ramon</a>. Download it <a href="https://github.com/nielsenramon/chalk" rel="noreferrer noopener" target="_blank" title="Download Chalk">here</a>.-->
+  </p>
+</footer>
+
+      </div>
+    </div>
+  </main>
+  
+
+<script type="text/javascript" src="/assets/vendor-2c224c53eb697c739f9490c38819a72184f09472739fd9e492272ef174090428.js"></script>
+
+
+  <script type="text/javascript" src="/assets/webfonts-96493456d319d1bf419afdf8701552d4d486fee6afd304897d4fd81eb4e0cc0b.js"></script>
+
+
+
+  <script type="text/javascript" src="/assets/scrollappear-e2da8ea567e418637e31266cc5302126eaa79f62a2273739086358b589a89ee6.js"></script>
+
+
+<script type="text/javascript" src="/assets/application-cfde13ac81ddaf4351b2e739603e2baf688d0fcc9aba613fe62bbb1c7b037fb9.js"></script>
+
+
+  <script type="text/javascript" src="/assets/themetoggle-df0d3d73164dc26dffbd630182ae4d0dfa7bee6b694a2b5d565d73595b582bbf.js"></script>
+
+</body>
+</html>

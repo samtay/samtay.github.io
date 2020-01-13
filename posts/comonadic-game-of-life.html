@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Sam Tay | Who needs HashLife when you have comonads?</title>
+  <meta name="description" content="Improving a naive implementation of the Game of Life with an elegant and performant solution.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta property="og:title" content="Who needs HashLife when you have comonads?">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://samtay.github.io/posts/comonadic-game-of-life">
+  <meta property="og:description" content="Improving a naive implementation of the Game of Life with an elegant and performant solution.">
+  <meta property="og:site_name" content="Sam Tay">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:url" content="https://samtay.github.io/posts/comonadic-game-of-life">
+  <meta name="twitter:title" content="Who needs HashLife when you have comonads?">
+  <meta name="twitter:description" content="Improving a naive implementation of the Game of Life with an elegant and performant solution.">
+
+  
+    <meta property="og:image" content="https://samtay.github.io/assets/og-image-ee46bbc61b334e821e81534b1fd43f3fee6f020ec174b3c2114445695fd48c01.jpg">
+    <meta name="twitter:image" content="https://samtay.github.io/assets/og-image-ee46bbc61b334e821e81534b1fd43f3fee6f020ec174b3c2114445695fd48c01.jpg">
+  
+
+  <link href="https://samtay.github.io/feed.xml" type="application/rss+xml" rel="alternate" title="Sam Tay Last 10 blog posts" />
+
+  
+
+  
+
+    
+      <link rel="icon" type="image/x-icon" href="/assets/favicon-light-a98c41efc5ed9fcc06ac664c9e2f7a9b3c3b2e0a52357d221fe382f6f4abc8fc.ico">
+      <link rel="apple-touch-icon" href="/assets/apple-touch-icon-light-87d1f2a3a19b1500e5c1626a0492025ca5f7f97d24540dc5900288e92112925a.png">
+      <link rel="stylesheet" type="text/css" title="light" id="light" href="/assets/light-af52f56b3a679f934bebf56e4f95e0a8a3c3abd27c3392582c0fbb45382c3ace.css">
+      <link rel="stylesheet" type="text/css" title="dark" id="dark" href="/assets/dark-34cba75263d5af9704e21aa0f389e08da0d80fd7cac0f13fa474dfdee35ad73c.css" disabled="true">
+    
+
+  
+
+</head>
+
+<body>
+  <main>
+    <div class="grid grid-centered">
+      <div class="grid-cell">
+        <nav class="header-nav scrollappear">
+  <a href="/" class="header-logo" title="Sam Tay">Sam Tay</a>
+  <ul class="header-links">
+    
+      <li>
+        <a href="/about" title="About me">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-about">
+  <use href="/assets/about-ecf154b571ab8034ae00aeed91a3b7ad68db80b46d958753ad6216c919486e88.svg#icon-about" xlink:href="/assets/about-ecf154b571ab8034ae00aeed91a3b7ad68db80b46d958753ad6216c919486e88.svg#icon-about"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+    
+    
+    
+      <li>
+        <a href="https://github.com/samtay" rel="noreferrer noopener" target="_blank" title="GitHub">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-github">
+  <use href="/assets/github-094f81040819f34343ee6ffff0980f17e2807b08b595eaaf66ae3554934fd78d.svg#icon-github" xlink:href="/assets/github-094f81040819f34343ee6ffff0980f17e2807b08b595eaaf66ae3554934fd78d.svg#icon-github"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      <li>
+        <a href="mailto:sam.chong.tay@gmail.com" title="Email">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-email">
+  <use href="/assets/email-782473193bf750036fdb90e8daa075508a20509d01854c09f3237c144a3f0601.svg#icon-email" xlink:href="/assets/email-782473193bf750036fdb90e8daa075508a20509d01854c09f3237c144a3f0601.svg#icon-email"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+      <li>
+        <a href="/feed.xml" rel="noreferrer noopener" target="_blank" title="RSS">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-rss">
+  <use href="/assets/rss-541ec5cea9cefd10d2fcfec01888f3f231a8829940249835fa7b7b3a12ae0d0d.svg#icon-rss" xlink:href="/assets/rss-541ec5cea9cefd10d2fcfec01888f3f231a8829940249835fa7b7b3a12ae0d0d.svg#icon-rss"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+      <li>
+        <a onclick="toggle()" title="Toggle Theme">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-theme">
+  <use href="/assets/theme-66869e0bf8dab34bae1c86bda400327b772e0be69e8dc28d3ede896e771320ed.svg#icon-theme" xlink:href="/assets/theme-66869e0bf8dab34bae1c86bda400327b772e0be69e8dc28d3ede896e771320ed.svg#icon-theme"></use>
+</svg>
+
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+
+
+        <article class="article scrollappear">
+          <header class="article-header">
+            <h1>Who needs HashLife when you have comonads?</h1>
+            <p>Improving a naive implementation of the Game of Life with an elegant and performant solution.</p>
+            <div class="article-list-footer">
+  <span class="article-list-date">
+    March 17, 2017
+  </span>
+  <span class="article-list-divider">-</span>
+  <span class="article-list-minutes">
+    
+    
+      20 minute read
+    
+  </span>
+  <span class="article-list-divider">-</span>
+  <div class="article-list-tags">
+    
+      
+      <a href="/tag/haskell" title="See all posts with tag 'Haskell'">Haskell</a>
+    
+      
+      <a href="/tag/tui" title="See all posts with tag 'Terminal User Interface'">Terminal User Interface</a>
+    
+      
+      <a href="/tag/automata" title="See all posts with tag 'Cellular Automata'">Cellular Automata</a>
+    
+  </div>
+</div>
+          </header>
+
+          <div class="article-content">
+            <h2 id="introduction">Introduction</h2>
+
+<p>I’m going to talk a little bit about Conway’s Game of Life,
+comonads in practical use,
+and the performance improvement that they have to offer.
+If you already know what the GoL is, skip the introduction,
+and if you’re already familiar with comonads and how they
+are defined in Haskell, feel free to skip down to the <a href="#performance">performance section</a>.</p>
+
+<h3 id="what-is-the-game-of-life">What is the Game of Life?</h3>
+<p>Conway’s <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Game of Life</a>
+is a cellular automaton of simple cells, each following simple rules,
+from which very complex behavior emerges under the right conditions.
+It is one of many examples of <a href="https://en.wikipedia.org/wiki/Complex_systems">complex systems</a>.</p>
+
+<p>In a nutshell, there is a 2D grid of cells, each of which has two possible states: alive or dead.
+The grid evolves in discrete steps of time <code class="highlighter-rouge">t</code>. At time <code class="highlighter-rouge">t = 0</code>,
+we give the board some initial state. For all <code class="highlighter-rouge">t &gt; 0</code>,
+the grid evolves to step <code class="highlighter-rouge">t + 1</code> based on these simple rules:</p>
+
+<ul>
+  <li>Any live cell with exactly two or three live neighbours stays alive.</li>
+  <li>Any dead cell with exactly three live neighbours becomes alive.</li>
+  <li>All other cells die.</li>
+</ul>
+
+<h3 id="a-naive-implementation">A naive implementation</h3>
+<p>Yesterday I finished a little <a href="https://github.com/samtay/conway/tree/v0.0.0">terminal application</a>
+to play around with the GoL (link set to “initial” version before comonads).
+As you can guess from the rules above, the GoL is very easy to program;
+the difficulty is in programming it <em>efficiently</em>. One well known method
+of computing the game is known as HashLife, which is a pretty objectively complex
+technique. (Someone did this, or some of it, in Haskell
+<a href="http://dotat.at/prog/life/hslife.hs">here</a>.)</p>
+
+<p>In my first pass at this, instead of creating a custom data structure directly
+I opted to leverage <a href="http://hackage.haskell.org/package/grid">grid</a> which is
+a really cool library that is useful for exploring mathematical grids/graphs/lattices:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="kr">import</span> <span class="nn">Math.Geometry.Grid</span> <span class="p">(</span><span class="kt">Index</span><span class="p">)</span>
+<span class="kr">import</span> <span class="nn">Math.Geometry.Grid.Octagonal</span> <span class="p">(</span><span class="kt">TorOctGrid</span><span class="p">)</span>
+<span class="kr">import</span> <span class="nn">Math.Geometry.GridMap.Lazy</span> <span class="p">(</span><span class="kt">LGridMap</span><span class="p">)</span>
+
+<span class="kr">data</span> <span class="kt">St</span> <span class="o">=</span> <span class="kt">Alive</span> <span class="o">|</span> <span class="kt">Dead</span>
+<span class="kr">type</span> <span class="kt">Board</span> <span class="o">=</span> <span class="kt">LGridMap</span> <span class="kt">TorOctGrid</span> <span class="kt">St</span>
+<span class="kr">type</span> <span class="kt">Cell</span> <span class="o">=</span> <span class="kt">Index</span> <span class="kt">Board</span></code></pre></figure>
+
+<p>It was nice to do this first because I got <strong>a lot</strong> for free.
+Essentially my board looks like a mapping of <code class="highlighter-rouge">(x,y)</code> coordinates to cell states.
+In fact, the <code class="highlighter-rouge">toList</code> function that we get from the <code class="highlighter-rouge">Grid</code> typeclass  confirms this:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="err">λ</span><span class="o">&gt;</span> <span class="n">toList</span> <span class="o">$</span> <span class="n">blinker</span> <span class="mi">3</span> <span class="mi">3</span>
+<span class="p">[((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="kt">Dead</span><span class="p">),((</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="kt">Alive</span><span class="p">),((</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="kt">Dead</span><span class="p">),((</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="kt">Dead</span><span class="p">),((</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="kt">Alive</span><span class="p">),((</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="kt">Dead</span><span class="p">),((</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="kt">Dead</span><span class="p">),((</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="kt">Alive</span><span class="p">),((</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="kt">Dead</span><span class="p">)]</span></code></pre></figure>
+
+<p>I even get a <code class="highlighter-rouge">neighbours</code> function that returns all 8 neighbours of a cell
+along with many more useful functions, so implementing
+game evolution was very straightforward:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">step</span> <span class="o">::</span> <span class="kt">Board</span> <span class="o">-&gt;</span> <span class="kt">Board</span>
+<span class="n">step</span> <span class="n">b</span> <span class="o">=</span> <span class="kt">GM</span><span class="o">.</span><span class="n">mapWithKey</span> <span class="n">rule</span> <span class="n">b</span>
+  <span class="kr">where</span> <span class="n">rule</span> <span class="o">::</span> <span class="kt">Cell</span> <span class="o">-&gt;</span> <span class="kt">St</span> <span class="o">-&gt;</span> <span class="kt">St</span>
+        <span class="n">rule</span> <span class="n">c</span> <span class="kt">Dead</span>
+          <span class="o">|</span> <span class="n">liveNeighbors</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">3</span> <span class="o">=</span> <span class="kt">Alive</span>
+          <span class="o">|</span> <span class="n">otherwise</span>            <span class="o">=</span> <span class="kt">Dead</span>
+        <span class="n">rule</span> <span class="n">c</span> <span class="kt">Alive</span>
+          <span class="o">|</span> <span class="n">liveNeighbors</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">2</span> <span class="o">=</span> <span class="kt">Alive</span>
+          <span class="o">|</span> <span class="n">liveNeighbors</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">3</span> <span class="o">=</span> <span class="kt">Alive</span>
+          <span class="o">|</span> <span class="n">otherwise</span>            <span class="o">=</span> <span class="kt">Dead</span>
+
+        <span class="n">liveNeighbors</span> <span class="o">::</span> <span class="kt">Cell</span> <span class="o">-&gt;</span> <span class="kt">Int</span>
+        <span class="n">liveNeighbors</span> <span class="n">c</span> <span class="o">=</span> <span class="n">population</span> <span class="o">$</span>
+          <span class="kt">GM</span><span class="o">.</span><span class="n">filterWithKey</span> <span class="p">(</span><span class="n">const</span> <span class="o">.</span> <span class="p">(`</span><span class="n">elem</span><span class="p">`</span> <span class="n">neighbours</span> <span class="n">b</span> <span class="n">c</span><span class="p">))</span> <span class="o">$</span> <span class="n">b</span>
+
+<span class="n">population</span> <span class="o">::</span> <span class="kt">Board</span> <span class="o">-&gt;</span> <span class="kt">Int</span>
+<span class="n">population</span> <span class="o">=</span> <span class="n">length</span> <span class="o">.</span> <span class="n">filter</span> <span class="p">(</span><span class="o">==</span><span class="kt">Alive</span><span class="p">)</span> <span class="o">.</span> <span class="kt">GM</span><span class="o">.</span><span class="n">elems</span></code></pre></figure>
+
+<p>Furthermore, using the toroidal style of grid allows modular boundaries
+which is how I wanted to implement this version.</p>
+
+<p>So, you can see I was able to speed through the actual GoL logic since
+most of the tedious legwork was done in the grid package.
+My real challenge and where I spent the most effort was in the
+frontend, rendering and handling user interaction from a terminal.
+I chose to use <a href="http://hackage.haskell.org/package/brick">brick</a>
+which is a <em>fantastic</em> package that provides
+a high level declarative API to develop terminal interface applications
+along with a number of useful widgets - not to mention 17 awesome
+demo programs, great documentation, and a responsive google group.
+If you’re curious, <a href="https://github.com/samtay/conway/blob/v0.0.0/app/Main.hs">this</a>
+is how I rendered the above implementation using the brick library.
+But, this post is not about brick. Maybe that will come in the future.</p>
+
+<h2 id="comonads">Comonads</h2>
+<p>Like any good Haskeller I’d like to leverage whatever abstractions I can
+to improve the elegance and performance of this codebase.
+As it turns out, cellular automata are well represented by comonads.</p>
+
+<h3 id="definition">Definition</h3>
+<p>Let’s consider what the <em>dual</em> of the <code class="highlighter-rouge">Monad</code> type looks like:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="c1">-- Monad definition (adapted)</span>
+<span class="kr">class</span> <span class="kt">Functor</span> <span class="o">=&gt;</span> <span class="kt">Monad</span> <span class="n">m</span> <span class="kr">where</span>
+  <span class="n">return</span> <span class="o">::</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="n">m</span> <span class="n">a</span>
+  <span class="n">join</span>   <span class="o">::</span> <span class="n">m</span> <span class="p">(</span><span class="n">m</span> <span class="n">a</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">m</span> <span class="n">a</span>
+  <span class="n">bind</span>   <span class="o">::</span> <span class="p">(</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="n">m</span> <span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">m</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="n">m</span> <span class="n">b</span><span class="p">)</span>
+
+<span class="c1">-- Comonad definition</span>
+<span class="c1">-- Minimum defintion: extract, (duplicate | extend)</span>
+<span class="kr">class</span> <span class="kt">Functor</span> <span class="o">=&gt;</span> <span class="kt">Comonad</span> <span class="n">m</span> <span class="kr">where</span>
+  <span class="n">extract</span>   <span class="o">::</span> <span class="n">m</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="n">a</span>       <span class="c1">-- aka co-return</span>
+  <span class="n">duplicate</span> <span class="o">::</span> <span class="n">m</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="n">m</span> <span class="p">(</span><span class="n">m</span> <span class="n">a</span><span class="p">)</span> <span class="c1">-- aka co-join</span>
+  <span class="n">extend</span>    <span class="o">::</span> <span class="p">(</span><span class="n">m</span> <span class="n">b</span> <span class="o">-&gt;</span> <span class="n">a</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">m</span> <span class="n">b</span> <span class="o">-&gt;</span> <span class="n">m</span> <span class="n">a</span><span class="p">)</span> <span class="c1">-- aka co-bind</span></code></pre></figure>
+
+<p>As anyone else on the internet would say, the <em>dual</em> of something
+is when its “arrows are flipped around”, which at first sounds like handwavey
+nonsense. Head <a href="http://blog.ezyang.com/2012/10/duality-for-haskellers/">here</a>
+for an excellent explanation of duality and how it applies to types in Haskell.
+I don’t want to get lost in the forest or duplicate content on the internet,
+so click that link or be satisfied with the fact that the arrows are literally
+flipped in the type signatures above.</p>
+
+<p>I don’t want to get bogged down in category theory land -
+if you want to go down that path, see my <a href="#further-reading">resources</a>.
+Instead, let’s just build up intuition with some examples.</p>
+
+<h3 id="examples">Examples</h3>
+<p>The intuition we are trying to garner is that while monads <em>produce</em> effectful computations,
+comonads are <em>consumed</em> in context-sensitive computations.
+They usually come in handy when there is some large data structure that is composed
+of small, similar computations. Sound familiar?</p>
+
+<h4 id="stream">Stream</h4>
+<p>This is probably the simplest example, almost canonical to comonads:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="kr">data</span> <span class="kt">Stream</span> <span class="n">a</span> <span class="o">=</span> <span class="kt">Cons</span> <span class="n">a</span> <span class="p">(</span><span class="kt">Stream</span> <span class="n">a</span><span class="p">)</span>
+
+<span class="kr">instance</span> <span class="kt">Functor</span> <span class="kt">Stream</span> <span class="kr">where</span>
+  <span class="n">fmap</span> <span class="n">f</span> <span class="p">(</span><span class="kt">Cons</span> <span class="n">x</span> <span class="n">xs</span><span class="p">)</span> <span class="o">=</span> <span class="kt">Cons</span> <span class="p">(</span><span class="n">f</span> <span class="n">x</span><span class="p">)</span> <span class="p">(</span><span class="n">fmap</span> <span class="n">f</span> <span class="n">xs</span><span class="p">)</span>
+
+<span class="kr">instance</span> <span class="kt">Comonad</span> <span class="kt">Stream</span> <span class="kr">where</span>
+  <span class="n">extract</span> <span class="o">::</span> <span class="kt">Stream</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="n">a</span>
+  <span class="n">extract</span> <span class="p">(</span><span class="kt">Cons</span> <span class="n">x</span> <span class="kr">_</span><span class="p">)</span> <span class="o">=</span> <span class="n">x</span>
+
+  <span class="n">duplicate</span> <span class="o">::</span> <span class="kt">Stream</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">Stream</span> <span class="p">(</span><span class="kt">Stream</span> <span class="n">a</span><span class="p">)</span>
+  <span class="n">duplicate</span> <span class="n">s</span><span class="o">@</span><span class="p">(</span><span class="kt">Cons</span> <span class="kr">_</span> <span class="n">xs</span><span class="p">)</span> <span class="o">=</span> <span class="kt">Cons</span> <span class="n">s</span> <span class="p">(</span><span class="n">duplicate</span> <span class="n">xs</span><span class="p">)</span>
+
+  <span class="n">extend</span> <span class="o">::</span> <span class="p">(</span><span class="kt">Stream</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Stream</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">Stream</span> <span class="n">b</span>
+  <span class="n">extend</span> <span class="n">f</span> <span class="n">s</span><span class="o">@</span><span class="p">(</span><span class="kt">Cons</span> <span class="kr">_</span> <span class="n">xs</span><span class="p">)</span> <span class="o">=</span> <span class="kt">Cons</span> <span class="p">(</span><span class="n">f</span> <span class="n">s</span><span class="p">)</span> <span class="p">(</span><span class="n">extend</span> <span class="n">f</span> <span class="n">xs</span><span class="p">)</span></code></pre></figure>
+
+<p>So <code class="highlighter-rouge">extract</code> is like <code class="highlighter-rouge">head</code> and <code class="highlighter-rouge">duplicate</code> is like <code class="highlighter-rouge">tails</code>.
+<code class="highlighter-rouge">extend</code> on the other hand looks a little <code class="highlighter-rouge">fmap</code>-y:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">fmap</span>   <span class="o">::</span> <span class="p">(</span>       <span class="n">a</span> <span class="o">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Stream</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">Stream</span> <span class="n">b</span>
+<span class="n">extend</span> <span class="o">::</span> <span class="p">(</span><span class="kt">Stream</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Stream</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">Stream</span> <span class="n">b</span></code></pre></figure>
+
+<p>Well, it’s sort of similar to <code class="highlighter-rouge">fmap</code>
+but the type signature is slightly different
+in that the function argument <code class="highlighter-rouge">f :: Stream a -&gt; b</code> accepts its first
+argument already of type <code class="highlighter-rouge">Stream a</code>.
+Consequently, <code class="highlighter-rouge">f</code> can <em>know</em> or be <em>context-aware</em> of the comonadic structure
+when it produces its return value of type <code class="highlighter-rouge">b</code>. This is where the power of
+comonad really shines. In this case, the context that <code class="highlighter-rouge">f</code> is aware of
+at <em>each</em> function call when mapping over the stream is a current element
+<code class="highlighter-rouge">x</code> (we’ll say at the current “cursor”) along with the whole tail of the list from
+<code class="highlighter-rouge">x</code> onwards.</p>
+
+<p>This observation lends itself to the intuition we set out to build, namely that
+monads <em>produce</em> additional context
+while comonads are <em>consumed</em> within a context.</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">bind</span>   <span class="o">::</span> <span class="p">(</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="n">m</span> <span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">m</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="n">m</span> <span class="n">b</span>
+<span class="n">extend</span> <span class="o">::</span> <span class="p">(</span><span class="n">m</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">m</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="n">m</span> <span class="n">b</span></code></pre></figure>
+
+<p>Note that <code class="highlighter-rouge">bind</code> accepts a function <code class="highlighter-rouge">g :: a -&gt; m b</code>
+that takes an <code class="highlighter-rouge">a</code> value and <em>produces</em> a contextual value <code class="highlighter-rouge">m b</code>.
+Contrast this with <code class="highlighter-rouge">extend</code> accepting a function <code class="highlighter-rouge">f :: m a -&gt; b</code>
+which has <code class="highlighter-rouge">f</code> <em>consuming</em> the contextual value <code class="highlighter-rouge">m a</code>.</p>
+
+<h4 id="zipper">Zipper</h4>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="c1">-- (elems to the left) (cursor) (elems to the right)</span>
+<span class="kr">data</span> <span class="kt">Zipper</span> <span class="n">a</span> <span class="o">=</span> <span class="kt">Zipper</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="n">a</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
+
+<span class="c1">-- moving the cursor (not changing any values, per se)</span>
+<span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">::</span> <span class="kt">Zipper</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">Zipper</span> <span class="n">a</span>
+<span class="n">left</span>  <span class="p">(</span><span class="kt">Zipper</span> <span class="p">(</span><span class="n">l</span><span class="o">:</span><span class="n">ls</span><span class="p">)</span> <span class="n">x</span> <span class="n">rs</span><span class="p">)</span> <span class="o">=</span> <span class="kt">Zipper</span> <span class="n">ls</span> <span class="n">l</span> <span class="p">(</span><span class="n">x</span><span class="o">:</span><span class="n">rs</span><span class="p">)</span>
+<span class="n">right</span> <span class="p">(</span><span class="kt">Zipper</span> <span class="n">ls</span> <span class="n">x</span> <span class="p">(</span><span class="n">r</span><span class="o">:</span><span class="n">rs</span><span class="p">))</span> <span class="o">=</span> <span class="kt">Zipper</span> <span class="p">(</span><span class="n">x</span><span class="o">:</span><span class="n">ls</span><span class="p">)</span> <span class="n">r</span> <span class="n">rs</span>
+
+<span class="kr">instance</span> <span class="kt">Functor</span> <span class="kt">Zipper</span> <span class="kr">where</span>
+  <span class="n">fmap</span> <span class="n">f</span> <span class="p">(</span><span class="kt">Zipper</span> <span class="n">l</span> <span class="n">x</span> <span class="n">r</span><span class="p">)</span> <span class="o">=</span> <span class="kt">Zipper</span> <span class="p">(</span><span class="n">fmap</span> <span class="n">f</span> <span class="n">l</span><span class="p">)</span> <span class="p">(</span><span class="n">f</span> <span class="n">x</span><span class="p">)</span> <span class="p">(</span><span class="n">fmap</span> <span class="n">f</span> <span class="n">r</span><span class="p">)</span>
+
+<span class="kr">instance</span> <span class="kt">Comonad</span> <span class="kt">Zipper</span> <span class="kr">where</span>
+  <span class="n">extract</span> <span class="p">(</span><span class="kt">Zipper</span> <span class="kr">_</span> <span class="n">x</span> <span class="kr">_</span><span class="p">)</span> <span class="o">=</span> <span class="n">x</span>
+  <span class="n">duplicate</span> <span class="n">z</span> <span class="o">=</span> <span class="kt">Zipper</span> <span class="p">(</span><span class="n">iterate'</span> <span class="n">left</span> <span class="n">z</span><span class="p">)</span> <span class="n">z</span> <span class="p">(</span><span class="n">iterate'</span> <span class="n">right</span> <span class="n">z</span><span class="p">)</span>
+    <span class="kr">where</span> <span class="n">iterate'</span> <span class="n">f</span> <span class="o">=</span> <span class="n">drop</span> <span class="mi">1</span> <span class="o">.</span> <span class="n">iterate</span> <span class="n">f</span></code></pre></figure>
+
+<p>Here’s what this looks like in practice:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="err">λ</span><span class="o">&gt;</span> <span class="kr">let</span> <span class="n">z</span> <span class="o">=</span> <span class="kt">Zipper</span> <span class="p">[(</span><span class="o">-</span><span class="mi">1</span><span class="p">),(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">..</span><span class="p">]</span> <span class="mi">0</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="p">]</span>
+<span class="err">λ</span><span class="o">&gt;</span> <span class="kr">let</span> <span class="n">take'</span> <span class="n">n</span> <span class="p">(</span><span class="kt">Zipper</span> <span class="n">l</span> <span class="n">x</span> <span class="n">r</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="kt">Zipper</span> <span class="p">(</span><span class="n">take</span> <span class="n">n</span> <span class="n">l</span><span class="p">)</span> <span class="n">x</span> <span class="p">(</span><span class="n">take</span> <span class="n">n</span> <span class="n">r</span><span class="p">))</span>
+<span class="err">λ</span><span class="o">&gt;</span> <span class="n">take'</span> <span class="mi">5</span> <span class="n">z</span>
+<span class="kt">Zipper</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="mi">0</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span>
+
+<span class="c1">-- duplicate</span>
+<span class="err">λ</span><span class="o">&gt;</span> <span class="n">take'</span> <span class="mi">5</span> <span class="o">$</span> <span class="n">fmap</span> <span class="p">(</span><span class="n">take'</span> <span class="mi">5</span><span class="p">)</span> <span class="o">$</span> <span class="n">duplicate</span> <span class="o">$</span> <span class="n">z</span>
+<span class="kt">Zipper</span>
+  <span class="p">[</span> <span class="kt">Zipper</span> <span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">6</span><span class="p">]</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
+  <span class="p">,</span> <span class="kt">Zipper</span> <span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span><span class="o">-</span><span class="mi">7</span><span class="p">]</span> <span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+  <span class="p">,</span> <span class="kt">Zipper</span> <span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span><span class="o">-</span><span class="mi">7</span><span class="p">,</span><span class="o">-</span><span class="mi">8</span><span class="p">]</span> <span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span> <span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+  <span class="p">,</span> <span class="kt">Zipper</span> <span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span><span class="o">-</span><span class="mi">7</span><span class="p">,</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">)</span> <span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+  <span class="p">,</span><span class="kt">Zipper</span> <span class="p">[</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span><span class="o">-</span><span class="mi">7</span><span class="p">,</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span><span class="o">-</span><span class="mi">9</span><span class="p">,</span><span class="o">-</span><span class="mi">10</span><span class="p">]</span> <span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span> <span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+  <span class="p">]</span>
+  <span class="p">(</span><span class="kt">Zipper</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="mi">0</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
+  <span class="p">[</span> <span class="kt">Zipper</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span> <span class="mi">1</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]</span>
+  <span class="p">,</span> <span class="kt">Zipper</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span> <span class="mi">2</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">]</span>
+  <span class="p">,</span> <span class="kt">Zipper</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="mi">3</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">]</span>
+  <span class="p">,</span> <span class="kt">Zipper</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="mi">4</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">]</span>
+  <span class="p">,</span> <span class="kt">Zipper</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="mi">5</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">]</span>
+  <span class="p">]</span>
+
+<span class="c1">-- extend . extract</span>
+<span class="err">λ</span><span class="o">&gt;</span> <span class="n">take'</span> <span class="mi">5</span> <span class="o">$</span> <span class="n">extend</span> <span class="n">extract</span> <span class="n">z</span>
+<span class="kt">Zipper</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="mi">0</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span> <span class="c1">-- this makes sense, also is a law!</span>
+
+<span class="c1">-- extend (without leveraging context)</span>
+<span class="err">λ</span><span class="o">&gt;</span> <span class="n">take'</span> <span class="mi">5</span> <span class="o">$</span> <span class="n">extend</span> <span class="p">(</span><span class="nf">\</span><span class="p">(</span><span class="kt">Zipper</span> <span class="kr">_</span> <span class="n">x</span> <span class="kr">_</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span> <span class="n">z</span>
+<span class="kt">Zipper</span> <span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span><span class="o">-</span><span class="mi">10</span><span class="p">]</span> <span class="mi">0</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">10</span><span class="p">]</span>
+
+<span class="c1">-- extend (looking to the immediate left and right)</span>
+<span class="err">λ</span><span class="o">&gt;</span> <span class="n">take'</span> <span class="mi">5</span> <span class="o">$</span> <span class="n">extend</span> <span class="p">(</span><span class="nf">\</span><span class="p">(</span><span class="kt">Zipper</span> <span class="p">(</span><span class="n">l</span><span class="o">:</span><span class="kr">_</span><span class="p">)</span> <span class="n">x</span> <span class="p">(</span><span class="n">r</span><span class="o">:</span><span class="kr">_</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">l</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="n">z</span>
+<span class="kt">Zipper</span> <span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span><span class="o">-</span><span class="mi">12</span><span class="p">,</span><span class="o">-</span><span class="mi">16</span><span class="p">,</span><span class="o">-</span><span class="mi">20</span><span class="p">]</span> <span class="mi">0</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">20</span><span class="p">]</span>
+<span class="err">λ</span><span class="o">&gt;</span> <span class="n">take'</span> <span class="mi">5</span> <span class="o">$</span> <span class="n">extend</span> <span class="p">(</span><span class="nf">\</span><span class="p">(</span><span class="kt">Zipper</span> <span class="p">(</span><span class="n">l</span><span class="o">:</span><span class="kr">_</span><span class="p">)</span> <span class="n">x</span> <span class="p">(</span><span class="n">r</span><span class="o">:</span><span class="kr">_</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">intercalate</span> <span class="s">","</span> <span class="o">.</span> <span class="n">map</span> <span class="n">show</span> <span class="o">$</span> <span class="p">[</span><span class="n">l</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">r</span><span class="p">])</span> <span class="n">z</span>
+<span class="kt">Zipper</span>
+  <span class="p">[</span><span class="s">"-2,-1,0"</span><span class="p">,</span><span class="s">"-3,-2,-1"</span><span class="p">,</span><span class="s">"-4,-3,-2"</span><span class="p">,</span><span class="s">"-5,-4,-3"</span><span class="p">,</span><span class="s">"-6,-5,-4"</span><span class="p">]</span>
+  <span class="s">"-1,0,1"</span>
+  <span class="p">[</span><span class="s">"0,1,2"</span><span class="p">,</span><span class="s">"1,2,3"</span><span class="p">,</span><span class="s">"2,3,4"</span><span class="p">,</span><span class="s">"3,4,5"</span><span class="p">,</span><span class="s">"4,5,6"</span><span class="p">]</span></code></pre></figure>
+
+<p>Hopefully these examples show how comonads are a very fitting solution
+to computing cellular autamata. Again, refer to <a href="#further-reading">resources</a>
+if you are unsatisfied, as there’s plenty of content to read up on.</p>
+
+<h3 id="applying-to-the-game-of-life">Applying to the Game of Life</h3>
+<p>I want to change as little as possible from my current implementation -
+ideally just swap out the data structure and change very little in my frontend and test suite.
+I hit this mark fairly well, as my commit updating the executable only diffs by +15/-17.</p>
+
+<p>My implementation is similar to my sources, but unique in the toroidal aspect.
+My base 1-dimensional zipper is defined as</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="kr">import</span> <span class="k">qualified</span> <span class="nn">Data.Sequence</span> <span class="k">as</span> <span class="n">S</span>
+
+<span class="cd">-- | One dimensional finite list with cursor context</span>
+<span class="c1">--</span>
+<span class="c1">-- The first element of the sequence at '_zl' can be thought of as</span>
+<span class="c1">-- /to the left/ of the cursor, while the last element is</span>
+<span class="c1">-- /to the right/ of the cursor.</span>
+<span class="c1">-- The cursor value and index are '_zc' and '_zi' respectively.</span>
+<span class="c1">-- This can be thought of as a circle.</span>
+<span class="c1">-- Warning: must have length greater than zero!</span>
+<span class="kr">data</span> <span class="kt">Z</span> <span class="n">a</span> <span class="o">=</span> <span class="kt">Z</span> <span class="p">{</span> <span class="n">_zl</span> <span class="o">::</span> <span class="kt">S</span><span class="o">.</span><span class="kt">Seq</span> <span class="n">a</span>
+             <span class="p">,</span> <span class="n">_zc</span> <span class="o">::</span> <span class="n">a</span>
+             <span class="p">,</span> <span class="n">_zi</span> <span class="o">::</span> <span class="kt">Int</span>
+             <span class="p">}</span> <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Eq</span><span class="p">,</span> <span class="kt">Show</span><span class="p">)</span></code></pre></figure>
+
+<p>So “shifting left” will focus the first element of <code class="highlighter-rouge">_zl</code> and snoc <code class="highlighter-rouge">_zc</code> to <code class="highlighter-rouge">_zl</code>,
+while “shifting right” will focus the last element of <code class="highlighter-rouge">_zl</code> and cons <code class="highlighter-rouge">_zc</code> to <code class="highlighter-rouge">_zl</code>.
+I chose <code class="highlighter-rouge">Data.Sequence</code> because it has a nice API and is symmetric in
+time complexities when viewing either end of the sequence.</p>
+
+<p>So the Game of Life is then implemented as a nested <code class="highlighter-rouge">Z (Z a)</code>:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="cd">-- | A modular game of life board</span>
+<span class="c1">--</span>
+<span class="c1">-- With this interpretation, for a board of size @n x n@</span>
+<span class="c1">-- the @(n + 1)@th column/row is the same as the boundary</span>
+<span class="c1">-- at the @1@st column/row.</span>
+<span class="kr">type</span> <span class="kt">Board</span> <span class="o">=</span> <span class="kt">ZZ</span> <span class="kt">St</span>
+
+<span class="cd">-- | Indexer for the 'Board'</span>
+<span class="kr">type</span> <span class="kt">Cell</span> <span class="o">=</span> <span class="p">(</span><span class="kt">Int</span><span class="p">,</span> <span class="kt">Int</span><span class="p">)</span>
+
+<span class="cd">-- | Possible cell states</span>
+<span class="kr">data</span> <span class="kt">St</span> <span class="o">=</span> <span class="kt">Alive</span> <span class="o">|</span> <span class="kt">Dead</span>
+  <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Eq</span><span class="p">)</span>
+
+<span class="kr">newtype</span> <span class="kt">ZZ</span> <span class="n">a</span> <span class="o">=</span> <span class="kt">ZZ</span> <span class="p">{</span> <span class="n">_unzz</span> <span class="o">::</span> <span class="kt">Z</span> <span class="p">(</span><span class="kt">Z</span> <span class="n">a</span><span class="p">)</span> <span class="p">}</span>
+  <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Eq</span><span class="p">)</span></code></pre></figure>
+
+<p>You might be wondering where that <code class="highlighter-rouge">Cell</code> indexer comes into play.
+I ended up creating a <code class="highlighter-rouge">Zipper</code> class, which was a nice pattern because
+once <code class="highlighter-rouge">Z</code> had a <code class="highlighter-rouge">Zipper</code> instance, I could easily polymorphically use those
+class functions when writing the instance for the newtype <code class="highlighter-rouge">ZZ</code>. The class
+is larger than it needs to be, as I’m not even currently using all of its methods,
+but I think it is fairly future proof if I want to add more features to the app:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="cd">-- | Class for a modular bounded container</span>
+<span class="c1">--</span>
+<span class="c1">-- Examples of functions provided for a simple one dimensional list, where appropriate</span>
+<span class="kr">class</span> <span class="kt">Zipper</span> <span class="n">z</span> <span class="kr">where</span>
+  <span class="kr">type</span> <span class="kt">Index</span> <span class="n">z</span>
+  <span class="kr">data</span> <span class="kt">Direction</span> <span class="n">z</span>
+
+  <span class="c1">-- | Shift in a direction</span>
+  <span class="n">shift</span> <span class="o">::</span> <span class="kt">Direction</span> <span class="n">z</span> <span class="o">-&gt;</span> <span class="n">z</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="n">z</span> <span class="n">a</span>
+
+  <span class="c1">-- | Retrieve current cursor value</span>
+  <span class="n">cursor</span> <span class="o">::</span> <span class="n">z</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="n">a</span>
+
+  <span class="c1">-- | Retrieve current index value</span>
+  <span class="n">index</span> <span class="o">::</span> <span class="n">z</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">Index</span> <span class="n">z</span>
+
+  <span class="c1">-- | Retrieve neighborhood of current cursor.</span>
+  <span class="n">neighborhood</span> <span class="o">::</span> <span class="n">z</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
+
+  <span class="c1">-- | Destruct to list maintaining order of @(Index z)@, e.g. @(Z ls c rs) -&gt; ls ++ [c] ++ rs@.</span>
+  <span class="n">toList</span> <span class="o">::</span> <span class="n">z</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
+
+  <span class="c1">-- | Destruct a list into a mapping with indices</span>
+  <span class="n">toMap</span> <span class="o">::</span> <span class="p">(</span><span class="kt">Comonad</span> <span class="n">z</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">z</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="p">[(</span><span class="kt">Index</span> <span class="n">z</span><span class="p">,</span> <span class="n">a</span><span class="p">)]</span>
+  <span class="n">toMap</span> <span class="o">=</span> <span class="n">toList</span> <span class="o">.</span> <span class="n">extend</span> <span class="p">((,)</span> <span class="o">&lt;$&gt;</span> <span class="n">index</span> <span class="o">&lt;*&gt;</span> <span class="n">cursor</span><span class="p">)</span>
+
+  <span class="c1">-- | Construct zipper from mapping (provide default value so this is always safe, no bottoms)</span>
+  <span class="n">fromMap</span> <span class="o">::</span> <span class="kt">Ord</span> <span class="p">(</span><span class="kt">Index</span> <span class="n">z</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="p">[(</span><span class="kt">Index</span> <span class="n">z</span><span class="p">,</span> <span class="n">a</span><span class="p">)]</span> <span class="o">-&gt;</span> <span class="n">z</span> <span class="n">a</span>
+
+  <span class="c1">-- | Lookup by possibly denormalised index (still safe from modularity).</span>
+  <span class="c1">--</span>
+  <span class="c1">-- e.g. [1,2] ! 2 == 1</span>
+  <span class="p">(</span><span class="o">!</span><span class="p">)</span> <span class="o">::</span> <span class="n">z</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="kt">Index</span> <span class="n">z</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">a</span>
+
+  <span class="c1">-- | Adjust value at specified index</span>
+  <span class="n">adjust</span> <span class="o">::</span> <span class="p">(</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="n">a</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Index</span> <span class="n">z</span> <span class="o">-&gt;</span> <span class="n">z</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="n">z</span> <span class="n">a</span>
+
+  <span class="c1">-- | Update value at specified index</span>
+  <span class="n">update</span> <span class="o">::</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">Index</span> <span class="n">z</span> <span class="o">-&gt;</span> <span class="n">z</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="n">z</span> <span class="n">a</span>
+  <span class="n">update</span> <span class="o">=</span> <span class="n">adjust</span> <span class="o">.</span> <span class="n">const</span>
+
+  <span class="c1">-- | Normalize @Index z@ value with respect to modular boundaries</span>
+  <span class="n">normalize</span> <span class="o">::</span> <span class="n">z</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="kt">Index</span> <span class="n">z</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="kt">Index</span> <span class="n">z</span><span class="p">)</span>
+
+  <span class="c1">-- | Get size (maximum of @Index z@).</span>
+  <span class="n">size</span> <span class="o">::</span> <span class="n">z</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="kt">Index</span> <span class="n">z</span><span class="p">)</span></code></pre></figure>
+
+<p>I don’t want there to be a billion lines of code in this article, so feel free to check out the
+<a href="https://github.com/samtay/conway/blob/master/src/Life.hs">source</a>
+if you want to see how those instances are defined for <code class="highlighter-rouge">Z</code> and <code class="highlighter-rouge">ZZ</code>.
+Once they are defined, writing the <code class="highlighter-rouge">Comonad</code> instance is much easier:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="kr">instance</span> <span class="kt">Comonad</span> <span class="kt">Z</span> <span class="kr">where</span>
+  <span class="n">extract</span> <span class="o">=</span> <span class="n">cursor</span>
+  <span class="n">duplicate</span> <span class="n">z</span> <span class="o">=</span> <span class="kt">Z</span> <span class="p">(</span><span class="kt">S</span><span class="o">.</span><span class="n">fromFunction</span> <span class="p">(</span><span class="n">size</span> <span class="n">z</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="n">fn</span><span class="p">)</span> <span class="n">z</span> <span class="p">(</span><span class="n">z</span> <span class="o">^.</span> <span class="n">zi</span><span class="p">)</span>
+    <span class="kr">where</span> <span class="n">fn</span> <span class="n">k</span> <span class="o">=</span> <span class="n">compose</span> <span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">(</span><span class="n">shift</span> <span class="kt">L</span><span class="p">)</span> <span class="o">$</span> <span class="n">z</span>
+
+<span class="kr">instance</span> <span class="kt">Comonad</span> <span class="kt">ZZ</span> <span class="kr">where</span>
+  <span class="n">extract</span> <span class="o">=</span> <span class="n">cursor</span>
+  <span class="n">duplicate</span> <span class="n">z</span> <span class="o">=</span> <span class="kt">ZZ</span> <span class="o">$</span> <span class="kt">Z</span>
+    <span class="p">(</span><span class="n">fromF</span> <span class="p">(</span><span class="n">xT</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="n">mkCol</span><span class="p">)</span> <span class="p">(</span><span class="kt">Z</span> <span class="p">(</span><span class="n">fromF</span> <span class="p">(</span><span class="n">yT</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="p">(</span><span class="n">mkRow</span> <span class="n">z</span><span class="p">))</span> <span class="n">z</span> <span class="n">y</span><span class="p">)</span> <span class="n">x</span>
+    <span class="kr">where</span>
+      <span class="n">mkRow</span> <span class="n">zx</span> <span class="n">j</span> <span class="o">=</span> <span class="n">compose</span> <span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">(</span><span class="n">shift</span> <span class="kt">S</span><span class="p">)</span> <span class="n">zx</span>
+      <span class="n">mkCol</span> <span class="n">i</span>    <span class="o">=</span> <span class="kr">let</span> <span class="n">zx</span> <span class="o">=</span> <span class="n">compose</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">(</span><span class="n">shift</span> <span class="kt">W</span><span class="p">)</span> <span class="n">z</span>
+                    <span class="kr">in</span> <span class="kt">Z</span> <span class="p">(</span><span class="n">fromF</span> <span class="p">(</span><span class="n">yT</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="p">(</span><span class="n">mkRow</span> <span class="n">zx</span><span class="p">))</span> <span class="n">zx</span> <span class="p">(</span><span class="n">zx</span> <span class="o">^.</span> <span class="n">to</span> <span class="n">index</span>  <span class="o">^.</span> <span class="n">_2</span><span class="p">)</span>
+      <span class="p">(</span><span class="n">xT</span><span class="p">,</span><span class="n">yT</span><span class="p">)</span>    <span class="o">=</span> <span class="n">size</span> <span class="n">z</span>
+      <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>      <span class="o">=</span> <span class="n">index</span> <span class="n">z</span>
+      <span class="n">fromF</span>      <span class="o">=</span> <span class="kt">S</span><span class="o">.</span><span class="n">fromFunction</span>
+
+<span class="n">compose</span> <span class="o">::</span> <span class="kt">Int</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="n">a</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="n">a</span><span class="p">)</span>
+<span class="n">compose</span> <span class="o">=</span> <span class="p">(</span><span class="n">foldr</span> <span class="p">(</span><span class="o">.</span><span class="p">)</span> <span class="n">id</span> <span class="o">.</span><span class="p">)</span> <span class="o">.</span> <span class="n">replicate</span></code></pre></figure>
+
+<p>It looks a little messy, but that’s probably just me being an amateur.
+Really all that <code class="highlighter-rouge">duplicate</code> needs to do is, for all indices <code class="highlighter-rouge">(i,j)</code>,
+replace the element at <code class="highlighter-rouge">(i,j)</code> with the argument <code class="highlighter-rouge">z</code> shifted west <code class="highlighter-rouge">i</code> times
+and shifted south <code class="highlighter-rouge">j</code> times; that is, the argument <code class="highlighter-rouge">z</code> with cursor/index focused
+at <code class="highlighter-rouge">(i,j)</code>.</p>
+
+<p>Finally, with <code class="highlighter-rouge">Zipper</code> and <code class="highlighter-rouge">Comonad</code> instances in place, here is the new <code class="highlighter-rouge">step</code>:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">step</span> <span class="o">::</span> <span class="kt">Board</span> <span class="o">-&gt;</span> <span class="kt">Board</span>
+<span class="n">step</span> <span class="o">=</span> <span class="n">extend</span> <span class="n">rule</span>
+  <span class="kr">where</span> <span class="n">p</span> <span class="o">=</span> <span class="n">length</span> <span class="o">.</span> <span class="n">filter</span> <span class="p">(</span><span class="o">==</span><span class="kt">Alive</span><span class="p">)</span> <span class="o">.</span> <span class="n">neighborhood</span>
+        <span class="n">rule</span> <span class="n">z</span> <span class="o">=</span> <span class="kr">case</span> <span class="p">(</span><span class="n">cursor</span> <span class="n">z</span><span class="p">,</span> <span class="n">p</span> <span class="n">z</span><span class="p">)</span> <span class="kr">of</span>
+                   <span class="p">(</span><span class="kt">Alive</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Alive</span>
+                   <span class="p">(</span><span class="kt">Alive</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Alive</span>
+                   <span class="p">(</span><span class="kt">Dead</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>  <span class="o">-&gt;</span> <span class="kt">Alive</span>
+                   <span class="kr">_</span>          <span class="o">-&gt;</span> <span class="kt">Dead</span></code></pre></figure>
+
+<h2 id="performance">Performance</h2>
+<p>My profiling methodology for each of the scenarios below is to simply measure against the test suite,
+which does quite a bit of computing and comparison of evolved games. Below are the commands
+I used to generate the results:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>stack ghc <span class="nt">--</span> <span class="nb">test</span>/Spec.hs <span class="nt">-prof</span> <span class="nt">-fprof-auto</span> <span class="nt">-rtsopts</span> <span class="nt">-O2</span>
+<span class="nv">$ </span><span class="nb">cd test</span>
+<span class="nv">$ </span>./Spec +RTS <span class="nt">-hc</span> <span class="nt">-p</span> <span class="nt">-K100M</span>
+<span class="c"># getting a web friendly view of heap profiler</span>
+<span class="nv">$ </span>hp2ps <span class="nt">-e8in</span> <span class="nt">-c</span> Spec.hp
+<span class="nv">$ </span>convert Spec.ps heap.png</code></pre></figure>
+
+<h3 id="initial">Initial</h3>
+<p>Here are some profiling details from the first implementation,
+which mapped across the board while performing lookups to retrieve the neighborhood values:</p>
+
+<ul>
+  <li>Time: 13.22 secs</li>
+  <li>Memory: 5.50 GB</li>
+  <li>Spec.prof &amp; Spec.ps</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-plaintext" data-lang="plaintext">	   Spec +RTS -hc -p -K100M -RTS
+
+	total time  =       13.22 secs   (13219 ticks @ 1000 us, 1 processor)
+	total alloc = 5,495,113,024 bytes  (excludes profiling overheads)
+
+COST CENTRE              MODULE                               SRC                                                           %time %alloc
+
+filterWithKey            Math.Geometry.GridMap.Lazy           src/Math/Geometry/GridMap/Lazy.hs:117:3-67                     94.9   75.5
+neighboursWrappedBasedOn Math.Geometry.GridInternal           src/Math/Geometry/GridInternal.hs:(295,1)-(296,64)              2.5   11.4
+normalise                Math.Geometry.Grid.OctagonalInternal src/Math/Geometry/Grid/OctagonalInternal.hs:(132,3)-(133,25)    1.0    4.3
+population               Life                                 src/Life.hs:(120,1)-(122,20)                                    0.6    4.7
+elems                    Math.Geometry.GridMap                src/Math/Geometry/GridMap.hs:266:3-25                           0.2    1.7</code></pre></figure>
+
+<p><a href="/assets/comonadic-gol/initial-heap-e20a1a1e8443fd96f097676362af5dc08762fb6ea8b8d25e11ad4b1930b07cf2.png">
+  <img src="/assets/comonadic-gol/initial-heap-e20a1a1e8443fd96f097676362af5dc08762fb6ea8b8d25e11ad4b1930b07cf2.png" alt="Initial Heap" class="zooming" data-rjs="/assets/comonadic-gol/initial-heap-e20a1a1e8443fd96f097676362af5dc08762fb6ea8b8d25e11ad4b1930b07cf2.png" data-zooming-width="576" data-zooming-height="384">
+</a></p>
+
+<p>We see there is quite a bit of memory spent in the <code class="highlighter-rouge">step</code> function.</p>
+
+<h3 id="comonads-to-the-rescue">Comonads to the rescue</h3>
+<p>Now that the function evolving the game has cursor context
+and easy access to each cursor’s neighborhood,
+just a few <code class="highlighter-rouge">O(1)</code> lookups at the front and back of <code class="highlighter-rouge">Data.Sequence.Seq a</code> containers,
+performance improves drammatically.</p>
+
+<ul>
+  <li>Time: 1.08 secs</li>
+  <li>Memory: 3.95 GB</li>
+  <li>Spec.prof &amp; Spec.ps</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-plaintext" data-lang="plaintext">	   Spec +RTS -hc -p -K100M -RTS
+
+	total time  =        1.08 secs   (1079 ticks @ 1000 us, 1 processor)
+	total alloc = 3,946,769,872 bytes  (excludes profiling overheads)
+
+COST CENTRE     MODULE SRC                           %time %alloc
+
+fmap            Life   src/Life.hs:158:3-41           27.1   22.9
+shift           Life   src/Life.hs:(147,3)-(155,38)   25.3   42.1
+shift.(...)     Life   src/Life.hs:152:7-27           13.6   22.1
+compose         Life   src/Life.hs:298:1-38           10.5    5.4
+neighborhood    Life   src/Life.hs:(136,3)-(138,59)    4.3    1.5
+step.p          Life   src/Life.hs:256:9-52            3.2    0.4
+neighborhood.ew Life   src/Life.hs:196:11-43           2.8    2.7
+==              Life   src/Life.hs:70:26-27            2.2    0.7
+shift.xs        Life   src/Life.hs:152:7-27            1.7    0.0
+duplicate.mkRow Life   src/Life.hs:215:7-47            1.4    0.2
+cursor          Life   src/Life.hs:174:3-28            1.2    0.2
+duplicate.mkCol Life   src/Life.hs:(216,7)-(217,80)    1.2    0.5</code></pre></figure>
+
+<p><a href="/assets/comonadic-gol/comonadic-heap-a2a0c49014b9735246cf64d4b05fb400bcaebbc8a770c02340def332c33347a8.png">
+  <img src="/assets/comonadic-gol/comonadic-heap-a2a0c49014b9735246cf64d4b05fb400bcaebbc8a770c02340def332c33347a8.png" alt="Comonadic Heap" class="zooming" data-rjs="/assets/comonadic-gol/comonadic-heap-a2a0c49014b9735246cf64d4b05fb400bcaebbc8a770c02340def332c33347a8.png" data-zooming-width="576" data-zooming-height="384">
+</a></p>
+
+<h3 id="comparison">Comparison</h3>
+<p>Running the test suite with the second data structure decreased the overall time by <strong>92%</strong>, the overall memory allocation by <strong>28%</strong>, and peak memory allocation by about <strong>57%</strong> <img class="emoji" title=":raised_hands:" alt=":raised_hands:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f64c.png" height="20" width="20">.</p>
+
+<h2 id="further-reading">Further reading</h2>
+<p>For more in-depth reading on category theory and comonads, here are my sources:</p>
+
+<ul>
+  <li>
+<a href="http://blog.ezyang.com/2012/10/duality-for-haskellers/">Duality for Haskellers</a> - EZ Yang</li>
+  <li>
+<a href="http://blog.ezyang.com/2010/07/flipping-arrows-in-coburger-king/">Flipping arrows in coBurger King</a> - EZ Yang</li>
+  <li>
+<a href="https://www.youtube.com/watch?v=F7F-BzOB670">Comonad presentation</a> - Kenny Foner</li>
+  <li>
+<a href="https://github.com/kwf/ComonadSheet">ComonadSheet source code</a> - Kenny Foner</li>
+  <li>
+<a href="https://www.slideshare.net/davidoverton/comonad">Another comonad presentation</a> - David Overton</li>
+</ul>
+
+          </div>
+
+          
+            <div id="disqus_thread" class="article-comments"></div>
+            <script>
+              //  https://disqus.com/admin/universalcode/#configuration-variables
+              var disqus_config = function () {
+                this.page.url = 'https://samtay.github.io/posts/comonadic-game-of-life';
+                this.page.identifier = '/posts/comonadic-game-of-life';
+                this.page.title = 'Who needs HashLife when you have comonads?';
+              };
+              (function() {
+                var d = document, s = d.createElement('script');
+                s.src = '//samtay.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+              })();
+            </script>
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+          
+        </article>
+        <footer class="footer scrollappear">
+  <p>
+    Ramblings &amp;straightepsilon; &amp;lcub;Mathematics, Statistics, Haskell&amp;rcub;.
+    © 2020. All rights reserved.
+    <!--<a href="/about" title="About me">Nielsen Ramon</a>. Download it <a href="https://github.com/nielsenramon/chalk" rel="noreferrer noopener" target="_blank" title="Download Chalk">here</a>.-->
+  </p>
+</footer>
+
+      </div>
+    </div>
+  </main>
+  
+
+<script type="text/javascript" src="/assets/vendor-2c224c53eb697c739f9490c38819a72184f09472739fd9e492272ef174090428.js"></script>
+
+
+  <script type="text/javascript" src="/assets/webfonts-96493456d319d1bf419afdf8701552d4d486fee6afd304897d4fd81eb4e0cc0b.js"></script>
+
+
+
+  <script type="text/javascript" src="/assets/scrollappear-e2da8ea567e418637e31266cc5302126eaa79f62a2273739086358b589a89ee6.js"></script>
+
+
+<script type="text/javascript" src="/assets/application-cfde13ac81ddaf4351b2e739603e2baf688d0fcc9aba613fe62bbb1c7b037fb9.js"></script>
+
+
+  <script type="text/javascript" src="/assets/themetoggle-df0d3d73164dc26dffbd630182ae4d0dfa7bee6b694a2b5d565d73595b582bbf.js"></script>
+
+</body>
+</html>

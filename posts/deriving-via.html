@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Sam Tay | A small use case for Deriving Via</title>
+  <meta name="description" content="Reducing boilerplate in exception hierarchies via Deriving Via">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta property="og:title" content="A small use case for Deriving Via">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://samtay.github.io/posts/deriving-via">
+  <meta property="og:description" content="Reducing boilerplate in exception hierarchies via Deriving Via">
+  <meta property="og:site_name" content="Sam Tay">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:url" content="https://samtay.github.io/posts/deriving-via">
+  <meta name="twitter:title" content="A small use case for Deriving Via">
+  <meta name="twitter:description" content="Reducing boilerplate in exception hierarchies via Deriving Via">
+
+  
+    <meta property="og:image" content="https://samtay.github.io/assets/og-image-ee46bbc61b334e821e81534b1fd43f3fee6f020ec174b3c2114445695fd48c01.jpg">
+    <meta name="twitter:image" content="https://samtay.github.io/assets/og-image-ee46bbc61b334e821e81534b1fd43f3fee6f020ec174b3c2114445695fd48c01.jpg">
+  
+
+  <link href="https://samtay.github.io/feed.xml" type="application/rss+xml" rel="alternate" title="Sam Tay Last 10 blog posts" />
+
+  
+
+  
+
+    
+      <link rel="icon" type="image/x-icon" href="/assets/favicon-light-a98c41efc5ed9fcc06ac664c9e2f7a9b3c3b2e0a52357d221fe382f6f4abc8fc.ico">
+      <link rel="apple-touch-icon" href="/assets/apple-touch-icon-light-87d1f2a3a19b1500e5c1626a0492025ca5f7f97d24540dc5900288e92112925a.png">
+      <link rel="stylesheet" type="text/css" title="light" id="light" href="/assets/light-af52f56b3a679f934bebf56e4f95e0a8a3c3abd27c3392582c0fbb45382c3ace.css">
+      <link rel="stylesheet" type="text/css" title="dark" id="dark" href="/assets/dark-34cba75263d5af9704e21aa0f389e08da0d80fd7cac0f13fa474dfdee35ad73c.css" disabled="true">
+    
+
+  
+
+</head>
+
+<body>
+  <main>
+    <div class="grid grid-centered">
+      <div class="grid-cell">
+        <nav class="header-nav scrollappear">
+  <a href="/" class="header-logo" title="Sam Tay">Sam Tay</a>
+  <ul class="header-links">
+    
+      <li>
+        <a href="/about" title="About me">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-about">
+  <use href="/assets/about-ecf154b571ab8034ae00aeed91a3b7ad68db80b46d958753ad6216c919486e88.svg#icon-about" xlink:href="/assets/about-ecf154b571ab8034ae00aeed91a3b7ad68db80b46d958753ad6216c919486e88.svg#icon-about"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+    
+    
+    
+      <li>
+        <a href="https://github.com/samtay" rel="noreferrer noopener" target="_blank" title="GitHub">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-github">
+  <use href="/assets/github-094f81040819f34343ee6ffff0980f17e2807b08b595eaaf66ae3554934fd78d.svg#icon-github" xlink:href="/assets/github-094f81040819f34343ee6ffff0980f17e2807b08b595eaaf66ae3554934fd78d.svg#icon-github"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      <li>
+        <a href="mailto:sam.chong.tay@gmail.com" title="Email">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-email">
+  <use href="/assets/email-782473193bf750036fdb90e8daa075508a20509d01854c09f3237c144a3f0601.svg#icon-email" xlink:href="/assets/email-782473193bf750036fdb90e8daa075508a20509d01854c09f3237c144a3f0601.svg#icon-email"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+      <li>
+        <a href="/feed.xml" rel="noreferrer noopener" target="_blank" title="RSS">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-rss">
+  <use href="/assets/rss-541ec5cea9cefd10d2fcfec01888f3f231a8829940249835fa7b7b3a12ae0d0d.svg#icon-rss" xlink:href="/assets/rss-541ec5cea9cefd10d2fcfec01888f3f231a8829940249835fa7b7b3a12ae0d0d.svg#icon-rss"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+      <li>
+        <a onclick="toggle()" title="Toggle Theme">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-theme">
+  <use href="/assets/theme-66869e0bf8dab34bae1c86bda400327b772e0be69e8dc28d3ede896e771320ed.svg#icon-theme" xlink:href="/assets/theme-66869e0bf8dab34bae1c86bda400327b772e0be69e8dc28d3ede896e771320ed.svg#icon-theme"></use>
+</svg>
+
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+
+
+        <article class="article scrollappear">
+          <header class="article-header">
+            <h1>A small use case for Deriving Via</h1>
+            <p>Reducing boilerplate in exception hierarchies via Deriving Via</p>
+            <div class="article-list-footer">
+  <span class="article-list-date">
+    March 11, 2019
+  </span>
+  <span class="article-list-divider">-</span>
+  <span class="article-list-minutes">
+    
+    
+      5 minute read
+    
+  </span>
+  <span class="article-list-divider">-</span>
+  <div class="article-list-tags">
+    
+      
+      <a href="/tag/haskell" title="See all posts with tag 'Haskell'">Haskell</a>
+    
+  </div>
+</div>
+          </header>
+
+          <div class="article-content">
+            <h2 id="introduction">Introduction</h2>
+
+<p>I am going to show a small but practical scenario for which
+<a href="https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/glasgow_exts.html#deriving-via">DerivingVia</a>,
+a language extension introduced in GHC 8.6, is a natural solution.
+The extension is aptly named, as it extends the customizability of deriving
+clauses, namely to allow you to specify that a type should derive a typeclass
+instance <em>via</em> another type’s instance.</p>
+
+<p>As is typical for me as a lowly software engineer that writes Haskell, as opposed to a
+computer scientist researching programming language theory, the description of the
+language extension initially seemed opaque. In hindsight, I would argue it is one of the
+simple-yet-still-incredibly-useful extensions.</p>
+
+<h2 id="motivation">Motivation</h2>
+
+<p>The motivating example that I recently came across at work is implementing an exception
+hierarchy. In fact, I wasn’t even writing a full blown exception hierarchy. All I wanted
+to do was have an exception handler that catches all exceptions that have a certain
+typeclass <code class="highlighter-rouge">HasHttpStatus</code> which looks like</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="kr">data</span> <span class="kt">HttpStatus</span> <span class="o">=</span> <span class="kt">HttpStatus</span>
+  <span class="p">{</span> <span class="n">httpStatusCode</span>    <span class="o">::</span> <span class="kt">Int</span>
+  <span class="p">,</span> <span class="n">httpStatusMessage</span> <span class="o">::</span> <span class="kt">String</span>
+  <span class="p">}</span>
+
+<span class="kr">class</span> <span class="kt">HasHttpStatus</span> <span class="n">e</span> <span class="kr">where</span>
+  <span class="n">toHttpStatus</span> <span class="o">::</span> <span class="n">e</span> <span class="o">-&gt;</span> <span class="kt">HttpStatus</span></code></pre></figure>
+
+<p>Now if I have some exceptions with natural http statuses, such as</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="kr">data</span> <span class="kt">NotFoundError</span> <span class="o">=</span> <span class="kt">NotFoundError</span>
+  <span class="kr">deriving</span> <span class="kt">Exception</span>
+
+<span class="kr">instance</span> <span class="kt">HasHttpStatus</span> <span class="kt">NotFoundError</span>
+  <span class="kr">where</span> <span class="n">toHttpStatus</span> <span class="kr">_</span> <span class="o">=</span> <span class="kt">Status</span> <span class="mi">404</span> <span class="s">"Not Found"</span>
+
+<span class="kr">data</span> <span class="kt">UnauthorizedError</span> <span class="o">=</span> <span class="kt">UnauthorizedError</span>
+  <span class="kr">deriving</span> <span class="kt">Exception</span>
+
+<span class="kr">instance</span> <span class="kt">HasHttpStatus</span> <span class="kt">UnauthorizedError</span>
+  <span class="kr">where</span> <span class="n">toHttpStatus</span> <span class="kr">_</span> <span class="o">=</span> <span class="kt">Status</span> <span class="mi">401</span> <span class="s">"Unauthorized"</span></code></pre></figure>
+
+<p>Then in my route handler, surrounding my application business logic, I want to catch such
+errors so I can return the appropriate http status:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">insertEntityRoute</span> <span class="o">::</span> <span class="kt">IO</span> <span class="nb">()</span>
+<span class="n">insertEntityRoute</span> <span class="o">=</span> <span class="n">catchAppErrors</span> <span class="o">$</span> <span class="kr">do</span>
+  <span class="o">...</span>
+
+<span class="n">catchAppErrors</span> <span class="o">::</span> <span class="kt">IO</span> <span class="nb">()</span> <span class="o">-&gt;</span> <span class="kt">IO</span> <span class="nb">()</span>
+<span class="n">catchAppErrors</span> <span class="o">=</span> <span class="n">flip</span> <span class="n">catches</span>
+  <span class="p">[</span> <span class="kt">Handler</span> <span class="o">$</span> <span class="nf">\</span><span class="n">e</span> <span class="o">::</span> <span class="kt">SomeHttpException</span> <span class="o">-&gt;</span>
+      <span class="n">sendHttpStatus</span> <span class="p">(</span><span class="n">toHttpStatus</span> <span class="n">e</span><span class="p">)</span>
+  <span class="p">,</span> <span class="kt">Handler</span> <span class="o">$</span> <span class="nf">\</span><span class="n">e</span> <span class="o">::</span> <span class="kt">SomeException</span>     <span class="o">-&gt;</span> <span class="kr">do</span>
+      <span class="n">logError</span> <span class="p">(</span><span class="s">"something awful has happened: "</span> <span class="o">++</span> <span class="n">show</span> <span class="n">e</span><span class="p">)</span>
+      <span class="n">sendHttpStatus</span> <span class="p">(</span><span class="kt">Status</span> <span class="mi">500</span> <span class="s">"Internal Server Error"</span><span class="p">)</span>
+  <span class="p">]</span></code></pre></figure>
+
+<p>My first attempt simply mimicked the definition of the <code class="highlighter-rouge">Exception</code> and <code class="highlighter-rouge">SomeException</code>
+types.</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="kr">data</span> <span class="kt">SomeHttpException</span>
+  <span class="o">=</span>  <span class="n">forall</span> <span class="n">e</span><span class="o">.</span> <span class="p">(</span><span class="kt">Exception</span> <span class="n">e</span><span class="p">,</span> <span class="kt">HasHttpStatus</span> <span class="n">e</span><span class="p">)</span>
+  <span class="o">=&gt;</span> <span class="kt">SomeHttpException</span> <span class="n">e</span>
+  <span class="kr">deriving</span> <span class="kt">Typeable</span>
+
+<span class="kr">instance</span> <span class="kt">Exception</span> <span class="kt">SomeHttpException</span> <span class="kr">where</span>
+
+<span class="kr">instance</span> <span class="kt">Show</span> <span class="kt">SomeHttpException</span> <span class="kr">where</span>
+  <span class="n">showsPrec</span> <span class="n">p</span> <span class="p">(</span><span class="kt">SomeHttpException</span> <span class="n">e</span><span class="p">)</span> <span class="o">=</span> <span class="n">showsPrec</span> <span class="n">p</span> <span class="n">e</span>
+
+<span class="kr">instance</span> <span class="kt">HasHttpStatus</span> <span class="kt">SomeHttpException</span> <span class="kr">where</span>
+  <span class="n">toHttpStatus</span> <span class="p">(</span><span class="kt">SomeHttpException</span> <span class="n">e</span><span class="p">)</span> <span class="o">=</span> <span class="n">toHttpStatus</span> <span class="n">e</span></code></pre></figure>
+
+<p>This is on the right track, but I initially (and ignorantly) thought this would be enough
+to use my handler above. Of course, nothing was being caught by the <code class="highlighter-rouge">SomeHttpException</code>
+handler. Instead, it became clear after looking in the
+<a href="http://hackage.haskell.org/package/base-4.12.0.0/docs/Control-Exception.html#t:Exception">Control.Exception</a>
+documentation that I would need to write custom <code class="highlighter-rouge">Exception</code>
+instances for all of my http errors. So my final pull request looked just like what the
+documentation advises (and is what is most likely familiar to anyone who has implemented
+an exception hierarchy in Haskell):</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">httpExceptionToException</span>
+  <span class="o">::</span> <span class="p">(</span><span class="kt">Exception</span> <span class="n">e</span><span class="p">,</span> <span class="kt">HasHttpStatus</span> <span class="n">e</span><span class="p">)</span>
+  <span class="o">=&gt;</span> <span class="n">e</span>
+  <span class="o">-&gt;</span> <span class="kt">SomeException</span>
+<span class="n">httpExceptionToException</span> <span class="o">=</span> <span class="n">toException</span> <span class="o">.</span> <span class="kt">SomeHttpException</span>
+
+<span class="n">httpExceptionFromException</span>
+  <span class="o">::</span> <span class="kt">Exception</span> <span class="n">e</span>
+  <span class="o">=&gt;</span> <span class="kt">SomeException</span>
+  <span class="o">-&gt;</span> <span class="kt">Maybe</span> <span class="n">e</span>
+<span class="n">httpExceptionFromException</span> <span class="n">e</span> <span class="o">=</span> <span class="kr">do</span>
+  <span class="kt">SomeHttpException</span> <span class="n">x</span> <span class="o">&lt;-</span> <span class="n">fromException</span> <span class="n">e</span>
+  <span class="n">cast</span> <span class="n">x</span>
+
+<span class="kr">instance</span> <span class="kt">Exception</span> <span class="kt">NotFoundError</span> <span class="kr">where</span>
+  <span class="n">toException</span> <span class="o">=</span> <span class="n">httpExceptionToException</span>
+  <span class="n">fromException</span> <span class="o">=</span> <span class="n">httpExceptionFromException</span>
+
+<span class="kr">instance</span> <span class="kt">Exception</span> <span class="kt">UnauthorizedError</span> <span class="kr">where</span>
+  <span class="n">toException</span> <span class="o">=</span> <span class="n">httpExceptionToException</span>
+  <span class="n">fromException</span> <span class="o">=</span> <span class="n">httpExceptionFromException</span></code></pre></figure>
+
+<p>With these <code class="highlighter-rouge">Exception</code> instances, my handler defined above works as expected. I didn’t
+like having to duplicate these instances (in my case there were quite a few more instances
+to write), but I trusted that this was the accepted solution since it was in the
+documentation and I came up dry googling for better solutions.</p>
+
+<h2 id="derivingvia">DerivingVia</h2>
+<p>However, a colleage at work (<a href="https://github.com/asivitz"><strong>@asivitz</strong></a> on GitHub, for credit) spotted the
+duplicate instances and refactored this by enabling <code class="highlighter-rouge">DerivingVia</code>. With this approach, we
+need only write an <code class="highlighter-rouge">Exception</code> instance for one newtype wrapper, and then we can auto-derive
+the rest of our http error instances via the newtype wrapper:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="kr">newtype</span> <span class="kt">HttpException</span> <span class="n">e</span> <span class="o">=</span> <span class="kt">HttpException</span> <span class="n">e</span>
+
+<span class="kr">instance</span> <span class="kt">Show</span> <span class="n">e</span> <span class="o">=&gt;</span> <span class="kt">Show</span> <span class="p">(</span><span class="kt">HttpException</span> <span class="n">e</span><span class="p">)</span> <span class="kr">where</span>
+  <span class="n">showsPrec</span> <span class="n">p</span> <span class="p">(</span><span class="kt">HttpException</span> <span class="n">e</span><span class="p">)</span> <span class="o">=</span> <span class="n">showsPrec</span> <span class="n">p</span> <span class="n">e</span>
+
+<span class="kr">instance</span> <span class="kt">HasHttpStatus</span> <span class="n">e</span> <span class="o">=&gt;</span> <span class="kt">HasHttpStatus</span> <span class="p">(</span><span class="kt">HttpException</span> <span class="n">e</span><span class="p">)</span> <span class="kr">where</span>
+  <span class="n">toHttpStatus</span> <span class="p">(</span><span class="kt">HttpException</span> <span class="n">e</span><span class="p">)</span> <span class="o">=</span> <span class="n">toHttpStatus</span> <span class="n">e</span>
+
+<span class="kr">instance</span> <span class="p">(</span><span class="kt">Show</span> <span class="n">e</span><span class="p">,</span> <span class="kt">HasHttpStatus</span> <span class="n">e</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="kt">Exception</span> <span class="p">(</span><span class="kt">HttpException</span> <span class="n">e</span><span class="p">)</span>
+  <span class="kr">where</span>
+    <span class="n">toException</span> <span class="o">=</span> <span class="n">httpExceptionToException</span>
+    <span class="n">fromException</span> <span class="o">=</span> <span class="n">httpExceptionFromException</span></code></pre></figure>
+
+<p>Now we can use this <code class="highlighter-rouge">HttpException</code> wrapper instance in our deriving clauses.
+The error types will instead be defined as:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="kr">data</span> <span class="kt">NotFoundError</span> <span class="o">=</span> <span class="kt">NotFoundError</span>
+  <span class="kr">deriving</span> <span class="kt">Exception</span> <span class="n">via</span> <span class="p">(</span><span class="kt">HttpException</span> <span class="kt">NotFoundError</span><span class="p">)</span>
+
+<span class="kr">data</span> <span class="kt">UnauthorizedError</span> <span class="o">=</span> <span class="kt">UnauthorizedError</span>
+  <span class="kr">deriving</span> <span class="kt">Exception</span> <span class="n">via</span> <span class="p">(</span><span class="kt">HttpException</span> <span class="kt">UnauthorizedError</span><span class="p">)</span></code></pre></figure>
+
+<p>The syntax is wonderfully clear here. It is evident when reading the deriving
+clause above that the exception instance for <code class="highlighter-rouge">e</code> is precisely the one that we
+have defined for <code class="highlighter-rouge">HttpException e</code>.  So our <code class="highlighter-rouge">SomeHttpException</code> handler will
+still catch both of these exceptions, but we get to remove our explicit
+typeclass implementations.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+<p>The lesson here is that if you find yourself writing identical typeclass instances over and
+over, possibly accumulating a mountain of boilerplate in your codebase: stop, drop, and
+derive via.</p>
+
+          </div>
+
+          
+            <div id="disqus_thread" class="article-comments"></div>
+            <script>
+              //  https://disqus.com/admin/universalcode/#configuration-variables
+              var disqus_config = function () {
+                this.page.url = 'https://samtay.github.io/posts/deriving-via';
+                this.page.identifier = '/posts/deriving-via';
+                this.page.title = 'A small use case for Deriving Via';
+              };
+              (function() {
+                var d = document, s = d.createElement('script');
+                s.src = '//samtay.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+              })();
+            </script>
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+          
+        </article>
+        <footer class="footer scrollappear">
+  <p>
+    Ramblings &straightepsilon; &lcub;Mathematics, Statistics, Haskell&rcub;.
+    &copy; 2020. All rights reserved.
+    <!--<a href="/about" title="About me">Nielsen Ramon</a>. Download it <a href="https://github.com/nielsenramon/chalk" rel="noreferrer noopener" target="_blank" title="Download Chalk">here</a>.-->
+  </p>
+</footer>
+
+      </div>
+    </div>
+  </main>
+  
+
+<script type="text/javascript" src="/assets/vendor-2c224c53eb697c739f9490c38819a72184f09472739fd9e492272ef174090428.js"></script>
+
+
+  <script type="text/javascript" src="/assets/webfonts-96493456d319d1bf419afdf8701552d4d486fee6afd304897d4fd81eb4e0cc0b.js"></script>
+
+
+
+  <script type="text/javascript" src="/assets/scrollappear-e2da8ea567e418637e31266cc5302126eaa79f62a2273739086358b589a89ee6.js"></script>
+
+
+<script type="text/javascript" src="/assets/application-cfde13ac81ddaf4351b2e739603e2baf688d0fcc9aba613fe62bbb1c7b037fb9.js"></script>
+
+
+  <script type="text/javascript" src="/assets/themetoggle-df0d3d73164dc26dffbd630182ae4d0dfa7bee6b694a2b5d565d73595b582bbf.js"></script>
+
+</body>
+</html>
