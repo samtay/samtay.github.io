@@ -23,7 +23,18 @@ jobs:
           name: build
           command: bundle exec jekyll build
       - run:
-          name: deploy
+          name: test
+          command: |
+            bundle exec htmlproofer ./_site --only-4xx --allow-hash-href --assume-extension --check-opengraph --url-ignore "feed.xml"
+      - add_ssh_keys:
+          fingerprints:
+            - "b8:46:81:62:27:6e:41:60:78:7d:50:da:cd:8b:80:e6"
+      - run:
+          name: deploy to uw
+          command: |
+            echo $UW_HOST_KEY >> ~/.ssh/known_hosts
+            rsync -avce ssh ~/chalk/_site/ $UW_USER@$UW_HOST:public_html
+          name: deploy to github.io
           command: |
             cd ~/chalk
             msg="$(git log -1 --pretty=%B) [ci skip]"
