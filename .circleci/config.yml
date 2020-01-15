@@ -46,21 +46,13 @@ jobs:
             - _assets/yarn
 
       - run:
-          name: build
+          name: build for github
           command: bundle exec jekyll build
       - run:
           name: test
           command: |
             bundle exec htmlproofer ./_site --only-4xx --allow-hash-href --assume-extension --check-opengraph --url-ignore "feed.xml"
 
-      - add_ssh_keys:
-          fingerprints:
-            - "85:bc:f3:fb:f3:fa:66:43:3a:71:40:7c:32:2f:90:f7"
-      - run:
-          name: deploy to uw
-          command: |
-            echo $UW_HOST_KEY >> ~/.ssh/known_hosts
-            rsync --delete -avce ssh ~/chalk/_site/ $UW_USER@$UW_HOST:public_html
       - run:
           name: deploy to github.io
           command: |
@@ -81,3 +73,20 @@ jobs:
               git commit --allow-empty -m "$msg"
               git push origin master
             fi
+
+      - run:
+          name: build for uw
+          command: |
+            cd ~/chalk
+            sed -i 's/samtay.github.io/www.stat.washington.edu/g' _config.yml
+            echo "baseurl: /people/tays" >> _config.yml
+            bundle exec jekyll build
+
+      - add_ssh_keys:
+          fingerprints:
+            - "85:bc:f3:fb:f3:fa:66:43:3a:71:40:7c:32:2f:90:f7"
+      - run:
+          name: deploy to uw
+          command: |
+            echo $UW_HOST_KEY >> ~/.ssh/known_hosts
+            rsync --delete -avce ssh ~/chalk/_site/ $UW_USER@$UW_HOST:public_html
