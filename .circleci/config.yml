@@ -11,6 +11,11 @@ jobs:
     steps:
       - checkout
 
+      - run:
+          name: TODO mk docker image with rsync
+          command: |
+            sudo apt-get install rsync
+
       - restore_cache:
           keys:
             - v1-rubygem-dependencies-{{ checksum "Gemfile.lock" }}
@@ -20,7 +25,8 @@ jobs:
           command: |
             bundle --version
             #gem install bundler
-            bundle install --jobs=4 --retry=3 --path vendor/bundle
+            bundle config set path 'vendor/bundle'
+            bundle install --jobs=4 --retry=3
             bundle update
       - save_cache:
           key: v1-rubygem-dependencies-{{ checksum "Gemfile.lock" }}
@@ -49,7 +55,7 @@ jobs:
 
       - add_ssh_keys:
           fingerprints:
-            - "b8:46:81:62:27:6e:41:60:78:7d:50:da:cd:8b:80:e6"
+            - "85:bc:f3:fb:f3:fa:66:43:3a:71:40:7c:32:2f:90:f7"
       - run:
           name: deploy to uw
           command: |
