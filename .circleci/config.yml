@@ -7,7 +7,7 @@ jobs:
       only:
         - chalk
     docker:
-      - image: circleci/ruby:2.5.1-node
+      - image: circleci/ruby:2.7.0-node
     steps:
       - checkout
 
@@ -18,14 +18,9 @@ jobs:
       - run:
           name: ruby deps
           command: |
-            which -a bundle
             bundle --version
-            gem update bundle
-            #gem uninstall bundler
-            #gem install bundler --version 2.1.4
-            which -a bundle
-            bundle --version
-            bundle check || bundle install --jobs=4 --retry=3 --path vendor/bundle
+            #gem install bundler
+            bundle install --jobs=4 --retry=3 --path vendor/bundle
             bundle update
       - save_cache:
           key: v1-rubygem-dependencies-{{ checksum "Gemfile.lock" }}
