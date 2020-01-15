@@ -10,15 +10,40 @@ jobs:
       - image: circleci/ruby:2.5.1-node
     steps:
       - checkout
+
+      - restore_cache:
+          keys:
+            - v1-rubygem-dependencies-{{ checksum "Gemfile.lock" }}
+            - v1-rubygem-dependencies-
       - run:
           name: ruby deps
           command: |
-            gem install bundler --conservative
-            bundle check || bundle install
+            which -a bundle
+            bundle --version
+            gem update bundle
+            #gem uninstall bundler
+            #gem install bundler --version 2.1.4
+            which -a bundle
+            bundle --version
+            bundle check || bundle install --jobs=4 --retry=3 --path vendor/bundle
             bundle update
+      - save_cache:
+          key: v1-rubygem-dependencies-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+
+      - restore_cache:
+          keys:
+            - v1-yarn-dependencies-{{ checksum "yarn.lock" }}
+            - v1-yarn-dependencies-
       - run:
           name: js deps
           command: yarn install --modules-folder ./_assets/yarn
+      - save_cache:
+          key: v1-yarn-dependencies-{{ checksum "yarn.lock" }}
+          paths:
+            - _assets/yarn
+
       - run:
           name: build
           command: bundle exec jekyll build
@@ -26,6 +51,7 @@ jobs:
           name: test
           command: |
             bundle exec htmlproofer ./_site --only-4xx --allow-hash-href --assume-extension --check-opengraph --url-ignore "feed.xml"
+
       - add_ssh_keys:
           fingerprints:
             - "b8:46:81:62:27:6e:41:60:78:7d:50:da:cd:8b:80:e6"
@@ -33,7 +59,8 @@ jobs:
           name: deploy to uw
           command: |
             echo $UW_HOST_KEY >> ~/.ssh/known_hosts
-            rsync -avce ssh ~/chalk/_site/ $UW_USER@$UW_HOST:public_html
+            rsync --delete -avce ssh ~/chalk/_site/ $UW_USER@$UW_HOST:public_html
+      - run:
           name: deploy to github.io
           command: |
             cd ~/chalk
