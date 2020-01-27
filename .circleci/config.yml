@@ -51,7 +51,7 @@ jobs:
       - run:
           name: test
           command: |
-            bundle exec htmlproofer ./_site --only-4xx --allow-hash-href --assume-extension --check-opengraph --url-ignore "feed.xml"
+            bundle exec htmlproofer ./_site --only-4xx --allow-hash-href --assume-extension --check-opengraph --url-ignore "feed.xml,/tag/.*/"
 
       - run:
           name: deploy to github.io
