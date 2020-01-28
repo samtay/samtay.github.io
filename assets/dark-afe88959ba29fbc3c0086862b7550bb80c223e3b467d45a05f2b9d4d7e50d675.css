@@ -531,6 +531,18 @@ img {
   color: #fff;
   background-color: #121111; }
 
+table.marginal-table {
+  margin: 0 auto 30px;
+  border-collapse: collapse; }
+  table.marginal-table th {
+    border-bottom: 1px solid black; }
+    table.marginal-table th:last-child {
+      border-left: 1px solid black; }
+  table.marginal-table td:last-child {
+    border-left: 1px solid black; }
+  table.marginal-table td, table.marginal-table th {
+    padding: 4px 16px; }
+
 .footer {
   display: block;
   padding-top: 35px;
