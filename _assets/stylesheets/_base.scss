@@ -159,3 +159,21 @@ img {
   color: $white;
   background-color: $gray-darkest;
 }
+
+// Tables
+table.marginal-table {
+  margin: 0 auto 30px;
+  border-collapse: collapse;
+  th {
+    border-bottom: 1px solid black;
+    &:last-child {
+      border-left: 1px solid black;
+    }
+  }
+  td:last-child {
+    border-left: 1px solid black;
+  }
+  td, th {
+    padding: 4px 16px;
+  }
+}
