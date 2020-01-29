@@ -23,7 +23,7 @@ main = mainWith pgh_1
 
 pgh_1 :: Diagram B
 pgh_1 =
-    connectOutside' arr "1" "2"
+    connectOutside' (arr & arrowShaft .~ arc xDir (1/6 @@ turn)) "1" "2"
   . connectOutside' (arr & arrowShaft .~ arc xDir (1.3/5 @@ turn)) "1" "3"
   . connectOutside' (arr & arrowShaft .~ arc xDir (1.4/5 @@ turn)) "1" "n"
   . connectOutside' arr "2" "3"
