@@ -14,11 +14,17 @@ them being that I like the opportunity to employ (seemingly disparate) pure
 math techniques to unsuspecting applied problem domains; in this case,
 solving probabilistic inference problems via graph theory.
 
-This is the first of a series designed to introduce the concept of probabalistic graphical models, motivate their definitions, demonstrate their mathematical beauty, and (time-permitting) show their implementation in Haskell.
+This is the first of a series designed to introduce the concept of
+probabalistic graphical models, motivate their definitions, outline related
+algorithms, and (time-permitting) show their implementation in Haskell.
 
-**Disclaimer**: this *Part 1* introductory post is rooted in the excessively optimistic assumption that I will have time to write subsequent posts that expand from this introduction, and the less excessively optimistic assumption that this expansion can be written to a broader audience than fellow graduate students enrolled in UW CSE 515.
+**Disclaimer**: this *Part 1* introductory post is rooted in the excessively
+optimistic assumption that I will have time to write subsequent posts that
+expand from this introduction.
 
-**Prerequisites** are unfortunately yet to be determined. Since I've only just started this class it is impossible to know exactly how much of it can be disseminated to a broader audience. At the very least, you will need
+**Prerequisites** are in flux. Since I've only just started this class it is
+impossible to know exactly how much of it can be disseminated to a broader
+audience. At the very least, you will need
 1. Mathematical maturity, at least enough to understand the definition of a [graph](https://en.wikipedia.org/wiki/Graph_theory) <!-- or link to my own definition -->
 2. Probability at the [undergraduate level](https://projects.iq.harvard.edu/stat110/home).
 
@@ -106,7 +112,7 @@ probability that an individual favors Medicare for all:
                      &= 0.097 + 0.043 + 0.054 + 0.331 \\\
                      &= 0.525
 \end{align}
-So in the marginal distribution, it is more likely that an individual is in
+Marginally it is more likely that an individual is in
 favor of Medicare for all. However, suppose we observe that this individual
 does not support stricter gun laws. How does this change the probability of the
 former issue?
@@ -149,28 +155,61 @@ Again, suppose we also observe \\(g^0\\):
 
 So if we already know the individual's party affiliation \\(P\\), then \\(G\\)
 and
-\\(H\\) are independent[^5], which we denote by \\( G \perp H \mid P \\). Thus
+\\(H\\) are independent, <!-- [^5] -->
+which we denote by \\( G \perp H \mid P \\). Thus
 when observing \\(G\\) changed our beliefs about \\(H\\) in the first case, it
-did so *solely* by changing our beliefs about \\(P\\). Put another way, for a
-given Republican or Democrat, gun laws and nationalied health insurance are
-fairly incomparable issues, but because
+did so *solely* by changing our beliefs about \\(P\\): since it is so unlikely
+that a Democrat is against stricter gun laws, we think it is more likely that
+such an individual is a Republican, which then lowers the probability that they
+support Medicare for all. But interestingly, when the party is already known,
+there is no other trail of influence for observing \\(G\\) to change our
+beliefs about \\(H\\).
 
-1. it is so unlikely that a Democrat would be against stricter gun laws
-2. it is so unlikely
+To wrap up this example, we exploit the complexity reduction mentioned above.
+By definition \\(G \perp H \mid P\\) is equivalent to
+\\(\mathbb{P}(G, H \mid P) = \mathbb{P}(G \mid P) \mathbb{P}(H \mid P)\\)
+Thus we can write
 
-<!--
-In the distribution laid out above, gun laws and
-nationalized health insurance are fairly incomparable issues
+\begin{align}
+\mathbb{P}(P, G, H)
+  &=  \mathbb{P}(P)\,\mathbb{P}\,(G, H \mid P) \\\
+  &=  \mathbb{P}(P) \,\mathbb{P}(G \mid P) \,\mathbb{P}(H \mid P) \\\
+  &\approx  O(2^{n-1}). \\\
+\end{align}
 
+# Bayesian Networks
+We say that the distribution with mass function \\(\mu(x_1,\ldots,x_n)\\) is a
+Bayesian Network (BN) if there exists a directed acyclic graph G with nodes
+\\(\\{1,\ldots,n\\}\\) such that
 
-TODO maybe avoid this and just start with a graph, explain if it factors then good
-Notice that by successively applying the definition of the conditional probability mass function[^2]
-[^2]: \\(\mathbb{P}(A, B) = \mathbb{P}(A)\mathbb{P}(B\mid A)\\)
-we can derive another general expression
+$$ \mu(x_1, \ldots, x_n) = \prod_{k = 1}^{n} \mu(x_k \mid x_{\pi(k)}) $$
 
-$$ \mu(x_1, \ldots, x_n) = \mu(x_1) \prod_{i = 2}^n \mu(x_i \mid x_1, \ldots, x_{i-1}). $$
-h^1 -> .525
- -->
+where \\(\pi(k)\\) is the set of parents of node \\(k\\) in G. As implied by
+the definition, BNs will allow us to encode certain conditional
+independencies in a distribution in the form of a graph.
+
+First, note that in the general and arbitrarily dependent case, by repeatedly
+applying the defintion of conditional independence, one can derive[^7]
+
+$$ \mu(x_1, \ldots, x_n) = \prod_{k = 1}^{n} \mu(x_k \mid x_1,\ldots,x_{k-1}). $$
+
+which would be represented by the DAG below.
+<p align="center">
+{% include image.html path="pgm-intro/generic-dag.svg" path-detail="pgm-intro/generic-dag.svg" alt="PGH DAG" %}
+</p>
+
+Since these arcs represent a flow of influence and dependence among variables,
+our desire for independence structures is equivalent to a desire for sparser
+graphs.
+
+In the example above we showed that \\(\mu\\) factors into
+
+$$ \mu(x_p, x_g, x_h) = \mu(x_p)\,\mu(x_g \mid x_p) \,\mu(x_h \mid x_p) $$
+
+which can be represented by the graph
+<p align="center">
+{% include image.html path="pgm-intro/pgh-1.svg" path-detail="pgm-intro/pgh-1.svg" alt="PGH DAG" %}
+</p>
 
 # Footnotes
 
@@ -178,4 +217,4 @@ h^1 -> .525
 [^2]: Actually first remove the Independents and other parties, then pick a Democrat or Republican party member at random. (Sorry, it's just easier to deal with a binary random variable!)
 [^3]: Technically, because these probabilities must sum to one, the distribution is fully specified by the first \\(2^n - 1\\) values.
 [^4]: Opinions on gun control and health care, conditional by party, are from polling by [Pew Research Center](https://www.pewresearch.org/fact-tank/2019/10/16/share-of-americans-who-favor-stricter-gun-laws-has-increased-since-2017/ft_19-10-16_gunlaws_sizable-gender-education-differences-support-stricter-gun-laws_2/) and [Kaiser Family Foundation](https://www.kff.org/health-reform/poll-finding/kff-health-tracking-poll-november-2019/), respectively.
-[^5]: I invite you to check the other cases or recall basic theorems of conditional independence and set complements.
+[^7]: See [wikipedia](https://en.wikipedia.org/wiki/Chain_rule_(probability)#More_than_two_random_variables) for a derivation.

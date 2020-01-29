@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+
+which sos &> /dev/null || stack install steeloverseer
+runghc_opts="--install-ghc --resolver lts-14.21 --package diagrams"
+dims_opts="-w 400 -h 140"
+sos diagrams/ \
+  -c "stack runghc $runghc_opts \0 -- $dims_opts -o _assets/images/\1.svg" \
+  -p "diagrams/(.*)\.hs"
