@@ -17,20 +17,21 @@ import Diagrams.Backend.SVG.CmdLine
 --------------------- Write files  -------------------------
 
 main :: IO ()
-main = mainWith pgh_1
+main = mainWith generic_dag
 
 --------------------- Diagrams  -------------------------
 
-pgh_1 :: Diagram B
-pgh_1 =
-  vsep 8
-    [ cn "P"
-    , centerX $ hsep 10 [cn "G", cn "H"]
-    ]
-    # connectOutside "P" "G"
-    # connectOutside "P" "H"
-    # connectOutside' (arr & colorArr red) "G" "P"
-    # connectOutside' (arr & colorArr red) "H" "P"
+generic_dag :: Diagram B
+generic_dag =
+    connectOutside' (arr & arrowShaft .~ arc xDir (1/6 @@ turn)) "1" "2"
+  . connectOutside' (arr & arrowShaft .~ arc xDir (1.3/5 @@ turn)) "1" "3"
+  . connectOutside' (arr & arrowShaft .~ arc xDir (1.4/5 @@ turn)) "1" "n"
+  . connectOutside' arr "2" "3"
+  . connectOutside' (arr & arrowShaft .~ arc xDir (-1.4/5 @@ turn)) "2" "n"
+  . connectOutside' arr "3" "n"
+  $ hsep 8 [cn (show k) | k <- [1..3]]
+      ||| strutX 9 ||| ellipses
+      ||| strutX 9 ||| cn "n"
 
 --------------------- Diagram utilities  -------------------
 
@@ -47,14 +48,9 @@ c' = circle 3.7 # fc lightblue <> c
 
 txt s = text s # font "serif" . fontSizeL 3
 
-arr = arr' & arrowShaft .~ arc xDir (-1/6 @@ turn)
-
-arr' =
+arr =
   with & arrowHead .~ spike
        & headLength .~ normal
+       & arrowShaft .~ arc xDir (-1/6 @@ turn)
 
-colorArr col =
-  (headStyle %~ fc col)
-  . (tailStyle %~ fc col)
-  . (shaftStyle %~ lc col . lw thick)
-
+ellipses = txt "..."
