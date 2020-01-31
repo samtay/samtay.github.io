@@ -25,12 +25,10 @@ pgh_1 :: Diagram B
 pgh_1 =
   vsep 8
     [ cn "P"
-    , centerX $ hsep 10 [cn "G", cn "H"]
+    , centerX $ hsep 8 [cn "G", cn "H"]
     ]
     # connectOutside "P" "G"
     # connectOutside "P" "H"
-    # connectOutside' (arr & colorArr red) "G" "P"
-    # connectOutside' (arr & colorArr red) "H" "P"
 
 --------------------- Diagram utilities  -------------------
 
@@ -46,15 +44,3 @@ c' :: QDiagram B V2 Double Any
 c' = circle 3.7 # fc lightblue <> c
 
 txt s = text s # font "serif" . fontSizeL 3
-
-arr = arr' & arrowShaft .~ arc xDir (-1/6 @@ turn)
-
-arr' =
-  with & arrowHead .~ spike
-       & headLength .~ normal
-
-colorArr col =
-  (headStyle %~ fc col)
-  . (tailStyle %~ fc col)
-  . (shaftStyle %~ lc col . lw thick)
-
