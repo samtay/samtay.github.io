@@ -1,7 +1,7 @@
 ---
 layout: post
-title: 'Graphical Models: Part 1'
-description: Introduction to probabalistic graphical models
+title: 'Graphical Models: Introduction'
+description: Motivating graphical models and defining Bayesian Networks.
 tags: [pgm, probability]
 mathjax: true
 ---
@@ -189,7 +189,7 @@ the definition, BNs will allow us to encode certain conditional
 independencies in a distribution in the form of a graph.
 
 First, note that in the general and arbitrarily dependent case, by repeatedly
-applying the defintion of conditional independence, one can derive[^7]
+applying the defintion of conditional independence, one can derive[^5]
 
 $$ \mu(x_1, \ldots, x_n) = \prod_{k = 1}^{n} \mu(x_k \mid x_1,\ldots,x_{k-1}). $$
 
@@ -206,10 +206,23 @@ In the example above we showed that \\(\mu\\) factors into
 
 $$ \mu(x_p, x_g, x_h) = \mu(x_p)\,\mu(x_g \mid x_p) \,\mu(x_h \mid x_p) $$
 
-which can be represented by the graph
+which can be represented by the graph below.
 <p align="center">
 {% include image.html path="pgm-intro/pgh-1.svg" path-detail="pgm-intro/pgh-1.svg" alt="PGH DAG" %}
 </p>
+It takes some familiarity to read independencies implied by the graph
+structure.[^6] In this case, each node can influence the others, as
+expected. However, since
+\\(P\\) and \\(H\\) are only connected via their single parent node \\(P\\), we
+can infer directly from the graph that they are conditionally independent given
+\\(P\\). In other words, denoting the trail of influence by red arrows, and
+observed variables by blue nodes, we discovered the following:
+<p align="center">
+{% include image.html path="pgm-intro/pgh-influence.svg" path-detail="pgm-intro/pgh-influence.svg" alt="PGH DAG" %}
+</p>
+that is, \\(G\\) can influence \\(H\\) via \\(P\\), but once \\(P\\) is
+observed this trail of influence is *blocked*, because observing \\(G\\) will
+clearly not update our beliefs about \\(P\\) if we already have observed \\(P\\).
 
 # Footnotes
 
@@ -217,4 +230,5 @@ which can be represented by the graph
 [^2]: Actually first remove the Independents and other parties, then pick a Democrat or Republican party member at random. (Sorry, it's just easier to deal with a binary random variable!)
 [^3]: Technically, because these probabilities must sum to one, the distribution is fully specified by the first \\(2^n - 1\\) values.
 [^4]: Opinions on gun control and health care, conditional by party, are from polling by [Pew Research Center](https://www.pewresearch.org/fact-tank/2019/10/16/share-of-americans-who-favor-stricter-gun-laws-has-increased-since-2017/ft_19-10-16_gunlaws_sizable-gender-education-differences-support-stricter-gun-laws_2/) and [Kaiser Family Foundation](https://www.kff.org/health-reform/poll-finding/kff-health-tracking-poll-november-2019/), respectively.
-[^7]: See [wikipedia](https://en.wikipedia.org/wiki/Chain_rule_(probability)#More_than_two_random_variables) for a derivation.
+[^5]: See [wikipedia](https://en.wikipedia.org/wiki/Chain_rule_(probability)#More_than_two_random_variables) for a derivation.
+[^6]:  I'd encourage anyone interested to refer to Daphne Koller's [coursera course](https://www.coursera.org/learn/probabilistic-graphical-models#syllabus) and associated textbook.
