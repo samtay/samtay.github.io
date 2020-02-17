@@ -11,7 +11,7 @@ This week I decided to revisit my halfway-finished (i.e. abandonded) TUI project
 2018, which was before I joined SimSpace[^1]
 where I was exposed to myriad new techniques, from clever
 [constraint](https://hackage.haskell.org/package/constraints-0.12/docs/Data-Constraint.html)
-programming to new [language extensions](/posts/deriving-via), in addition to
+programming to new [language extensions](/posts/deriving-via-use-case), in addition to
 debates regarding larger-scale patterns such as how to achieve error handling
 with the fewest headaches possible. Needless to say, after working with such
 smart and talented folks, I am a better developer now than I was before.[^2]
