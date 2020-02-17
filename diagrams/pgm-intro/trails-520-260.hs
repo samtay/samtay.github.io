@@ -85,15 +85,13 @@ c :: QDiagram B V2 Double Any
 c = circle 3.5 # fc silver
 
 c' :: QDiagram B V2 Double Any
-c' = circle 3.1 # fc lightblue <> c
+c' = circle 3.0 # fc lightblue <> c
 
 txt s = text s # font "serif" . fontSizeL 2.5
 
 arr = with & headLength .~ small
 
-arr' =
-  with & arrowHead .~ spike
-       & headLength .~ normal
+arr' = with & arrowHead .~ noHead
 
 colorArr = colorArr' 1
 
@@ -101,4 +99,3 @@ colorArr' o col =
   (headStyle %~ fc col . opacity o)
   . (tailStyle %~ fc col . opacity o)
   . (shaftStyle %~ lc col . opacity o)
-  . (headLength .~ small)
