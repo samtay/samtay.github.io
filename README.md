@@ -8,5 +8,4 @@ Hosted at [samtay.github.io](https://samtay.github.io).
 
 ### todo
 
-1. Write a `shake` script to build them conservatively
-2. In the meantime use `bin/diagrams`. If necessary include & parse "$file-$width-$height.hs"
+1. Adapt `bin/diagrams` to parse "$file-$width-$height.hs"
