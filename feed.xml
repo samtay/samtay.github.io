@@ -10,24 +10,24 @@
         <title>Graphical Models: Introduction</title>
         <description>Motivating graphical models and defining Bayesian Networks.</description>
         <pubDate>Sun, 16 Feb 2020 00:00:00 +0000</pubDate>
-        <link>https://samtay.github.io/posts/pgm-intro</link>
-        <guid isPermaLink="true">https://samtay.github.io/posts/pgm-intro</guid>
+        <link>https://samtay.github.io/posts/graphical-models-intro</link>
+        <guid isPermaLink="true">https://samtay.github.io/posts/graphical-models-intro</guid>
       </item>
     
       <item>
         <title>A small use case for Deriving Via</title>
         <description>Reducing boilerplate in exception hierarchies via Deriving Via.</description>
         <pubDate>Mon, 11 Mar 2019 00:00:00 +0000</pubDate>
-        <link>https://samtay.github.io/posts/deriving-via</link>
-        <guid isPermaLink="true">https://samtay.github.io/posts/deriving-via</guid>
+        <link>https://samtay.github.io/posts/deriving-via-use-case</link>
+        <guid isPermaLink="true">https://samtay.github.io/posts/deriving-via-use-case</guid>
       </item>
     
       <item>
         <title>Introduction to Brick</title>
         <description>A small introduction to the terminal user interface framework.</description>
         <pubDate>Thu, 29 Jun 2017 00:00:00 +0000</pubDate>
-        <link>https://samtay.github.io/posts/brick</link>
-        <guid isPermaLink="true">https://samtay.github.io/posts/brick</guid>
+        <link>https://samtay.github.io/posts/introduction-to-brick</link>
+        <guid isPermaLink="true">https://samtay.github.io/posts/introduction-to-brick</guid>
       </item>
     
       <item>
