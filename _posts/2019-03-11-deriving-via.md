@@ -1,7 +1,7 @@
 ---
 layout: post
 title: A small use case for Deriving Via
-description: Reducing boilerplate in exception hierarchies via Deriving Via
+description: Reducing boilerplate in exception hierarchies via Deriving Via.
 tags: [haskell]
 ---
 
