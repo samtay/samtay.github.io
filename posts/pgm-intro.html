@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Sam Tay | Graphical Models: Introduction</title>
+  <meta name="description" content="Motivating graphical models and defining Bayesian Networks.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta property="og:title" content="Graphical Models: Introduction">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://samtay.github.io/posts/pgm-intro">
+  <meta property="og:description" content="Motivating graphical models and defining Bayesian Networks.">
+  <meta property="og:site_name" content="Sam Tay">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:url" content="https://samtay.github.io/posts/pgm-intro">
+  <meta name="twitter:title" content="Graphical Models: Introduction">
+  <meta name="twitter:description" content="Motivating graphical models and defining Bayesian Networks.">
+
+  
+    <meta property="og:image" content="https://samtay.github.io/assets/og-image-ee46bbc61b334e821e81534b1fd43f3fee6f020ec174b3c2114445695fd48c01.jpg">
+    <meta name="twitter:image" content="https://samtay.github.io/assets/og-image-ee46bbc61b334e821e81534b1fd43f3fee6f020ec174b3c2114445695fd48c01.jpg">
+  
+
+  <link href="https://samtay.github.io/feed.xml" type="application/rss+xml" rel="alternate" title="Sam Tay Last 10 blog posts" />
+
+  
+
+  
+
+    
+      <link rel="icon" type="image/x-icon" href="/assets/favicon-light-a98c41efc5ed9fcc06ac664c9e2f7a9b3c3b2e0a52357d221fe382f6f4abc8fc.ico">
+      <link rel="apple-touch-icon" href="/assets/apple-touch-icon-light-87d1f2a3a19b1500e5c1626a0492025ca5f7f97d24540dc5900288e92112925a.png">
+      <link rel="stylesheet" type="text/css" title="light" id="light" href="/assets/light-bc2be56cb529d7f2022bc5d497e19f0671dc1b2beda656380647cde7d36023e9.css">
+      <link rel="stylesheet" type="text/css" title="dark" id="dark" href="/assets/dark-afe88959ba29fbc3c0086862b7550bb80c223e3b467d45a05f2b9d4d7e50d675.css" disabled="true">
+    
+
+  
+
+  
+    <script type="text/javascript" async
+      src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML">
+    </script>
+  
+
+</head>
+
+<body>
+  <main>
+    <div class="grid grid-centered">
+      <div class="grid-cell">
+        <nav class="header-nav scrollappear">
+  <a href="/" class="header-logo" title="Sam Tay">Sam Tay</a>
+  <ul class="header-links">
+    
+      <li>
+        <a href="/about" title="About me">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-about">
+  <use href="/assets/about-ecf154b571ab8034ae00aeed91a3b7ad68db80b46d958753ad6216c919486e88.svg#icon-about" xlink:href="/assets/about-ecf154b571ab8034ae00aeed91a3b7ad68db80b46d958753ad6216c919486e88.svg#icon-about"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+    
+    
+    
+      <li>
+        <a href="https://github.com/samtay" rel="noreferrer noopener" target="_blank" title="GitHub">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-github">
+  <use href="/assets/github-094f81040819f34343ee6ffff0980f17e2807b08b595eaaf66ae3554934fd78d.svg#icon-github" xlink:href="/assets/github-094f81040819f34343ee6ffff0980f17e2807b08b595eaaf66ae3554934fd78d.svg#icon-github"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      <li>
+        <a href="mailto:sam.chong.tay@gmail.com" title="Email">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-email">
+  <use href="/assets/email-782473193bf750036fdb90e8daa075508a20509d01854c09f3237c144a3f0601.svg#icon-email" xlink:href="/assets/email-782473193bf750036fdb90e8daa075508a20509d01854c09f3237c144a3f0601.svg#icon-email"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+      <li>
+        <a href="/feed.xml" rel="noreferrer noopener" target="_blank" title="RSS">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-rss">
+  <use href="/assets/rss-541ec5cea9cefd10d2fcfec01888f3f231a8829940249835fa7b7b3a12ae0d0d.svg#icon-rss" xlink:href="/assets/rss-541ec5cea9cefd10d2fcfec01888f3f231a8829940249835fa7b7b3a12ae0d0d.svg#icon-rss"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+      <li>
+        <a onclick="toggle()" title="Toggle Theme">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-theme">
+  <use href="/assets/theme-66869e0bf8dab34bae1c86bda400327b772e0be69e8dc28d3ede896e771320ed.svg#icon-theme" xlink:href="/assets/theme-66869e0bf8dab34bae1c86bda400327b772e0be69e8dc28d3ede896e771320ed.svg#icon-theme"></use>
+</svg>
+
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+
+
+        <article class="article scrollappear">
+          <header class="article-header">
+            <h1>Graphical Models: Introduction</h1>
+            <p>Motivating graphical models and defining Bayesian Networks.</p>
+            <div class="article-list-footer">
+  <span class="article-list-date">
+    February 16, 2020
+  </span>
+  <span class="article-list-divider">-</span>
+  <span class="article-list-minutes">
+    
+    
+      8 minute read
+    
+  </span>
+  <span class="article-list-divider">-</span>
+  <div class="article-list-tags">
+    
+      
+      <a href="/tag/pgm" title="See all posts with tag 'Graphical Models'">Graphical Models</a>
+    
+      
+      <a href="/tag/probability" title="See all posts with tag 'Probability'">Probability</a>
+    
+  </div>
+</div>
+          </header>
+
+          <div class="article-content">
+            <p>This week I will start my second quarter as a PhD student at the University of
+Washington and I will be studying Graphical Models with <a href="https://homes.cs.washington.edu/~sewoong/">Sewoong
+Oh</a> over in the CS department, a class
+which I’ve been looking forward to for a number of reasons, chief among
+them that I like the opportunity to employ (seemingly disparate) pure
+math techniques to unsuspecting applied problem domains; in this case,
+solving probabilistic inference problems via graph theory.</p>
+
+<p>This is the first of a series designed to introduce the concept of
+probabalistic graphical models, motivate their definitions, outline related
+algorithms, and (time-permitting) show their implementation in Haskell.</p>
+
+<p><strong>Disclaimer</strong>: this <em>Part 1</em> introductory post is rooted in the excessively
+optimistic assumption that I will have time to write subsequent posts that
+expand from this introduction.</p>
+
+<p><strong>Prerequisites</strong> are in flux. Since I’ve only just started this class it is
+impossible to know exactly how much of it can be disseminated to a broader
+audience. At the very least, you will need</p>
+<ol>
+  <li>Mathematical maturity, at least enough to understand the definition of a <a href="https://en.wikipedia.org/wiki/Graph_theory">graph</a> <!-- or link to my own definition --></li>
+  <li>Probability at the <a href="https://projects.iq.harvard.edu/stat110/home">undergraduate level</a>.</li>
+</ol>
+
+<h1 id="motivation">Motivation</h1>
+
+<p>Let \(\mathcal{X}\) be some alphabet<sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup> and consider a probability
+distribution over the sample space \(\mathcal{X}^n\) with probability mass
+function \(\mu\). That is, letting \((X_1,\ldots,X_n)\) denote a random
+vector over this distribution,</p>
+
+<script type="math/tex; mode=display">\mu(x_1, \ldots, x_n) = \mathbb{P}(X_1 = x_1, \ldots, X_n = x_n).</script>
+
+<p>In this fully general setting where the \(X_i\)’s can be arbitrarily interdependent,
+notice that \(\mu\) must be specified by \(O(|\mathcal{X}|^n)\) values. However,
+if the \(X_i\)’s are independent, there is a tremendous
+simplification as this distribution factors into \(\mathbb{P}(X_1 = x_1)
+\cdots \mathbb{P}(X_n = x_n)\),
+and in this case, \(\mu\) is specified by only \(O(n|\mathcal{X}|)\)
+values. By exploiting this admittedly best-case independence scenario, our
+computations regarding \(\mu\) reduce from exponential to linear in the
+dimension \(n\).</p>
+
+<p>This is the main idea behind our graphical model representations. While it is
+rare for the \(X_i\) to be completely independent, it is often the
+case that some of the \(X_i\) are conditionally independent (or at least, the
+assumption of such conditional independence is a reasonable approximation),
+which allows a reduction in complexity and thus more efficient and feasible
+algorithms.</p>
+
+<h3 id="example">Example</h3>
+<p>Let’s take a small detour to look an illustrative example. Lately in U.S.
+domestic politics, partisanship and party alliance seem to increasingly determine an
+individual’s views on a given issue. This observation suggests the
+approximation that issues are conditionally independent given the party
+alliance is known. So suppose we pick an American<sup id="fnref:2"><a href="#fn:2" class="footnote">2</a></sup> at random and consider the
+probability space induced by three <!-- TODO count -->
+random variables <em>Party</em> \((P)\), <em>Gun Control</em> \((G)\), and <em>Health Care</em>
+\((H)\). For the sake of simplicity we will treat these as binary random variables,
+i.e.</p>
+
+<p>\[ Val(P) = \{p^0, p^1\} \quad Val(G) = \{g^0, g^1\} \quad Val(H) = \{h^0, h^1\} \]</p>
+
+<p>where</p>
+
+<p>\begin{align}
+p^0 &amp;:= \text{republican} \\
+p^1 &amp;:= \text{democrat} \\
+g^0 &amp;:= \text{does not support stricter gun laws} \\
+g^1 &amp;:= \text{supports stricter gun laws} \\
+h^0 &amp;:= \text{does not support Medicare for all} \\
+h^1 &amp;:= \text{supports Medicare for all}
+\end{align}</p>
+
+<p>As discussed above, a fully general probablistic model allows for arbitrary
+\(\mathbb{P}(P,G,H)\) probabilities for the \(2^n\) possible outcomes in
+this space.<sup id="fnref:3"><a href="#fn:3" class="footnote">3</a></sup> One such distribution is given in the table below.</p>
+
+<table class="marginal-table">
+  <thead>
+    <tr>
+      <th style="text-align: center">\(P\)</th>
+      <th style="text-align: center">\(G\)</th>
+      <th style="text-align: center">\(H\)</th>
+      <th style="text-align: center">\(\mathbb{P}(P, G, H)\)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">\(p^0\)</td>
+      <td style="text-align: center">\(g^0\)</td>
+      <td style="text-align: center">\(h^0\)</td>
+      <td style="text-align: center">\(0.248\)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(p^0\)</td>
+      <td style="text-align: center">\(g^0\)</td>
+      <td style="text-align: center">\(h^1\)</td>
+      <td style="text-align: center">\(0.097\)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(p^0\)</td>
+      <td style="text-align: center">\(g^1\)</td>
+      <td style="text-align: center">\(h^0\)</td>
+      <td style="text-align: center">\(0.112\)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(p^0\)</td>
+      <td style="text-align: center">\(g^1\)</td>
+      <td style="text-align: center">\(h^1\)</td>
+      <td style="text-align: center">\(0.043\)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(p^1\)</td>
+      <td style="text-align: center">\(g^0\)</td>
+      <td style="text-align: center">\(h^0\)</td>
+      <td style="text-align: center">\(0.016\)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(p^1\)</td>
+      <td style="text-align: center">\(g^0\)</td>
+      <td style="text-align: center">\(h^1\)</td>
+      <td style="text-align: center">\(0.054\)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(p^1\)</td>
+      <td style="text-align: center">\(g^1\)</td>
+      <td style="text-align: center">\(h^0\)</td>
+      <td style="text-align: center">\(0.099\)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">\(p^1\)</td>
+      <td style="text-align: center">\(g^1\)</td>
+      <td style="text-align: center">\(h^1\)</td>
+      <td style="text-align: center">\(0.331\)</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- generated by marginals
+P(g| p0) = (.31, .69)
+P(h| p0) = (.28, .72)
+P(g| p1) = (.86, .14)
+P(h| p1) = (.77, .23)
+-->
+
+<p>While the specific joint probabilities are contrived, the marginal
+probabilities per party are based on real polling<sup id="fnref:4"><a href="#fn:4" class="footnote">4</a></sup>, so these
+values should fit roughly with our intuition.</p>
+
+<p>Let’s explore the dependence among these variables, first computing the
+probability that an individual favors Medicare for all:
+\begin{align}
+ \mathbb{P}(H = h^1) &amp;= \sum_{p, g} \mathbb{P}(H = h^1, P = p, G = g) \\
+                     &amp;= 0.097 + 0.043 + 0.054 + 0.331 \\
+                     &amp;= 0.525
+\end{align}
+Marginally it is more likely that an individual is in
+favor of Medicare for all. However, suppose we observe that this individual
+does not support stricter gun laws. How does this change the probability of the
+former issue?
+\begin{align}
+ \mathbb{P}(H = h^1 | G = g^0)
+   &amp;= \frac{\mathbb{P}(H = h^1, G = g^0)}{\mathbb{P}(G = g^0)} \\
+   &amp;= \frac{\sum_{p}\mathbb{P}(G = g^0, H = h^1, P=p)}
+           {\sum_{p,h}\mathbb{P}(G = g^0, P=p, H=h)} \\
+   &amp;= \frac{0.097 + 0.054}{0.248+0.097+0.016+0.054} \\
+   &amp;= 0.364
+\end{align}
+The conclusion to draw from this calculation is that \(H\) and \(G\) are
+quite dependent. Recall that independence holds if and only if observing
+\(G\) does not change our beliefs about \(H\); in this case we see that
+observing \(G = g^0\) rather drastically updates our beliefs, and we now find
+it very unlikely that \(H = h^1\). So we’re not at all justified in an assumption of independence.</p>
+
+<p>But how exactly does the observation \(G\) influence \(H\)? Recall our
+discussion above about that pesky p-word: partisanship. Let’s run through the
+same calculations, but this time, suppose we know the individual is a Democrat
+beforehand.</p>
+
+<p>\begin{align}
+\mathbb{P}(H = h^1 | P = p^1)
+  &amp;= \frac{\mathbb{P}(H = h^1, P = p^1)}
+          {\mathbb{P}(P = p^1)} \\
+  &amp;= \frac{0.054 + 0.331}
+          {0.500} \\
+  &amp;= 0.77
+\end{align}</p>
+
+<p>Again, suppose we also observe \(g^0\):
+\begin{align}
+ \mathbb{P}(H = h^1 | G = g^0, P = p^1)
+   &amp;= \frac{\mathbb{P}(H = h^1, G = g^0, P = p^1)}
+           {\mathbb{P}(G = g^0, P=p^1)} \\
+   &amp;= \frac{0.054}{0.016 + 0.054} \\
+   &amp;= 0.77
+\end{align}</p>
+
+<p>So if we already know the individual’s party affiliation \(P\), then \(G\)
+and
+\(H\) are independent, <!-- [^5] -->
+which we denote by \( G \perp H \mid P \). Thus
+when observing \(G\) changed our beliefs about \(H\) in the first case, it
+did so <em>solely</em> by changing our beliefs about \(P\): since it is so unlikely
+that a Democrat is against stricter gun laws, we think it is more likely that
+such an individual is a Republican, which then lowers the probability that they
+support Medicare for all. But interestingly, when the party is already known,
+there is no other trail of influence for observing \(G\) to change our
+beliefs about \(H\).</p>
+
+<p>To wrap up this example, we exploit the complexity reduction mentioned above.
+By definition \(G \perp H \mid P\) is equivalent to
+\(\mathbb{P}(G, H \mid P) = \mathbb{P}(G \mid P) \mathbb{P}(H \mid P)\)
+Thus we can write</p>
+
+<p>\begin{align}
+\mathbb{P}(P, G, H)
+  &amp;=  \mathbb{P}(P)\,\mathbb{P}\,(G, H \mid P) \\
+  &amp;=  \mathbb{P}(P) \,\mathbb{P}(G \mid P) \,\mathbb{P}(H \mid P) \\
+  &amp;\approx  O(2^{n-1}). \\
+\end{align}</p>
+
+<h1 id="bayesian-networks">Bayesian Networks</h1>
+<p>We say that the distribution with mass function \(\mu(x_1,\ldots,x_n)\) is a
+Bayesian Network (BN) if there exists a directed acyclic graph G with nodes
+\(\{1,\ldots,n\}\) such that</p>
+
+<script type="math/tex; mode=display">\mu(x_1, \ldots, x_n) = \prod_{k = 1}^{n} \mu(x_k \mid x_{\pi(k)})</script>
+
+<p>where \(\pi(k)\) is the set of parents of node \(k\) in G. As implied by
+the definition, BNs will allow us to encode certain conditional
+independencies in a distribution in the form of a graph.</p>
+
+<p>First, note that in the general and arbitrarily dependent case, by repeatedly
+applying the defintion of conditional independence, one can derive<sup id="fnref:5"><a href="#fn:5" class="footnote">5</a></sup></p>
+
+<script type="math/tex; mode=display">\mu(x_1, \ldots, x_n) = \prod_{k = 1}^{n} \mu(x_k \mid x_1,\ldots,x_{k-1}).</script>
+
+<p>which would be represented by the DAG below.</p>
+<p align="center">
+<a href="/assets/pgm-intro/generic-dag-aac4af20ab49c99d5f985c9fafebe62d33cfc8de5c17584646b4df5d1fa16e6d.svg">
+  <img src="/assets/pgm-intro/generic-dag-aac4af20ab49c99d5f985c9fafebe62d33cfc8de5c17584646b4df5d1fa16e6d.svg" alt="PGH DAG" class="zooming" data-rjs="/assets/pgm-intro/generic-dag-aac4af20ab49c99d5f985c9fafebe62d33cfc8de5c17584646b4df5d1fa16e6d.svg" data-zooming-width="400" data-zooming-height="140" />
+</a>
+
+</p>
+
+<p>Since these arcs represent a flow of influence and dependence among variables,
+our desire for independence structures is equivalent to a desire for sparser
+graphs.</p>
+
+<p>In the example above we showed that \(\mu\) factors into</p>
+
+<script type="math/tex; mode=display">\mu(x_p, x_g, x_h) = \mu(x_p)\,\mu(x_g \mid x_p) \,\mu(x_h \mid x_p)</script>
+
+<p>which can be represented by the graph below.</p>
+<p align="center">
+<a href="/assets/pgm-intro/pgh-1-45d408bab57626b35d22a4eb91eb0345a77475c6a976fe23e9dbce1e16911cc7.svg">
+  <img src="/assets/pgm-intro/pgh-1-45d408bab57626b35d22a4eb91eb0345a77475c6a976fe23e9dbce1e16911cc7.svg" alt="PGH DAG" class="zooming" data-rjs="/assets/pgm-intro/pgh-1-45d408bab57626b35d22a4eb91eb0345a77475c6a976fe23e9dbce1e16911cc7.svg" data-zooming-width="400" data-zooming-height="140" />
+</a>
+
+</p>
+<p>It takes some familiarity to read independencies implied by the graph
+structure.<sup id="fnref:6"><a href="#fn:6" class="footnote">6</a></sup> In this case, each node can influence the others, as
+expected. However, since
+\(P\) and \(H\) are only connected via their single parent node \(P\), we
+can infer directly from the graph that they are conditionally independent given
+\(P\). In other words, denoting the trail of influence by red arrows, and
+observed variables by blue nodes, we discovered the following:</p>
+<p align="center">
+<a href="/assets/pgm-intro/pgh-influence-6f568012e39fdadf1dbb7a13dad8298831a10e897f1bd5003a018216c7ae817f.svg">
+  <img src="/assets/pgm-intro/pgh-influence-6f568012e39fdadf1dbb7a13dad8298831a10e897f1bd5003a018216c7ae817f.svg" alt="PGH DAG" class="zooming" data-rjs="/assets/pgm-intro/pgh-influence-6f568012e39fdadf1dbb7a13dad8298831a10e897f1bd5003a018216c7ae817f.svg" data-zooming-width="400" data-zooming-height="140" />
+</a>
+
+</p>
+<p>that is, \(G\) can influence \(H\) via \(P\), but once \(P\) is
+observed this trail of influence is <em>blocked</em>, because observing \(G\) will
+clearly not update our beliefs about \(P\) if we already have observed \(P\).</p>
+
+<h1 id="conclusion">Conclusion</h1>
+<p>We’ve just scratched the surface on the topic of graphical models, but I hope
+this is enough to at least motivate <em>why</em> we’re interested in such graphs.
+I’d like to mention that BNs are just one type of graphical model, but equally
+popular are Markov Random Fields (on undirected graphs) and Factor Graphs (on
+undirected bipartite graphs), among others. These different types of induced
+graphs can encode different types of conditional independencies, and thus have
+their own unique advantages in applications.</p>
+
+<p>In my next post, assuming I find the time to write it, I’d like to explore a
+specific Bayesian Network called Hidden Markov Model, and show how
+exploiting the graph structure leads to an efficient message-passing algorithm
+called belief propagation for finding marginal probabilities.</p>
+
+<h1 id="footnotes">Footnotes</h1>
+
+<div class="footnotes">
+  <ol>
+    <li id="fn:1">
+      <p>Typically a finite set, e.g. \(\{0,1\}\). <a href="#fnref:1" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:2">
+      <p>Actually first remove the Independents and other parties, then pick a Democrat or Republican party member at random. (Sorry, it’s just easier to deal with a binary random variable!) <a href="#fnref:2" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:3">
+      <p>Technically, because these probabilities must sum to one, the distribution is fully specified by the first \(2^n - 1\) values. <a href="#fnref:3" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:4">
+      <p>Opinions on gun control and health care, conditional by party, are from polling by <a href="https://www.pewresearch.org/fact-tank/2019/10/16/share-of-americans-who-favor-stricter-gun-laws-has-increased-since-2017/ft_19-10-16_gunlaws_sizable-gender-education-differences-support-stricter-gun-laws_2/">Pew Research Center</a> and <a href="https://www.kff.org/health-reform/poll-finding/kff-health-tracking-poll-november-2019/">Kaiser Family Foundation</a>, respectively. <a href="#fnref:4" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:5">
+      <p>See <a href="https://en.wikipedia.org/wiki/Chain_rule_(probability)#More_than_two_random_variables">wikipedia</a> for a derivation. <a href="#fnref:5" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:6">
+      <p>I’d encourage anyone interested to refer to Daphne Koller’s <a href="https://www.coursera.org/learn/probabilistic-graphical-models#syllabus">coursera course</a> and associated textbook. <a href="#fnref:6" class="reversefootnote">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+
+          </div>
+
+          
+            <div id="disqus_thread" class="article-comments"></div>
+            <script>
+              //  https://disqus.com/admin/universalcode/#configuration-variables
+              var disqus_config = function () {
+                this.page.url = 'https://samtay.github.io/posts/pgm-intro';
+                this.page.identifier = '/posts/pgm-intro';
+                this.page.title = 'Graphical Models: Introduction';
+              };
+              (function() {
+                var d = document, s = d.createElement('script');
+                s.src = '//samtay.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+              })();
+            </script>
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+          
+        </article>
+        <footer class="footer scrollappear">
+  <p>
+  Ramblings ϵ {Mathematics, Statistics, Haskell}.
+    &copy; 2020. All rights reserved.
+    <!--<a href="/about" title="About me">Nielsen Ramon</a>. Download it <a href="https://github.com/nielsenramon/chalk" rel="noreferrer noopener" target="_blank" title="Download Chalk">here</a>.-->
+  </p>
+</footer>
+
+      </div>
+    </div>
+  </main>
+  
+
+<script type="text/javascript" src="/assets/vendor-2c224c53eb697c739f9490c38819a72184f09472739fd9e492272ef174090428.js"></script>
+
+
+  <script type="text/javascript" src="/assets/webfonts-96493456d319d1bf419afdf8701552d4d486fee6afd304897d4fd81eb4e0cc0b.js"></script>
+
+
+
+  <script type="text/javascript" src="/assets/scrollappear-e2da8ea567e418637e31266cc5302126eaa79f62a2273739086358b589a89ee6.js"></script>
+
+
+<script type="text/javascript" src="/assets/application-cfde13ac81ddaf4351b2e739603e2baf688d0fcc9aba613fe62bbb1c7b037fb9.js"></script>
+
+
+  <script type="text/javascript" src="/assets/themetoggle-df0d3d73164dc26dffbd630182ae4d0dfa7bee6b694a2b5d565d73595b582bbf.js"></script>
+
+</body>
+</html>
