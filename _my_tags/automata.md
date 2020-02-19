@@ -1,4 +1,4 @@
 ---
 slug: automata
-name: Cellular Automata
+title: Cellular Automata
 ---

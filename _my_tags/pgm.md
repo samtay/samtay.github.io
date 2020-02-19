@@ -1,4 +1,4 @@
 ---
 slug: pgm
-name: Graphical Models
+title: Graphical Models
 ---

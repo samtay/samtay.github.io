@@ -1,4 +1,4 @@
 ---
 slug: probability
-name: Probability
+title: Probability
 ---

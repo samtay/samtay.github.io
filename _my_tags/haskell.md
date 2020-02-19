@@ -1,4 +1,4 @@
 ---
 slug: haskell
-name: Haskell
+title: Haskell
 ---

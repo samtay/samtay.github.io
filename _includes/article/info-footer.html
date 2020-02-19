@@ -14,8 +14,8 @@
   <span class="article-list-divider">-</span>
   <div class="article-list-tags">
     {% for tag in include.post.tags %}
-      {% assign tag_name = site.my_tags | where: "slug", tag | map: "name" | first %}
-      <a href="{{ 'tag/' | relative_url }}{{ tag }}" title="See all posts with tag '{{ tag_name }}'">{{ tag_name }}</a>
+      {% assign tag_title = site.my_tags | where: "slug", tag | map: "title" | first %}
+      <a href="{{ 'tag/' | relative_url }}{{ tag }}" title="See all posts with tag '{{ tag_title }}'">{{ tag_title }}</a>
     {% endfor %}
   </div>
 </div>

@@ -1,4 +1,4 @@
 ---
 slug: tui
-name: Terminal User Interface
+title: Terminal User Interface
 ---
