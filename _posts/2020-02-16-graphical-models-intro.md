@@ -15,7 +15,7 @@ math techniques to unsuspecting applied problem domains; in this case,
 solving probabilistic inference problems via graph theory.
 
 This is the first of a series designed to introduce the concept of
-probabalistic graphical models, motivate their definitions, outline related
+probabilistic graphical models, motivate their definitions, outline related
 algorithms, and (time-permitting) show their implementation in Haskell.
 
 **Disclaimer**: this *Part 1* introductory post is rooted in the excessively
@@ -189,7 +189,7 @@ the definition, BNs will allow us to encode certain conditional
 independencies in a distribution in the form of a graph.
 
 First, note that in the general and arbitrarily dependent case, by repeatedly
-applying the defintion of conditional independence, one can derive[^5]
+applying the defintion of conditional probability, one can derive[^5]
 
 $$ \mu(x_1, \ldots, x_n) = \prod_{k = 1}^{n} \mu(x_k \mid x_1,\ldots,x_{k-1}). $$
 
