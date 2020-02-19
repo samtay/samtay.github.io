@@ -3,6 +3,8 @@ layout: post
 title: Who needs HashLife when you have comonads?
 description: Improving a naive implementation of the Game of Life with an elegant and performant solution.
 tags: [haskell, tui, automata]
+redirect_from:
+  - /articles/comonadic-game-of-life.html
 ---
 
 ## Introduction

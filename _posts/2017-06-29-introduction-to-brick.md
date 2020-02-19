@@ -4,6 +4,9 @@ title: "Introduction to Brick"
 description: "A small introduction to the terminal user interface framework."
 thumb_image: "brick/snake-demo.gif"
 tags: [haskell, tui]
+redirect_from:
+  - /articles/brick.html
+  - /posts/brick
 ---
 
 ## Introduction
