@@ -14,16 +14,16 @@ where I was exposed to myriad new techniques, from clever
 programming to new [language extensions](/posts/deriving-via-use-case), in addition to
 debates regarding larger-scale patterns such as how to achieve error handling
 with the fewest headaches possible. Needless to say, after working with such
-smart and talented folks, I am a better developer now than I was before.[^2]
+smart and talented folks, I am a better developer now than I was before.
 
 Lately I've been craving some Haskell time, and pondering my decision to enter
-a Statistics graduate program :thinking:, ergo diving back into `so`. I was
+into a Statistics graduate program :thinking: ergo diving back into `so`. I was
 happy to find code that horrified me and was in dire need of refactoring.
-Unfortunately I was a bit overzealous and ended up just issuing a massive
+I was a bit overzealous and ended up just issuing a massive
 [*Revive in
 2020*](https://github.com/samtay/so/commit/dd90673b5cb705118dc7a7c616c58cbe275e9942)
 commit, before thinking that such refactoring might be of interest to budding
-Haskell developers. Let's dive into some of these changes.
+Haskell developers. So, if you're interested, let's dive into some of these changes.
 
 ### Default Extensions
 This one may be obvious to most, but I previously had never used the
@@ -51,12 +51,18 @@ waitWithLoading a = do
 {% endhighlight %}
 Here I have some `a :: Async a` that the user is waiting for, and I'm providing
 a nice animation for them while they wait. Once I get the `res :: a`, I need to
-clear and clean up the animation.  Whenever we want to execute some `action`
+clear and clean up the animation.  Whenever you want to execute some `action`
 which should always be preceeded
-and followed by some other `pre_action` and `post_action`,
+and followed by some other `pre_action` and `post_action` respectively,
 [bracket](https://hackage.haskell.org/package/base-4.12.0.0/docs/Control-Exception.html#v:bracket)
 is the way to go:
 {% highlight haskell %}
+
+bracket :: IO a        -- first "acquire resource"
+        -> (a -> IO b) -- last "release resource"
+        -> (a -> IO c) -- computation to run in-between
+        -> IO c
+
 waitWithLoading a =
   bracket
     (forkIO showLoadingAnimation)
@@ -68,7 +74,7 @@ waitWithLoading a =
     (const $ wait a)
 {% endhighlight %}
 While the before and after code may look functionally the
-same, there is actually an important difference in behavior: exception
+same, there is an important difference in behavior: exception
 handling. In my previous version, if `wait a` threw an exception, the animation
 would not be cleaned up! As the documentation for bracket explains, in the
 second version if `wait a` throws an exception, the animation clean up still
@@ -122,10 +128,158 @@ the bracket pattern, such as `bracketOnError` or `onException` which only run
 the "release" action when an exception is thrown.
 
 ### LambdaCase
+[`LambdaCase`](https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/glasgow_exts.html#extension-LambdaCase)
+is one of my favorite extensions. It's also arguably the smallest
+and simplest one available. Chances are if you are reading this, you are
+already aware of it, but I thought I'd include it here just in case.
+All it does is enable the `\case` syntactic sugar which is short for `\a ->
+case a of`, but it cleans up code surprisingly well.
+Here is an example of an unnecessarily named function:
+{% highlight haskell %}
+execPrompt :: Async (Either Error [Question [] Markdown]) -> App ()
+execPrompt aQuestions = liftIO $
+  waitWithLoading aQuestions >>= runner
+  where
+    runner qs =
+      if null qs
+        then exitWithError "No results found. Try a different question."
+        else void $ runStateT (runByline runPrompt) (initPromptState qs)
+{% endhighlight %}
+The `runner` function is poorly named and an unnecessary binding. Here's a
+version with LambdaCase, which let's the information flow a bit more cleanly:
+{% highlight haskell %}
+execPrompt :: Async (Either Error [Question [] Markdown]) -> App ()
+execPrompt aQuestions = liftIO $
+  waitWithLoading aQuestions >>= \case
+    [] -> exitWithError "No results found. Try a different question."
+    qs -> void $ runStateT (runByline runPrompt) (initPromptState qs)
+{% endhighlight %}
 
 ### Error Handling
+What jumped out the most to me, and probably to you as well by now, is just how many
+`App (Either Error a)` types are floating around. I count 10 of them in the
+*Revive in 2020* diff. While there's nothing inherently wrong with passing
+`Either e a` types around, even frequently, generally speaking this is a code
+smell, particularly if they are nested directly within an `App`-esque monad
+stack. The issue is that, in most of these places along the application flow, I
+don't particularly care about the `Either e` context and am simply bookkeeping to
+have errors bubble up to a top-level (or nearer-to-top-level) error handler.
 
+There a number of ways for me to avoid this bookkeeping and replace `App (Either
+Error a)`'s with `App a`'s, so as to have a cleaner flow of information.
+Because my errors were really only used closer to the `main` entrypoint, I
+chose to use exceptions. In particular because I am using asynchronous
+processes for a friendlier user interface, it made sense to have a
+[`MonadMask`](https://hackage.haskell.org/package/exceptions-0.10.4/docs/Control-Monad-Catch.html#t:MonadMask)
+instance. Similar refactoring could be accomplished with
+[`MonadError`](http://hackage.haskell.org/package/mtl-2.2.2/docs/Control-Monad-Except.html#t:MonadError),
+or even just putting errors into your `MonadState` transformer; it really just
+depends on the use case and style preference.[^3]
+
+For this code, the `Either Error a` was only coming from one place, namely the
+decoding of the JSON response from Stack Exchange:
+{% highlight haskell %}
+seRequest
+  :: String
+  -> [W.Options -> W.Options]
+  -> App (Either Error [Question [] Text])
+seRequest resource optMods = do
+  -- eliding irrelevant code
+  decoded <- makeRequest resource optMods >>= thenDecodeIt
+  return $ case decoded of
+    Left e   -> Left . JSONError $ T.pack e
+    Right [] -> Left NoResultsError
+    Right qs -> Right qs
+{% endhighlight %}
+So all that changes is the last return statement, and of course the type signature:
+{% highlight haskell %}
+seRequest
+  :: String
+  -> [W.Options -> W.Options]
+  -> App [Question [] Text]
+seRequest resource optMods = do
+ -- eliding again
+ case decoded of
+    Left e   -> throwM $ JSONError $ T.pack e
+    Right [] -> throwM NoResultsError
+    Right qs -> pure qs
+{% endhighlight %}
+With these changes, the rest of the code between `main` and `seRequest` can be
+cleaner and just concern itself with the underlying question and answer data
+coming from the StackExchange API. At the top level, instead of dealing with
+the `Either Error` we deal with the exception. Originally the code looked something like:
+{% highlight haskell %}
+-- Simplified main example
+main :: IO ()
+main = do
+  q <- getQuery
+  runApp q >>= \case
+    Left e    -> exitPrintingError e
+    Right qas -> print qas
+{% endhighlight %}
+and it changed to this:
+{% highlight haskell %}
+-- Simplified main example
+main :: IO ()
+main = do
+  q   <- getQuery
+  qas <- catch (runApp q) exitPrintingError
+  print qas
+{% endhighlight %}
+Furthermore, even if a few of the intermediary functions along my application
+flow required the `Either Error` context, there would still likely be a net
+benefit to change to exceptions. I could still reference any possible errors
+within the application flow, and choose whether or not the exception should
+bubble up, like so:
+{% highlight haskell %}
+intermediary :: App a
+intermediary = do
+  txt <- catch getQuestionTxt $ \case
+    NoResultsError -> "No results, try another query."
+    e              -> throwM e
+  displayText txt
+{% endhighlight %}
+In this example I want to continue the same application flow if the error is
+simply that the query returned no results from the search API, a reasonable
+thing to do.[^4] But for other bonafide exceptions such as a JSON decoding
+issue, I `throwM e` to continue to let the exception bubble up, halting
+execution until the next exception catcher. Some readers may be opposed to
+this latter version aesthetically, and I sympathize, but if it cleans up the
+ugly juggling of `Either` types in 10 other locations, the maintenance benefit
+outweighs the "purity" aesthetic.
+
+To play devil's advocate, I do think in the current state of
+the codebase, `MonadError e m` is a great fit, especially given that I am only
+dealing with a single type of error. And for the scope of this application, now
+and in the future, that's probably a fine choice. However, after seeing the
+headaches that can come from using `MonadError` as an application gets more
+complex, and the reconciliation required of different types of errors in
+various parts of a growing application, I personally feel some bias against the approach.
+
+I've chosen to go over this section rather painstakingly because, in my
+experience, it seems exceptions in Haskell are rarely found in beginner to
+intermediate level code. I'm not really sure why this is; it could be
+influenced by the available learning materials, or perhaps it inherently feels a little
+"dirty" to use exceptions, or any dynamically scoped features, in such a pure
+language, but I hope to disavow you of
+this notion by referring you to Mark Karpov's Exceptions tutorial, or
+at the very least the [Motivation for
+exceptions](https://markkarpov.com/tutorial/exceptions.html#motivation-for-exceptions)
+section.
+
+### NonEmptyList
+I think this was on my TODO list even back in 2018, but of course if I am
+throwing a `NoResultsError`, why am I using a data type `[]` that allows for no
+results? And worse, having to redundantly handle the `[]` case in three locations? Enter
+[`NonEmptyList`](https://hackage.haskell.org/package/base-4.12.0.0/docs/Data-List-NonEmpty.html#t:NonEmpty)
+which allows for safer code and peace of mind.
+TODO
+
+### Type Synonyms
+TODO
 
 ### Footnotes
-[^1]: [SimSpace](https://angel.co/company/simspace/jobs/64261-software-engineer-backend) was a fantastic place to work, and they are still hiring! I highly encourage you to apply if you love programming in Haskell and want to work remotely (or not).
-[^2]: Hopefully this will always be true.
+[^1]: [SimSpace](https://angel.co/company/simspace/jobs/64261-software-engineer-backend) was a fantastic place to work, and they are still hiring as of this writing! I highly encourage you to apply if you love programming in Haskell and want to work remotely (or not).
+[^3]: See [here](https://wiki.haskell.org/Error_vs._Exception) for a more detailed look at the distinction between errors and exceptions, and [here](https://markkarpov.com/tutorial/exceptions.html) for an excellent dive into community opinions on the matter.
+
+[^4]: In my case, `NoResultsError` is still worthwhile as an exception because the application immediately bails on no results. Again, there's no single right way to handle this, but I tend to agree with those reading who think that `NoResultsError` should be classified separately from say `JSONDecodingError`.
