@@ -5,7 +5,7 @@
     "local": "bundle exec jekyll serve --drafts"
   },
   "dependencies": {
-    "jquery": "^3.2.1",
+    "jquery": "^3.5.0",
     "npm": "^6.14.0",
     "retinajs": "^2.1.1",
     "svgxuse": "^1.2.4",
