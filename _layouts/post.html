@@ -17,6 +17,18 @@
             {{ content }}
           </div>
 
+          {% if site.utterances_repo %}
+          <script id="utterances_script"
+                  src="https://utteranc.es/client.js"
+                  repo="{{ site.utterances_repo }}"
+                  issue-term="pathname"
+                  label="comments"
+                  theme="github-{{ site.blog_theme }}"
+                  crossorigin="anonymous"
+                  async>
+          </script>
+          {% endif %}
+
           {% if site.discus_identifier %}
             <div id="disqus_thread" class="article-comments"></div>
             <script>
