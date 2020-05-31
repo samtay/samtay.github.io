@@ -16,11 +16,14 @@ function toggle() {
 function themer() {
   var tone = localStorage.getItem('theme');
   var light = document.getElementById("light");
+  var utterances = document.querySelector('iframe');
 
-  if(tone == "dark"){
-    dark.disabled = false;
+  if (utterances) {
+    utterances.contentWindow.postMessage(
+      {type: 'set-theme', theme: 'github-'+tone},
+      'https://utteranc.es'
+    );
   }
-  else{
-    dark.disabled = true;
-  }
+
+  dark.disabled = (tone == "light");
 }
