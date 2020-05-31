@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Sam Tay | Adventures in Refactoring</title>
+  <meta name="description" content="Spelunking into stale code two years later.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta property="og:title" content="Adventures in Refactoring">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://samtay.github.io/posts/refactoring-adventures">
+  <meta property="og:description" content="Spelunking into stale code two years later.">
+  <meta property="og:site_name" content="Sam Tay">
+
+  <meta name="google-site-verification" content="3Dks-zyFcUXhgficK-VIzu2wp9gCz8fNjM7sAQDYhMg" />
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:url" content="https://samtay.github.io/posts/refactoring-adventures">
+  <meta name="twitter:title" content="Adventures in Refactoring">
+  <meta name="twitter:description" content="Spelunking into stale code two years later.">
+
+  
+    <meta property="og:image" content="https://samtay.github.io/assets/og-image-ee46bbc61b334e821e81534b1fd43f3fee6f020ec174b3c2114445695fd48c01.jpg">
+    <meta name="twitter:image" content="https://samtay.github.io/assets/og-image-ee46bbc61b334e821e81534b1fd43f3fee6f020ec174b3c2114445695fd48c01.jpg">
+  
+
+  <link href="https://samtay.github.io/feed.xml" type="application/rss+xml" rel="alternate" title="Sam Tay Last 10 blog posts" />
+
+  
+
+  
+
+    
+      <link rel="icon" type="image/x-icon" href="/assets/favicon-light-a98c41efc5ed9fcc06ac664c9e2f7a9b3c3b2e0a52357d221fe382f6f4abc8fc.ico">
+      <link rel="apple-touch-icon" href="/assets/apple-touch-icon-light-87d1f2a3a19b1500e5c1626a0492025ca5f7f97d24540dc5900288e92112925a.png">
+      <link rel="stylesheet" type="text/css" title="light" id="light" href="/assets/light-e27e2bf91650f9f57d0bb77d6edca6ccc99802019df0d26b3f94f97163aef491.css">
+      <link rel="stylesheet" type="text/css" title="dark" id="dark" href="/assets/dark-a6931aaf0c0507eeb56ee2265f701c37cfcecde13463e8a7dfa9b8966cda3e8e.css" disabled="true">
+    
+
+  
+
+  
+
+</head>
+
+<body>
+  <main>
+    <div class="grid grid-centered">
+      <div class="grid-cell">
+        <nav class="header-nav scrollappear">
+  <a href="/" class="header-logo" title="Sam Tay">Sam Tay</a>
+  <ul class="header-links">
+    
+      <li>
+        <a href="/about" title="About me">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-about">
+  <use href="/assets/about-ecf154b571ab8034ae00aeed91a3b7ad68db80b46d958753ad6216c919486e88.svg#icon-about" xlink:href="/assets/about-ecf154b571ab8034ae00aeed91a3b7ad68db80b46d958753ad6216c919486e88.svg#icon-about"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+    
+    
+    
+      <li>
+        <a href="https://github.com/samtay" rel="noreferrer noopener" target="_blank" title="GitHub">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-github">
+  <use href="/assets/github-094f81040819f34343ee6ffff0980f17e2807b08b595eaaf66ae3554934fd78d.svg#icon-github" xlink:href="/assets/github-094f81040819f34343ee6ffff0980f17e2807b08b595eaaf66ae3554934fd78d.svg#icon-github"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      <li>
+        <a href="mailto:sam.chong.tay@gmail.com" title="Email">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-email">
+  <use href="/assets/email-782473193bf750036fdb90e8daa075508a20509d01854c09f3237c144a3f0601.svg#icon-email" xlink:href="/assets/email-782473193bf750036fdb90e8daa075508a20509d01854c09f3237c144a3f0601.svg#icon-email"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+      <li>
+        <a href="/feed.xml" rel="noreferrer noopener" target="_blank" title="RSS">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-rss">
+  <use href="/assets/rss-541ec5cea9cefd10d2fcfec01888f3f231a8829940249835fa7b7b3a12ae0d0d.svg#icon-rss" xlink:href="/assets/rss-541ec5cea9cefd10d2fcfec01888f3f231a8829940249835fa7b7b3a12ae0d0d.svg#icon-rss"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+      <li>
+        <a onclick="toggle()" title="Toggle Theme">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-theme">
+  <use href="/assets/theme-66869e0bf8dab34bae1c86bda400327b772e0be69e8dc28d3ede896e771320ed.svg#icon-theme" xlink:href="/assets/theme-66869e0bf8dab34bae1c86bda400327b772e0be69e8dc28d3ede896e771320ed.svg#icon-theme"></use>
+</svg>
+
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+
+
+        <article class="article scrollappear">
+          <header class="article-header">
+            <h1>Adventures in Refactoring</h1>
+            <p>Spelunking into stale code two years later.</p>
+            <div class="article-list-footer">
+  <span class="article-list-date">
+    May 30, 2020
+  </span>
+  <span class="article-list-divider">-</span>
+  <span class="article-list-minutes">
+    
+    
+      13 minute read
+    
+  </span>
+  <span class="article-list-divider">-</span>
+  <div class="article-list-tags">
+    
+      
+      <a href="/tag/haskell" title="See all posts with tag 'Haskell'">Haskell</a>
+    
+  </div>
+</div>
+
+          </header>
+
+          <div class="article-content">
+            <p>I recently decided to revisit my halfway-finished (i.e. abandonded) TUI
+project: <a href="https://github.com/samtay/so">so</a>. My last commit to this project was
+in May 2018, which was before I joined SimSpace where I was exposed to myriad
+new techniques, from clever
+<a href="https://hackage.haskell.org/package/constraints-0.12/docs/Data-Constraint.html">constraint</a>
+programming to new <a href="/posts/deriving-via-use-case">language extensions</a>, in
+addition to debates regarding larger-scale patterns such as how to achieve
+error handling with the fewest headaches possible. I’ve found that whenever I
+enter a new environment and get exposed to other, smarter peoples’
+perspectives, my old code looks more and more wretched. So I was not surprised
+that upon revisiting <code class="highlighter-rouge">so</code>, I found code that horrified me and was in dire need
+of refactoring, some of which may be of interest to budding Haskell developers.
+So, if you’re interested, let’s dive into some of these changes, enumerated
+here for convenience:</p>
+<ul>
+  <li><a href="#bracket-pattern">Bracket Pattern</a></li>
+  <li><a href="#lambdacase">LambdaCase</a></li>
+  <li><a href="#error-handling">Error Handling</a></li>
+  <li><a href="#nonemptylist">NonEmptyList</a></li>
+  <li><a href="#type-synonyms">Type Synonyms</a></li>
+</ul>
+
+<h3 id="bracket-pattern">Bracket Pattern</h3>
+<p>I had a clear case of a bracket pattern in my loading
+animation:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">waitWithLoading</span> <span class="o">::</span> <span class="kt">Async</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">IO</span> <span class="n">a</span>
+<span class="n">waitWithLoading</span> <span class="n">a</span> <span class="o">=</span> <span class="kr">do</span>
+  <span class="n">loadingThreadId</span> <span class="o">&lt;-</span> <span class="n">forkIO</span> <span class="n">showLoadingAnimation</span>
+  <span class="n">res</span>             <span class="o">&lt;-</span> <span class="n">wait</span> <span class="n">a</span>
+  <span class="n">killThread</span> <span class="n">loadingThreadId</span>
+  <span class="kt">A</span><span class="o">.</span><span class="n">clearLine</span>
+  <span class="kt">A</span><span class="o">.</span><span class="n">setCursorColumn</span> <span class="mi">0</span>
+  <span class="kt">A</span><span class="o">.</span><span class="n">showCursor</span>
+  <span class="n">return</span> <span class="n">res</span></code></pre></figure>
+
+<p>Here I have some <code class="highlighter-rouge">a :: Async a</code> that the user is waiting for, and I’m providing
+a nice animation for them while they wait. Once I get the <code class="highlighter-rouge">res :: a</code>, I need to
+clear and clean up the animation.  Whenever you want to execute some <code class="highlighter-rouge">action</code>
+which should always be preceded
+and followed by some other <code class="highlighter-rouge">pre_action</code> and <code class="highlighter-rouge">post_action</code> respectively,
+<a href="https://hackage.haskell.org/package/base-4.12.0.0/docs/Control-Exception.html#v:bracket">bracket</a>
+is the way to go:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">bracket</span> <span class="o">::</span> <span class="kt">IO</span> <span class="n">a</span>        <span class="c1">-- first "acquire resource"</span>
+        <span class="o">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">IO</span> <span class="n">b</span><span class="p">)</span> <span class="c1">-- last "release resource"</span>
+        <span class="o">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">IO</span> <span class="n">c</span><span class="p">)</span> <span class="c1">-- computation to run in-between</span>
+        <span class="o">-&gt;</span> <span class="kt">IO</span> <span class="n">c</span>
+
+<span class="n">waitWithLoading</span> <span class="n">a</span> <span class="o">=</span>
+  <span class="n">bracket</span>
+    <span class="p">(</span><span class="n">forkIO</span> <span class="n">showLoadingAnimation</span><span class="p">)</span>
+    <span class="p">(</span><span class="nf">\</span><span class="n">tid</span> <span class="o">-&gt;</span> <span class="kr">do</span>
+      <span class="n">killThread</span> <span class="n">tid</span>
+      <span class="kt">A</span><span class="o">.</span><span class="n">clearLine</span>
+      <span class="kt">A</span><span class="o">.</span><span class="n">setCursorColumn</span> <span class="mi">0</span>
+      <span class="kt">A</span><span class="o">.</span><span class="n">showCursor</span><span class="p">)</span>
+    <span class="p">(</span><span class="n">const</span> <span class="o">$</span> <span class="n">wait</span> <span class="n">a</span><span class="p">)</span></code></pre></figure>
+
+<p>While the before and after code may look functionally the
+same, there is an important difference in behavior: exception
+handling. In my previous version, if <code class="highlighter-rouge">wait a</code> threw an exception, the animation
+would not be cleaned up! As the documentation for bracket explains, in the
+second version if <code class="highlighter-rouge">wait a</code> throws an exception, the animation clean up still
+gets called, and <em>then</em> the exception is re-thrown to the same scope. This is
+the correct behavior.</p>
+
+<p>I found another, slightly subtler, instance of bracket in a state-monadic context:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">queryLucky</span> <span class="o">::</span> <span class="kt">App</span> <span class="p">(</span><span class="kt">Either</span> <span class="kt">Error</span> <span class="p">(</span><span class="kt">Question</span> <span class="kt">[]</span> <span class="kt">Markdown</span><span class="p">))</span>
+<span class="n">queryLucky</span> <span class="o">=</span> <span class="kr">do</span>
+  <span class="n">initialState</span> <span class="o">&lt;-</span> <span class="n">get</span>
+  <span class="n">put</span> <span class="o">$</span> <span class="n">initialState</span> <span class="o">&amp;</span> <span class="n">sOptions</span> <span class="o">.</span> <span class="n">oLimit</span> <span class="o">.~</span> <span class="mi">1</span>
+  <span class="n">result</span> <span class="o">&lt;-</span> <span class="n">query</span>
+  <span class="n">put</span> <span class="n">initialState</span>
+  <span class="n">return</span> <span class="o">$</span> <span class="kr">case</span> <span class="n">result</span> <span class="kr">of</span>
+    <span class="kt">Right</span> <span class="kt">[]</span>    <span class="o">-&gt;</span> <span class="kt">Left</span> <span class="kt">NoResultsError</span>
+    <span class="kt">Right</span> <span class="p">(</span><span class="n">q</span><span class="o">:</span><span class="kr">_</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Right</span> <span class="n">q</span>
+    <span class="kt">Left</span> <span class="n">e</span>      <span class="o">-&gt;</span> <span class="kt">Left</span> <span class="n">e</span></code></pre></figure>
+
+<p>Here <code class="highlighter-rouge">queryLucky</code> is a hopeful version of <code class="highlighter-rouge">query</code> that just grabs the first
+search result from the StackExchange API. Consequently, instead of requesting
+the usual number of question results, we limit the request to a single
+question, so as to have a more efficient API call. So I want to run an inner
+<code class="highlighter-rouge">query :: App b</code> action with a temporarily modified configuration state,
+setting the limit to one, and <code class="highlighter-rouge">put</code> the initial state back in place once I’m
+done. This should trigger your bracket spidey-sense! What could go wrong if
+<code class="highlighter-rouge">query</code> throws an exception? The caller of <code class="highlighter-rouge">queryLucky</code> is left with what was
+supposed to be a <em>temporarily</em> modified state! So let’s bracket this:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">queryLucky</span> <span class="o">::</span> <span class="kt">App</span> <span class="p">(</span><span class="kt">Either</span> <span class="kt">Error</span> <span class="p">(</span><span class="kt">Question</span> <span class="kt">[]</span> <span class="kt">Markdown</span><span class="p">))</span>
+<span class="n">queryLucky</span> <span class="o">=</span> <span class="kr">do</span>
+  <span class="n">initialState</span> <span class="o">&lt;-</span> <span class="n">get</span>
+  <span class="n">result</span> <span class="o">&lt;-</span> <span class="n">bracket_</span>
+      <span class="p">(</span><span class="n">modify</span> <span class="o">$</span> <span class="n">sOptions</span> <span class="o">.</span> <span class="n">oLimit</span> <span class="o">.~</span> <span class="mi">1</span><span class="p">)</span>
+      <span class="p">(</span><span class="n">put</span> <span class="n">initialState</span><span class="p">)</span>
+      <span class="n">query</span>
+  <span class="n">return</span> <span class="o">$</span> <span class="kr">case</span> <span class="n">result</span> <span class="kr">of</span>
+    <span class="kt">Right</span> <span class="kt">[]</span>    <span class="o">-&gt;</span> <span class="kt">Left</span> <span class="kt">NoResultsError</span>
+    <span class="kt">Right</span> <span class="p">(</span><span class="n">q</span><span class="o">:</span><span class="kr">_</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Right</span> <span class="n">q</span>
+    <span class="kt">Left</span> <span class="n">e</span>      <span class="o">-&gt;</span> <span class="kt">Left</span> <span class="n">e</span></code></pre></figure>
+
+<p>Now regardless of what happens in <code class="highlighter-rouge">query</code>, we are assured that <code class="highlighter-rouge">put
+initialState</code> will be called afterwards. Note here that
+<code class="highlighter-rouge">bracket_ :: App a -&gt; App c -&gt; App b -&gt; App b</code> is a <a href="https://hackage.haskell.org/package/exceptions-0.10.4/docs/Control-Monad-Catch.html#v:bracket_">generic
+ version</a>
+ that runs in the <code class="highlighter-rouge">MonadMask App</code> instance, rather than <code class="highlighter-rouge">IO</code>. It is also a
+ shorthand variant of <code class="highlighter-rouge">bracket</code> which doesn’t require passing values to the
+ second and third actions, like we had to do above with the forked thread ID.
+Also, see in the same module other useful variants of
+the bracket pattern, such as <code class="highlighter-rouge">bracketOnError</code> or <code class="highlighter-rouge">onException</code> which only run
+the “release” action when an exception is thrown.</p>
+
+<h3 id="lambdacase">LambdaCase</h3>
+<p><a href="https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/glasgow_exts.html#extension-LambdaCase"><code class="highlighter-rouge">LambdaCase</code></a>
+is one of my favorite extensions. It’s also arguably the smallest
+and simplest one available. Chances are if you are reading this, you are
+already aware of it, but I thought I’d include it here just in case.
+All it does is enable the <code class="highlighter-rouge">\case</code> syntactic sugar which is short for <code class="highlighter-rouge">\a -&gt;
+case a of</code>, but it cleans up code surprisingly well.
+Here is an example of an unnecessarily named function:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">execPrompt</span> <span class="o">::</span> <span class="kt">Async</span> <span class="p">(</span><span class="kt">Either</span> <span class="kt">Error</span> <span class="p">[</span><span class="kt">Question</span> <span class="kt">[]</span> <span class="kt">Markdown</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">App</span> <span class="nb">()</span>
+<span class="n">execPrompt</span> <span class="n">aQuestions</span> <span class="o">=</span> <span class="n">liftIO</span> <span class="o">$</span>
+  <span class="n">waitWithLoading</span> <span class="n">aQuestions</span> <span class="o">&gt;&gt;=</span> <span class="n">runner</span>
+  <span class="kr">where</span>
+    <span class="n">runner</span> <span class="n">qs</span> <span class="o">=</span>
+      <span class="kr">if</span> <span class="n">null</span> <span class="n">qs</span>
+        <span class="kr">then</span> <span class="n">exitWithError</span> <span class="s">"No results found. Try a different question."</span>
+        <span class="kr">else</span> <span class="n">void</span> <span class="o">$</span> <span class="n">runStateT</span> <span class="p">(</span><span class="n">runByline</span> <span class="n">runPrompt</span><span class="p">)</span> <span class="p">(</span><span class="n">initPromptState</span> <span class="n">qs</span><span class="p">)</span></code></pre></figure>
+
+<p>The <code class="highlighter-rouge">runner</code> function is poorly named and an unnecessary binding. Here’s a
+version with LambdaCase, which let’s the information flow a bit more cleanly:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">execPrompt</span> <span class="o">::</span> <span class="kt">Async</span> <span class="p">(</span><span class="kt">Either</span> <span class="kt">Error</span> <span class="p">[</span><span class="kt">Question</span> <span class="kt">[]</span> <span class="kt">Markdown</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">App</span> <span class="nb">()</span>
+<span class="n">execPrompt</span> <span class="n">aQuestions</span> <span class="o">=</span> <span class="n">liftIO</span> <span class="o">$</span>
+  <span class="n">waitWithLoading</span> <span class="n">aQuestions</span> <span class="o">&gt;&gt;=</span> <span class="nf">\</span><span class="kr">case</span>
+    <span class="kt">[]</span> <span class="o">-&gt;</span> <span class="n">exitWithError</span> <span class="s">"No results found. Try a different question."</span>
+    <span class="n">qs</span> <span class="o">-&gt;</span> <span class="n">void</span> <span class="o">$</span> <span class="n">runStateT</span> <span class="p">(</span><span class="n">runByline</span> <span class="n">runPrompt</span><span class="p">)</span> <span class="p">(</span><span class="n">initPromptState</span> <span class="n">qs</span><span class="p">)</span></code></pre></figure>
+
+<h3 id="error-handling">Error Handling</h3>
+<p>What jumped out the most to me, and probably to you as well by now, is just how many
+<code class="highlighter-rouge">App (Either Error a)</code> types are floating around.
+While there’s nothing inherently wrong with passing
+<code class="highlighter-rouge">Either e a</code> types around, even frequently, generally speaking this is a code
+smell, particularly if they are nested directly within an <code class="highlighter-rouge">App</code>-esque monad
+stack. The issue is that, in most of these places along the application flow, I
+don’t particularly care about the <code class="highlighter-rouge">Either e</code> context and am simply bookkeeping to
+have errors bubble up to a top-level (or nearer-to-top-level) error handler.</p>
+
+<p>There a number of ways for me to avoid this bookkeeping and replace <code class="highlighter-rouge">App (Either
+Error a)</code>’s with <code class="highlighter-rouge">App a</code>’s, so as to have a cleaner flow of information.
+Because my errors were really only used closer to the <code class="highlighter-rouge">main</code> entry point, I
+chose to use exceptions. In particular because I am using asynchronous
+processes for a friendlier user interface, it made sense to have a
+<a href="https://hackage.haskell.org/package/exceptions-0.10.4/docs/Control-Monad-Catch.html#t:MonadMask"><code class="highlighter-rouge">MonadMask</code></a>
+instance. Similar refactoring could be accomplished with
+<a href="http://hackage.haskell.org/package/mtl-2.2.2/docs/Control-Monad-Except.html#t:MonadError"><code class="highlighter-rouge">MonadError</code></a>,
+or even just putting errors into your <code class="highlighter-rouge">MonadState</code> transformer; it really just
+depends on the use case and style preference.<sup id="fnref:3"><a href="#fn:3" class="footnote">1</a></sup></p>
+
+<p>For this code, the <code class="highlighter-rouge">Either Error a</code> was only coming from one place, namely the
+decoding of the JSON response from Stack Exchange:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">seRequest</span>
+  <span class="o">::</span> <span class="kt">String</span>
+  <span class="o">-&gt;</span> <span class="p">[</span><span class="kt">W</span><span class="o">.</span><span class="kt">Options</span> <span class="o">-&gt;</span> <span class="kt">W</span><span class="o">.</span><span class="kt">Options</span><span class="p">]</span>
+  <span class="o">-&gt;</span> <span class="kt">App</span> <span class="p">(</span><span class="kt">Either</span> <span class="kt">Error</span> <span class="p">[</span><span class="kt">Question</span> <span class="kt">[]</span> <span class="kt">Text</span><span class="p">])</span>
+<span class="n">seRequest</span> <span class="n">resource</span> <span class="n">optMods</span> <span class="o">=</span> <span class="kr">do</span>
+  <span class="c1">-- eliding irrelevant code</span>
+  <span class="n">decoded</span> <span class="o">&lt;-</span> <span class="n">makeRequest</span> <span class="n">resource</span> <span class="n">optMods</span> <span class="o">&gt;&gt;=</span> <span class="n">thenDecodeIt</span>
+  <span class="n">return</span> <span class="o">$</span> <span class="kr">case</span> <span class="n">decoded</span> <span class="kr">of</span>
+    <span class="kt">Left</span> <span class="n">e</span>   <span class="o">-&gt;</span> <span class="kt">Left</span> <span class="o">.</span> <span class="kt">JSONError</span> <span class="o">$</span> <span class="kt">T</span><span class="o">.</span><span class="n">pack</span> <span class="n">e</span>
+    <span class="kt">Right</span> <span class="kt">[]</span> <span class="o">-&gt;</span> <span class="kt">Left</span> <span class="kt">NoResultsError</span>
+    <span class="kt">Right</span> <span class="n">qs</span> <span class="o">-&gt;</span> <span class="kt">Right</span> <span class="n">qs</span></code></pre></figure>
+
+<p>So all that changes is the last return statement, and of course the type signature:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">seRequest</span>
+  <span class="o">::</span> <span class="kt">String</span>
+  <span class="o">-&gt;</span> <span class="p">[</span><span class="kt">W</span><span class="o">.</span><span class="kt">Options</span> <span class="o">-&gt;</span> <span class="kt">W</span><span class="o">.</span><span class="kt">Options</span><span class="p">]</span>
+  <span class="o">-&gt;</span> <span class="kt">App</span> <span class="p">[</span><span class="kt">Question</span> <span class="kt">[]</span> <span class="kt">Text</span><span class="p">]</span>
+<span class="n">seRequest</span> <span class="n">resource</span> <span class="n">optMods</span> <span class="o">=</span> <span class="kr">do</span>
+ <span class="c1">-- eliding again</span>
+ <span class="kr">case</span> <span class="n">decoded</span> <span class="kr">of</span>
+    <span class="kt">Left</span> <span class="n">e</span>   <span class="o">-&gt;</span> <span class="n">throwM</span> <span class="o">$</span> <span class="kt">JSONError</span> <span class="o">$</span> <span class="kt">T</span><span class="o">.</span><span class="n">pack</span> <span class="n">e</span>
+    <span class="kt">Right</span> <span class="kt">[]</span> <span class="o">-&gt;</span> <span class="n">throwM</span> <span class="kt">NoResultsError</span>
+    <span class="kt">Right</span> <span class="n">qs</span> <span class="o">-&gt;</span> <span class="n">pure</span> <span class="n">qs</span></code></pre></figure>
+
+<p>With these changes, the rest of the code between <code class="highlighter-rouge">main</code> and <code class="highlighter-rouge">seRequest</code> can be
+cleaner and just concern itself with the underlying question and answer data
+coming from the StackExchange API. At the top level, instead of dealing with
+the <code class="highlighter-rouge">Either Error</code> we deal with the exception. Originally the code looked something like:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="c1">-- Simplified main example</span>
+<span class="n">main</span> <span class="o">::</span> <span class="kt">IO</span> <span class="nb">()</span>
+<span class="n">main</span> <span class="o">=</span> <span class="kr">do</span>
+  <span class="n">q</span> <span class="o">&lt;-</span> <span class="n">getQuery</span>
+  <span class="n">runApp</span> <span class="n">q</span> <span class="o">&gt;&gt;=</span> <span class="nf">\</span><span class="kr">case</span>
+    <span class="kt">Left</span> <span class="n">e</span>    <span class="o">-&gt;</span> <span class="n">exitPrintingError</span> <span class="n">e</span>
+    <span class="kt">Right</span> <span class="n">qas</span> <span class="o">-&gt;</span> <span class="n">print</span> <span class="n">qas</span></code></pre></figure>
+
+<p>and it changed to this:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="c1">-- Simplified main example</span>
+<span class="n">main</span> <span class="o">::</span> <span class="kt">IO</span> <span class="nb">()</span>
+<span class="n">main</span> <span class="o">=</span> <span class="kr">do</span>
+  <span class="n">q</span>   <span class="o">&lt;-</span> <span class="n">getQuery</span>
+  <span class="n">qas</span> <span class="o">&lt;-</span> <span class="n">catch</span> <span class="p">(</span><span class="n">runApp</span> <span class="n">q</span><span class="p">)</span> <span class="n">exitPrintingError</span>
+  <span class="n">print</span> <span class="n">qas</span></code></pre></figure>
+
+<p>Furthermore, even if a few of the intermediary functions along my application
+flow required the <code class="highlighter-rouge">Either Error</code> context, there would still likely be a net
+benefit to change to exceptions. I could still reference any possible errors
+within the application flow, and choose whether or not the exception should
+bubble up, like so:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">intermediary</span> <span class="o">::</span> <span class="kt">App</span> <span class="n">a</span>
+<span class="n">intermediary</span> <span class="o">=</span> <span class="kr">do</span>
+  <span class="n">txt</span> <span class="o">&lt;-</span> <span class="n">catch</span> <span class="n">getQuestionTxt</span> <span class="o">$</span> <span class="nf">\</span><span class="kr">case</span>
+    <span class="kt">NoResultsError</span> <span class="o">-&gt;</span> <span class="s">"No results, try another query."</span>
+    <span class="n">e</span>              <span class="o">-&gt;</span> <span class="n">throwM</span> <span class="n">e</span>
+  <span class="n">displayText</span> <span class="n">txt</span></code></pre></figure>
+
+<p>In this example I want to continue the same application flow if the error is
+simply that the query returned no results from the search API, a reasonable
+thing to do.<sup id="fnref:4"><a href="#fn:4" class="footnote">2</a></sup> But for other bona fide exceptions such as a JSON decoding
+issue, I <code class="highlighter-rouge">throwM e</code> to continue to let the exception bubble up, halting
+execution until the next exception catcher. Some readers may be opposed to
+this latter version aesthetically, and I sympathize, but if it cleans up the
+ugly juggling of <code class="highlighter-rouge">Either</code> types in 10 other locations, the maintenance benefit
+outweighs the “purity” aesthetic.</p>
+
+<p>To play devil’s advocate, I do think in the current state of
+the codebase, <code class="highlighter-rouge">MonadError e m</code> is a great fit, especially given that I am only
+dealing with a single type of error. And for the scope of this application, now
+and in the future, that’s probably a fine choice. However, after seeing the
+headaches that can come from using <code class="highlighter-rouge">MonadError</code> as an application gets more
+complex, and the reconciliation required of different types of errors in
+various parts of a growing application, I personally feel some bias against the approach.</p>
+
+<p>I’ve chosen to go over this section rather painstakingly because, in my
+experience, it seems exceptions in Haskell are rarely found in beginner to
+intermediate level code. I’m not really sure why this is; it could be
+influenced by the available learning materials, or perhaps it inherently feels a little
+“dirty” to use exceptions, or any dynamically scoped features, in such a pure
+language, but I hope to disavow you of
+this notion by referring you to Mark Karpov’s Exceptions tutorial, or
+at the very least the <a href="https://markkarpov.com/tutorial/exceptions.html#motivation-for-exceptions">Motivation for
+exceptions</a>
+section.</p>
+
+<h3 id="nonemptylist">NonEmptyList</h3>
+<p>I think this was on my TODO list even back in 2018, but of course if I am
+throwing a <code class="highlighter-rouge">NoResultsError</code>, why am I using a data type <code class="highlighter-rouge">[]</code> that allows for no
+results? And worse, having to redundantly handle the <code class="highlighter-rouge">[]</code> case in three locations? Enter
+<a href="https://hackage.haskell.org/package/base-4.12.0.0/docs/Data-List-NonEmpty.html#t:NonEmpty"><code class="highlighter-rouge">NonEmptyList</code></a>
+which allows for safer code and peace of mind. Now instead of handling
+the empty case at the prompt</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">showLuckyAnswer</span> <span class="o">::</span> <span class="kt">Question</span> <span class="kt">[]</span> <span class="kt">Markdown</span> <span class="o">-&gt;</span> <span class="kt">IO</span> <span class="nb">()</span>
+<span class="n">showLuckyAnswer</span> <span class="n">question</span> <span class="o">=</span>
+  <span class="kr">case</span> <span class="n">question</span> <span class="o">^.</span> <span class="n">qAnswers</span> <span class="kr">of</span>
+    <span class="kt">[]</span> <span class="o">-&gt;</span> <span class="n">exitWithError</span> <span class="s">"No answers found."</span> <span class="c1">-- this line never runs</span>
+    <span class="p">(</span><span class="n">answer</span><span class="o">:</span><span class="kr">_</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">putMdLn</span> <span class="n">answer</span></code></pre></figure>
+
+<p>redundantly, since such a situation would have thrown an error earlier,
+we can type-safely access the first element of the answers list:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="kr">import</span> <span class="k">qualified</span> <span class="nn">Data.List.NonEmpty</span> <span class="k">as</span> <span class="n">NonEmpty</span>
+
+<span class="n">showLuckyAnswer</span> <span class="o">::</span> <span class="kt">Question</span> <span class="kt">NonEmpty</span> <span class="kt">Markdown</span> <span class="o">-&gt;</span> <span class="kt">IO</span> <span class="nb">()</span>
+<span class="n">showLuckyAnswer</span> <span class="n">question</span> <span class="o">=</span>
+  <span class="n">putMdLn</span> <span class="o">.</span> <span class="kt">NonEmpty</span><span class="o">.</span><span class="n">head</span> <span class="o">$</span> <span class="n">question</span> <span class="o">^.</span> <span class="n">qAnswers</span></code></pre></figure>
+
+<h3 id="type-synonyms">Type Synonyms</h3>
+<p>Good type synonyms can do wonders for readability, particularly for type
+constructors with common or canonical parameters. Consider the
+the noise of all the <code class="highlighter-rouge">Question [] Markdown</code> types you’ve seen in this post thus
+far. I suppose now is a good time as any to explain the need for such a
+parameterization: the <code class="highlighter-rouge">Question</code> datatype is defined as</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="kr">data</span> <span class="kt">Question</span> <span class="n">t</span> <span class="n">a</span> <span class="o">=</span> <span class="kt">Question</span>
+  <span class="p">{</span> <span class="n">_qId</span>      <span class="o">::</span> <span class="kt">Int</span>
+  <span class="p">,</span> <span class="n">_qScore</span>   <span class="o">::</span> <span class="kt">Int</span>
+  <span class="p">,</span> <span class="n">_qAnswers</span> <span class="o">::</span> <span class="n">t</span> <span class="p">(</span><span class="kt">Answer</span> <span class="n">a</span><span class="p">)</span>
+  <span class="p">,</span> <span class="n">_qTitle</span>   <span class="o">::</span> <span class="kt">Text</span>
+  <span class="p">,</span> <span class="n">_qBody</span>    <span class="o">::</span> <span class="n">a</span>
+  <span class="p">}</span> <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Functor</span><span class="p">)</span>
+
+<span class="kr">data</span> <span class="kt">Answer</span> <span class="n">a</span> <span class="o">=</span> <span class="kt">Answer</span>
+  <span class="p">{</span> <span class="n">_aId</span>       <span class="o">::</span> <span class="kt">Int</span>
+  <span class="p">,</span> <span class="n">_aScore</span>    <span class="o">::</span> <span class="kt">Int</span>
+  <span class="p">,</span> <span class="n">_aBody</span>     <span class="o">::</span> <span class="n">a</span>
+  <span class="p">,</span> <span class="n">_aAccepted</span> <span class="o">::</span> <span class="kt">Bool</span>
+  <span class="p">}</span> <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Show</span><span class="p">,</span> <span class="kt">Functor</span><span class="p">)</span></code></pre></figure>
+
+<p>and <code class="highlighter-rouge">t</code> is parameterized because, while most of the application iterates over
+answers in a <code class="highlighter-rouge">NonEmpty</code> container, there are areas within the brick
+implementation that need to be able to iterate over questions and answers in
+brick’s <a href="https://hackage.haskell.org/package/brick-0.52/docs/Brick-Widgets-List.html">list widget</a>
+container. Because they are nested, without this parameterization, we would
+essentially need to duplicate datatypes for the brick interface. The <code class="highlighter-rouge">a</code> is
+just the content type of the answers, which is initially just raw <code class="highlighter-rouge">Text</code> but
+later is parsed into a <code class="highlighter-rouge">Markdown</code> AST.</p>
+
+<p>But, as noted above, that means I’ve added this type parameter noise everywhere
+in my application when only <em>one place</em>, the brick implementation, uses a
+different parameter. We can de-noise this using a type synonym:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="kr">type</span> <span class="kt">Question</span> <span class="o">=</span> <span class="kt">Question'</span> <span class="kt">NonEmpty</span>
+
+<span class="kr">data</span> <span class="kt">Question'</span> <span class="n">t</span> <span class="n">a</span> <span class="o">=</span> <span class="kt">Question</span>
+  <span class="p">{</span> <span class="n">_qId</span>      <span class="o">::</span> <span class="kt">Int</span>
+  <span class="p">,</span> <span class="n">_qScore</span>   <span class="o">::</span> <span class="kt">Int</span>
+  <span class="p">,</span> <span class="n">_qAnswers</span> <span class="o">::</span> <span class="n">t</span> <span class="p">(</span><span class="kt">Answer</span> <span class="n">a</span><span class="p">)</span>
+  <span class="p">,</span> <span class="n">_qTitle</span>   <span class="o">::</span> <span class="kt">Text</span>
+  <span class="p">,</span> <span class="n">_qBody</span>    <span class="o">::</span> <span class="n">a</span>
+  <span class="p">}</span> <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Functor</span><span class="p">)</span></code></pre></figure>
+
+<p>Now I can use <code class="highlighter-rouge">Question Text</code> or <code class="highlighter-rouge">Question Markdown</code> in all of the above code
+snippets. Furthermore, I can add another type synonym specific to the brick
+interface to use there:</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="kr">module</span> <span class="nn">Interface.Brick</span>
+  <span class="p">(</span> <span class="nf">execBrick</span>
+  <span class="p">)</span> <span class="kr">where</span>
+
+<span class="kr">type</span> <span class="kt">BQuestion</span> <span class="o">=</span> <span class="kt">Question'</span> <span class="p">(</span><span class="kt">GenericList</span> <span class="kt">Name</span> <span class="kt">Vector</span><span class="p">)</span> <span class="kt">Markdown</span></code></pre></figure>
+
+<h3 id="footnotes">Footnotes</h3>
+
+<div class="footnotes">
+  <ol>
+    <li id="fn:3">
+      <p>See <a href="https://wiki.haskell.org/Error_vs._Exception">here</a> for a more detailed look at the distinction between errors and exceptions, and <a href="https://markkarpov.com/tutorial/exceptions.html">here</a> for an excellent dive into community opinions on the matter. <a href="#fnref:3" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:4">
+      <p>In my case, <code class="highlighter-rouge">NoResultsError</code> is still worthwhile as an exception because the application immediately bails on no results. Again, there’s no single right way to handle this, but I tend to agree with those reading who think that <code class="highlighter-rouge">NoResultsError</code> should be classified separately from say <code class="highlighter-rouge">JSONDecodingError</code>. <a href="#fnref:4" class="reversefootnote">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+
+          </div>
+
+          
+          <script id="utterances_script"
+                  src="https://utteranc.es/client.js"
+                  repo="samtay/samtay.github.io"
+                  issue-term="pathname"
+                  label="comments"
+                  theme="github-light"
+                  crossorigin="anonymous"
+                  async>
+          </script>
+          <script>
+            // wait for utterances to load and send its first message.
+            addEventListener('message', event => {
+              var tone = localStorage.getItem('theme');
+              if (!tone || event.origin !== 'https://utteranc.es') {
+                return;
+              }
+              const message = {
+                type: 'set-theme',
+                theme: 'github-' + tone
+              };
+              const utterances = document.querySelector('iframe').contentWindow;
+              utterances.postMessage(message, 'https://utteranc.es');
+            });
+          </script>
+          
+
+          
+        </article>
+        <footer class="footer scrollappear">
+  <p>
+  Ramblings ϵ {Mathematics, Statistics, Haskell}.
+    &copy; 2020. All rights reserved.
+    <!--<a href="/about" title="About me">Nielsen Ramon</a>. Download it <a href="https://github.com/nielsenramon/chalk" rel="noreferrer noopener" target="_blank" title="Download Chalk">here</a>.-->
+  </p>
+</footer>
+
+      </div>
+    </div>
+  </main>
+  
+
+<script type="text/javascript" src="/assets/vendor-477ef7ade179538494e13ef734def226f39f3144ff3911d1a03961bbbc4cb872.js"></script>
+
+
+  <script type="text/javascript" src="/assets/webfonts-96493456d319d1bf419afdf8701552d4d486fee6afd304897d4fd81eb4e0cc0b.js"></script>
+
+
+
+  <script type="text/javascript" src="/assets/scrollappear-e2da8ea567e418637e31266cc5302126eaa79f62a2273739086358b589a89ee6.js"></script>
+
+
+<script type="text/javascript" src="/assets/application-cfde13ac81ddaf4351b2e739603e2baf688d0fcc9aba613fe62bbb1c7b037fb9.js"></script>
+
+
+  <script type="text/javascript" src="/assets/themetoggle-592c116ce4dcad7dc732f6ffd55b682581fae9e8737bca3da323e802faf1367f.js"></script>
+
+</body>
+</html>
