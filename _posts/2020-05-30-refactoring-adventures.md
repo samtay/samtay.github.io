@@ -6,25 +6,27 @@ tags: [haskell]
 mathjax: false
 ---
 
-This week I decided to revisit my halfway-finished (i.e. abandonded) TUI project:
-[so](https://github.com/samtay/so). My last commit to this project was in May
-2018, which was before I joined SimSpace[^1]
-where I was exposed to myriad new techniques, from clever
+I recently decided to revisit my halfway-finished (i.e. abandonded) TUI
+project: [so](https://github.com/samtay/so). My last commit to this project was
+in May 2018, which was before I joined SimSpace where I was exposed to myriad
+new techniques, from clever
 [constraint](https://hackage.haskell.org/package/constraints-0.12/docs/Data-Constraint.html)
-programming to new [language extensions](/posts/deriving-via-use-case), in addition to
-debates regarding larger-scale patterns such as how to achieve error handling
-with the fewest headaches possible. Needless to say, after working with such
-smart and talented folks, I am a better developer now than I was before.
+programming to new [language extensions](/posts/deriving-via-use-case), in
+addition to debates regarding larger-scale patterns such as how to achieve
+error handling with the fewest headaches possible. I've found that whenever I
+enter a new environment and get exposed to other, smarter peoples'
+perspectives, my old code looks more and more wretched. So I was not surprised
+that upon revisiting `so`, I found code that horrified me and was in dire need
+of refactoring, some of which may be of interest to budding Haskell developers.
+So, if you're interested, let's dive into some of these changes, enumerated
+here for convenience:
+- [Bracket Pattern](#bracket-pattern)
+- [LambdaCase](#lambdacase)
+- [Error Handling](#error-handling)
+- [NonEmptyList](#nonemptylist)
+- [Type Synonyms](#type-synonyms)
 
-Lately I've been craving some Haskell time, and pondering my decision to enter
-into a Statistics graduate program :thinking: ergo diving back into `so`. I was
-happy to find code that horrified me and was in dire need of refactoring.
-I was a bit overzealous and ended up just issuing a massive
-[*Revive in
-2020*](https://github.com/samtay/so/commit/dd90673b5cb705118dc7a7c616c58cbe275e9942)
-commit, before thinking that such refactoring might be of interest to budding
-Haskell developers. So, if you're interested, let's dive into some of these changes.
-
+{% comment %}
 ### Default Extensions
 This one may be obvious to most, but I previously had never used the
 `default-extensions` clause in cabal. I always just included a massive number
@@ -34,6 +36,11 @@ extensions that, in your own opinion, are not controversial and should be
 enabled unanimously, stick them in your cabal file [like
 this](https://github.com/samtay/so/commit/dd90673b5cb705118dc7a7c616c58cbe275e9942#diff-36f413166e2fc25f29ab47d0e5789fecR29-R45)
 so they are enabled for every module automatically.
+
+In fact, if you are starting a new Haskell package, you should probably be
+using `hpack` which greatly simplifies the management of cabal files. (This is
+also the new default for `stack new` projects.)
+{% endcomment %}
 
 ### Bracket Pattern
 I had a clear case of a bracket pattern in my loading
@@ -52,7 +59,7 @@ waitWithLoading a = do
 Here I have some `a :: Async a` that the user is waiting for, and I'm providing
 a nice animation for them while they wait. Once I get the `res :: a`, I need to
 clear and clean up the animation.  Whenever you want to execute some `action`
-which should always be preceeded
+which should always be preceded
 and followed by some other `pre_action` and `post_action` respectively,
 [bracket](https://hackage.haskell.org/package/base-4.12.0.0/docs/Control-Exception.html#v:bracket)
 is the way to go:
@@ -157,8 +164,8 @@ execPrompt aQuestions = liftIO $
 
 ### Error Handling
 What jumped out the most to me, and probably to you as well by now, is just how many
-`App (Either Error a)` types are floating around. I count 10 of them in the
-*Revive in 2020* diff. While there's nothing inherently wrong with passing
+`App (Either Error a)` types are floating around.
+While there's nothing inherently wrong with passing
 `Either e a` types around, even frequently, generally speaking this is a code
 smell, particularly if they are nested directly within an `App`-esque monad
 stack. The issue is that, in most of these places along the application flow, I
@@ -167,7 +174,7 @@ have errors bubble up to a top-level (or nearer-to-top-level) error handler.
 
 There a number of ways for me to avoid this bookkeeping and replace `App (Either
 Error a)`'s with `App a`'s, so as to have a cleaner flow of information.
-Because my errors were really only used closer to the `main` entrypoint, I
+Because my errors were really only used closer to the `main` entry point, I
 chose to use exceptions. In particular because I am using asynchronous
 processes for a friendlier user interface, it made sense to have a
 [`MonadMask`](https://hackage.haskell.org/package/exceptions-0.10.4/docs/Control-Monad-Catch.html#t:MonadMask)
@@ -241,7 +248,7 @@ intermediary = do
 {% endhighlight %}
 In this example I want to continue the same application flow if the error is
 simply that the query returned no results from the search API, a reasonable
-thing to do.[^4] But for other bonafide exceptions such as a JSON decoding
+thing to do.[^4] But for other bona fide exceptions such as a JSON decoding
 issue, I `throwM e` to continue to let the exception bubble up, halting
 execution until the next exception catcher. Some readers may be opposed to
 this latter version aesthetically, and I sympathize, but if it cleans up the
@@ -272,14 +279,83 @@ I think this was on my TODO list even back in 2018, but of course if I am
 throwing a `NoResultsError`, why am I using a data type `[]` that allows for no
 results? And worse, having to redundantly handle the `[]` case in three locations? Enter
 [`NonEmptyList`](https://hackage.haskell.org/package/base-4.12.0.0/docs/Data-List-NonEmpty.html#t:NonEmpty)
-which allows for safer code and peace of mind.
-TODO
+which allows for safer code and peace of mind. Now instead of handling
+the empty case at the prompt
+{% highlight haskell %}
+showLuckyAnswer :: Question [] Markdown -> IO ()
+showLuckyAnswer question =
+  case question ^. qAnswers of
+    [] -> exitWithError "No answers found." -- this line never runs
+    (answer:_) -> putMdLn answer
+{% endhighlight %}
+redundantly, since such a situation would have thrown an error earlier,
+we can type-safely access the first element of the answers list:
+{% highlight haskell %}
+import qualified Data.List.NonEmpty as NonEmpty
+
+showLuckyAnswer :: Question NonEmpty Markdown -> IO ()
+showLuckyAnswer question =
+  putMdLn . NonEmpty.head $ question ^. qAnswers
+{% endhighlight %}
+
 
 ### Type Synonyms
-TODO
+Good type synonyms can do wonders for readability, particularly for type
+constructors with common or canonical parameters. Consider the
+the noise of all the `Question [] Markdown` types you've seen in this post thus
+far. I suppose now is a good time as any to explain the need for such a
+parameterization: the `Question` datatype is defined as
+{% highlight haskell %}
+data Question t a = Question
+  { _qId      :: Int
+  , _qScore   :: Int
+  , _qAnswers :: t (Answer a)
+  , _qTitle   :: Text
+  , _qBody    :: a
+  } deriving (Functor)
+
+data Answer a = Answer
+  { _aId       :: Int
+  , _aScore    :: Int
+  , _aBody     :: a
+  , _aAccepted :: Bool
+  } deriving (Show, Functor)
+{% endhighlight %}
+and `t` is parameterized because, while most of the application iterates over
+answers in a `NonEmpty` container, there are areas within the brick
+implementation that need to be able to iterate over questions and answers in
+brick's [list widget](https://hackage.haskell.org/package/brick-0.52/docs/Brick-Widgets-List.html)
+container. Because they are nested, without this parameterization, we would
+essentially need to duplicate datatypes for the brick interface. The `a` is
+just the content type of the answers, which is initially just raw `Text` but
+later is parsed into a `Markdown` AST.
+
+But, as noted above, that means I've added this type parameter noise everywhere
+in my application when only *one place*, the brick implementation, uses a
+different parameter. We can de-noise this using a type synonym:
+{% highlight haskell %}
+type Question = Question' NonEmpty
+
+data Question' t a = Question
+  { _qId      :: Int
+  , _qScore   :: Int
+  , _qAnswers :: t (Answer a)
+  , _qTitle   :: Text
+  , _qBody    :: a
+  } deriving (Functor)
+{% endhighlight %}
+Now I can use `Question Text` or `Question Markdown` in all of the above code
+snippets. Furthermore, I can add another type synonym specific to the brick
+interface to use there:
+{% highlight haskell %}
+module Interface.Brick
+  ( execBrick
+  ) where
+
+type BQuestion = Question' (GenericList Name Vector) Markdown
+{% endhighlight %}
 
 ### Footnotes
-[^1]: [SimSpace](https://angel.co/company/simspace/jobs/64261-software-engineer-backend) was a fantastic place to work, and they are still hiring as of this writing! I highly encourage you to apply if you love programming in Haskell and want to work remotely (or not).
 [^3]: See [here](https://wiki.haskell.org/Error_vs._Exception) for a more detailed look at the distinction between errors and exceptions, and [here](https://markkarpov.com/tutorial/exceptions.html) for an excellent dive into community opinions on the matter.
 
 [^4]: In my case, `NoResultsError` is still worthwhile as an exception because the application immediately bails on no results. Again, there's no single right way to handle this, but I tend to agree with those reading who think that `NoResultsError` should be classified separately from say `JSONDecodingError`.
