@@ -36,17 +36,17 @@
   {% if site.local_fonts %}
     {% asset fonts.css %}
   {% endif %}
+  <link rel="apple-touch-icon" sizes="180x180" href="{% asset favicon-'{{ site.blog_theme }}'/apple-touch-icon.png @path %}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{% asset favicon-'{{ site.blog_theme }}'/favicon-32x32.png @path %}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{% asset favicon-'{{ site.blog_theme }}'/favicon-16x16.png @path %}">
+  <link rel="manifest" href="{% asset favicon-'{{ site.blog_theme }}'/site.webmanifest @path %}">
 
   {% if site.theme_toggle == true %}
 
     {% if site.blog_theme == "light" %}
-      <link rel="icon" type="image/x-icon" href="{% asset favicon-light.ico @path %}">
-      <link rel="apple-touch-icon" href="{% asset apple-touch-icon-light.png @path %}">
       <link rel="stylesheet" type="text/css" title="light" id="light" href="{% asset light.css @path%}">
       <link rel="stylesheet" type="text/css" title="dark" id="dark" href="{% asset dark.css @path%}" disabled="true">
     {% else %}
-      <link rel="icon" type="image/x-icon" href="{% asset favicon-dark.ico @path %}">
-      <link rel="apple-touch-icon" href="{% asset apple-touch-icon-dark.png @path %}">
       <link rel="stylesheet" type="text/css" title="light" id="light" href="{% asset light.css @path%}">
       <link rel="stylesheet" type="text/css" title="dark" id="dark" href="{% asset dark.css @path%}" disabled="false">
     {% endif %}
@@ -54,12 +54,8 @@
   {% else %}
 
     {% if site.blog_theme == "light" %}
-      <link rel="icon" type="image/x-icon" href="{% asset favicon-light.ico @path %}">
-      <link rel="apple-touch-icon" href="{% asset apple-touch-icon-light.png @path %}">
       {% asset light.css %}
     {% else %}
-      <link rel="icon" type="image/x-icon" href="{% asset favicon-dark.ico @path %}">
-      <link rel="apple-touch-icon" href="{% asset apple-touch-icon-dark.png @path %}">
       {% asset dark.css %}
     {% endif %}
 
