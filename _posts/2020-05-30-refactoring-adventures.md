@@ -7,7 +7,7 @@ mathjax: false
 ---
 
 I recently decided to revisit my halfway-finished (i.e. abandonded) TUI
-project: [so](https://github.com/samtay/so). My last commit to this project was
+project: [so](https://github.com/samtay/so-hs). My last commit to this project was
 in May 2018, which was before I joined SimSpace where I was exposed to myriad
 new techniques, from clever
 [constraint](https://hackage.haskell.org/package/constraints-0.12/docs/Data-Constraint.html)
@@ -34,7 +34,7 @@ of `{-# LANGUAGE Extension #-}` directives at the top of every file, having to
 add them ad hoc when `ghcid` told me to do so. If you have a preferred set of
 extensions that, in your own opinion, are not controversial and should be
 enabled unanimously, stick them in your cabal file [like
-this](https://github.com/samtay/so/commit/dd90673b5cb705118dc7a7c616c58cbe275e9942#diff-36f413166e2fc25f29ab47d0e5789fecR29-R45)
+this](https://github.com/samtay/so-hs/commit/dd90673b5cb705118dc7a7c616c58cbe275e9942#diff-36f413166e2fc25f29ab47d0e5789fecR29-R45)
 so they are enabled for every module automatically.
 
 In fact, if you are starting a new Haskell package, you should probably be
