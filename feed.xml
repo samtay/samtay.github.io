@@ -7,6 +7,14 @@
     <atom:link href="https://samtay.github.io/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>My first foray into Rust</title>
+        <description>A story of coming to Rust from Haskell</description>
+        <pubDate>Fri, 03 Jul 2020 00:00:00 +0000</pubDate>
+        <link>https://samtay.github.io/posts/first-foray-into-rust</link>
+        <guid isPermaLink="true">https://samtay.github.io/posts/first-foray-into-rust</guid>
+      </item>
+    
+      <item>
         <title>Adventures in Refactoring</title>
         <description>Spelunking into stale code two years later.</description>
         <pubDate>Sat, 30 May 2020 00:00:00 +0000</pubDate>

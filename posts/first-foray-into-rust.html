@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Sam Tay | My first foray into Rust</title>
+  <meta name="description" content="A story of coming to Rust from Haskell">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta property="og:title" content="My first foray into Rust">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://samtay.github.io/posts/first-foray-into-rust">
+  <meta property="og:description" content="A story of coming to Rust from Haskell">
+  <meta property="og:site_name" content="Sam Tay">
+
+  <meta name="google-site-verification" content="3Dks-zyFcUXhgficK-VIzu2wp9gCz8fNjM7sAQDYhMg" />
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:url" content="https://samtay.github.io/posts/first-foray-into-rust">
+  <meta name="twitter:title" content="My first foray into Rust">
+  <meta name="twitter:description" content="A story of coming to Rust from Haskell">
+
+  
+    <meta property="og:image" content="https://samtay.github.io/assets/og-image-ee46bbc61b334e821e81534b1fd43f3fee6f020ec174b3c2114445695fd48c01.jpg">
+    <meta name="twitter:image" content="https://samtay.github.io/assets/og-image-ee46bbc61b334e821e81534b1fd43f3fee6f020ec174b3c2114445695fd48c01.jpg">
+  
+
+  <link href="https://samtay.github.io/feed.xml" type="application/rss+xml" rel="alternate" title="Sam Tay Last 10 blog posts" />
+
+  
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon-light/apple-touch-icon-2d18f0eb077831f89079d4eaddf7310f9bd08fa824ca5c783e7338fbeb8a6895.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-light/favicon-32x32-c058adc4fb4eddc2f534aafb6fd568728d834a6c006a6190abc2ac8c6ff72931.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-light/favicon-16x16-a5643dace800e8ed2f3c81d1e869f7783da139177b63cb7e087bae5b3036f694.png">
+  <link rel="manifest" href="/assets/favicon-light/site-7a9e07ce1f7386689917602ddc5a75750ad842e605ff764f67173529c181bf04.webmanifest">
+
+  
+
+    
+      <link rel="stylesheet" type="text/css" title="light" id="light" href="/assets/light-e27e2bf91650f9f57d0bb77d6edca6ccc99802019df0d26b3f94f97163aef491.css">
+      <link rel="stylesheet" type="text/css" title="dark" id="dark" href="/assets/dark-a6931aaf0c0507eeb56ee2265f701c37cfcecde13463e8a7dfa9b8966cda3e8e.css" disabled="true">
+    
+
+  
+
+  
+
+</head>
+
+<body>
+  <main>
+    <div class="grid grid-centered">
+      <div class="grid-cell">
+        <nav class="header-nav scrollappear">
+  <a href="/" class="header-logo" title="Sam Tay">Sam Tay</a>
+  <ul class="header-links">
+    
+      <li>
+        <a href="/about" title="About me">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-about">
+  <use href="/assets/about-ecf154b571ab8034ae00aeed91a3b7ad68db80b46d958753ad6216c919486e88.svg#icon-about" xlink:href="/assets/about-ecf154b571ab8034ae00aeed91a3b7ad68db80b46d958753ad6216c919486e88.svg#icon-about"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+    
+    
+    
+      <li>
+        <a href="https://github.com/samtay" rel="noreferrer noopener" target="_blank" title="GitHub">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-github">
+  <use href="/assets/github-094f81040819f34343ee6ffff0980f17e2807b08b595eaaf66ae3554934fd78d.svg#icon-github" xlink:href="/assets/github-094f81040819f34343ee6ffff0980f17e2807b08b595eaaf66ae3554934fd78d.svg#icon-github"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      <li>
+        <a href="mailto:sam.chong.tay@gmail.com" title="Email">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-email">
+  <use href="/assets/email-782473193bf750036fdb90e8daa075508a20509d01854c09f3237c144a3f0601.svg#icon-email" xlink:href="/assets/email-782473193bf750036fdb90e8daa075508a20509d01854c09f3237c144a3f0601.svg#icon-email"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+      <li>
+        <a href="/feed.xml" rel="noreferrer noopener" target="_blank" title="RSS">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-rss">
+  <use href="/assets/rss-541ec5cea9cefd10d2fcfec01888f3f231a8829940249835fa7b7b3a12ae0d0d.svg#icon-rss" xlink:href="/assets/rss-541ec5cea9cefd10d2fcfec01888f3f231a8829940249835fa7b7b3a12ae0d0d.svg#icon-rss"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+      <li>
+        <a onclick="toggle()" title="Toggle Theme">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-theme">
+  <use href="/assets/theme-66869e0bf8dab34bae1c86bda400327b772e0be69e8dc28d3ede896e771320ed.svg#icon-theme" xlink:href="/assets/theme-66869e0bf8dab34bae1c86bda400327b772e0be69e8dc28d3ede896e771320ed.svg#icon-theme"></use>
+</svg>
+
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+
+
+        <article class="article scrollappear">
+          <header class="article-header">
+            <h1>My first foray into Rust</h1>
+            <p>A story of coming to Rust from Haskell</p>
+            <div class="article-list-footer">
+  <span class="article-list-date">
+    July 3, 2020
+  </span>
+  <span class="article-list-divider">-</span>
+  <span class="article-list-minutes">
+    
+    
+      11 minute read
+    
+  </span>
+  <span class="article-list-divider">-</span>
+  <div class="article-list-tags">
+    
+      
+      <a href="/tag/rust" title="See all posts with tag 'Rust'">Rust</a>
+    
+      
+      <a href="/tag/haskell" title="See all posts with tag 'Haskell'">Haskell</a>
+    
+  </div>
+</div>
+
+          </header>
+
+          <div class="article-content">
+            <h2 id="the-language">The language</h2>
+
+<p>Rust seems to have a lot of momentum and a strong community. For a young
+language, I was pleasantly surprised by the ease of getting up and running with
+<code class="highlighter-rouge">rustup</code> and <code class="highlighter-rouge">cargo</code>, solid beginner tutorials,<sup id="fnref:2"><a href="#fn:2" class="footnote">1</a></sup> and the community emphasis on
+documentation. All of these factors made for a very ergonomic exploration of the
+language. It was also great to see familiar friends from Haskell, such as
+generics and traits. Traits are definitely not as powerful as Haskell’s
+typeclasses, but they provide plenty of mileage for writing elegant, type-safe
+code.</p>
+
+<p>For my first project, I made <a href="https://github.com/samtay/so">so: a terminal interface for
+StackOverflow</a>:
+<img src="https://raw.githubusercontent.com/samtay/so/master/assets/demo.gif" alt="demo">
+This is a rewrite of a <a href="https://github.com/samtay/so-hs">Haskell implementation</a>
+I started a while ago, so it was a great way to see the two languages
+side-by-side.</p>
+
+<h2 id="battling-lifetimes">Battling lifetimes</h2>
+
+<p>Lifetimes in Rust are notoriously tricky for beginners and comfort with them
+probably only comes with experience. You can of course look at the <a href="https://doc.rust-lang.org/1.9.0/book/lifetimes.html">rust lang
+book</a> chapter, but there
+you will find a series of <code class="highlighter-rouge">foo</code>, <code class="highlighter-rouge">baz</code> functions and single letter variable
+assignments; for me personally, this makes it harder to grok the real
+implications. So let me walk you through my actual experience, which I think
+will be a better demonstration:</p>
+
+<p>If I want to create a specific instance of
+<a href="https://docs.rs/clap/2.33.1/clap/struct.App.html"><code class="highlighter-rouge">clap::App</code></a>,
+but it is used in multiple places, like once in <code class="highlighter-rouge">main</code> and once in <code class="highlighter-rouge">test</code>, my
+immediate reaction is to make a function, so I don’t have to duplicate code.
+Let’s do that:</p>
+
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">use</span> <span class="nn">clap</span><span class="p">::{</span><span class="n">App</span><span class="p">,</span> <span class="n">Arg</span><span class="p">,</span> <span class="n">ArgMatches</span><span class="p">};</span>
+
+<span class="k">pub</span> <span class="k">fn</span> <span class="n">mk_app</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="nv">'b</span><span class="o">&gt;</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="n">App</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="nv">'b</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="nn">App</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="s">"so"</span><span class="p">)</span>
+        <span class="nf">.arg</span><span class="p">(</span>
+            <span class="nn">Arg</span><span class="p">::</span><span class="nf">with_name</span><span class="p">(</span><span class="s">"site"</span><span class="p">)</span>
+                <span class="nf">.long</span><span class="p">(</span><span class="s">"site"</span><span class="p">)</span>
+                <span class="nf">.short</span><span class="p">(</span><span class="s">"s"</span><span class="p">)</span>
+                <span class="nf">.takes_value</span><span class="p">(</span><span class="k">true</span><span class="p">)</span>
+                <span class="nf">.default_value</span><span class="p">(</span><span class="s">"stackoverflow"</span><span class="p">)</span>
+                <span class="nf">.help</span><span class="p">(</span><span class="s">"StackExchange site code to search"</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="nf">.arg</span><span class="p">(</span>
+            <span class="nn">Arg</span><span class="p">::</span><span class="nf">with_name</span><span class="p">(</span><span class="s">"limit"</span><span class="p">)</span>
+                <span class="nf">.long</span><span class="p">(</span><span class="s">"limit"</span><span class="p">)</span>
+                <span class="nf">.short</span><span class="p">(</span><span class="s">"l"</span><span class="p">)</span>
+                <span class="nf">.takes_value</span><span class="p">(</span><span class="k">true</span><span class="p">)</span>
+                <span class="nf">.default_value</span><span class="p">(</span><span class="s">"10"</span><span class="p">)</span>
+                <span class="nf">.help</span><span class="p">(</span><span class="s">"Question limit per site query"</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="nf">.arg</span><span class="p">(</span>
+            <span class="nn">Arg</span><span class="p">::</span><span class="nf">with_name</span><span class="p">(</span><span class="s">"query"</span><span class="p">)</span>
+                <span class="nf">.multiple</span><span class="p">(</span><span class="k">true</span><span class="p">)</span>
+                <span class="nf">.index</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="nf">.required</span><span class="p">(</span><span class="k">true</span><span class="p">)</span>
+        <span class="p">)</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>If you’re a budding Rustacean, and wondering where <code class="highlighter-rouge">'a</code>, <code class="highlighter-rouge">'b</code> are coming
+from, it might help to first read an overview of
+<a href="https://doc.rust-lang.org/1.8.0/book/lifetimes.html">lifetimes</a>. For what it’s
+worth, this was the first time I encountered them writing <code class="highlighter-rouge">so</code>, and if you try
+to write <code class="highlighter-rouge">pub fn mk_app() -&gt; App</code>, the compiler will very helpfully guide you
+towards the signature above.</p>
+
+<p>But now it turns out, I want to be able to pull default CLI options
+from a config file. No biggie, let’s modify my function to take the
+configuration:</p>
+
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">pub</span> <span class="k">struct</span> <span class="n">Config</span> <span class="p">{</span>
+    <span class="k">pub</span> <span class="n">limit</span><span class="p">:</span> <span class="nb">u16</span><span class="p">,</span>
+    <span class="k">pub</span> <span class="n">site</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">mk_app</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="nv">'b</span><span class="o">&gt;</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">App</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="nv">'b</span><span class="o">&gt;</span></code></pre></figure>
+
+<p>This is great, I’ll be able to mock configs in my tests and really hammer
+this. Let’s start by using the default value for the <code class="highlighter-rouge">site</code> parameter:</p>
+
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">pub</span> <span class="k">fn</span> <span class="n">mk_app</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="nv">'b</span><span class="o">&gt;</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">App</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="nv">'b</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="nn">App</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="s">"so"</span><span class="p">)</span>
+        <span class="nf">.arg</span><span class="p">(</span>
+            <span class="nn">Arg</span><span class="p">::</span><span class="nf">with_name</span><span class="p">(</span><span class="s">"site"</span><span class="p">)</span>
+                <span class="nf">.long</span><span class="p">(</span><span class="s">"site"</span><span class="p">)</span>
+                <span class="nf">.short</span><span class="p">(</span><span class="s">"s"</span><span class="p">)</span>
+                <span class="nf">.takes_value</span><span class="p">(</span><span class="k">true</span><span class="p">)</span>
+                <span class="nf">.default_value</span><span class="p">(</span><span class="n">config</span><span class="py">.site</span><span class="p">)</span>
+                <span class="nf">.help</span><span class="p">(</span><span class="s">"StackExchange site code to search"</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="c">// elided, same as above</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>Here we run into a n00b Rust issue, but again, the compiler is quite helpful:</p>
+
+<figure class="highlight"><pre><code class="language-shell" data-lang="shell">error[E0308]: mismatched types
+  <span class="nt">--</span><span class="o">&gt;</span> src/cli.rs:21:32
+   |
+21 |                 .default_value<span class="o">(</span>config.site<span class="o">)</span>
+   |                                ^^^^^^^^^^^
+   |                                |
+   |                                expected <span class="sb">`</span>&amp;str<span class="sb">`</span>, found struct <span class="sb">`</span>std::string::String<span class="sb">`</span>
+   |                                <span class="nb">help</span>: consider borrowing here: <span class="sb">`</span>&amp;config.site<span class="sb">`</span></code></pre></figure>
+
+<p>Ah yes, this makes sense, since earlier we were passing in
+<code class="highlighter-rouge">"stackoverflow": &amp;str</code>. So we follow the compiler’s advice and borrow, using
+<code class="highlighter-rouge">.default_value(&amp;config.site)</code>. But next we see:</p>
+
+<figure class="highlight"><pre><code class="language-shell" data-lang="shell">error[E0515]: cannot <span class="k">return </span>value referencing <span class="nb">local </span>data <span class="sb">`</span>config.site<span class="sb">`</span>
+  <span class="nt">--</span><span class="o">&gt;</span> src/cli.rs:14:5
+   |
+14 | /     App::new<span class="o">(</span><span class="s2">"so"</span><span class="o">)</span>
+15 | |         .arg<span class="o">(</span>
+16 | |             Arg::with_name<span class="o">(</span><span class="s2">"site"</span><span class="o">)</span>
+17 | |                 .long<span class="o">(</span><span class="s2">"site"</span><span class="o">)</span>
+...  |
+22 | |                 .default_value<span class="o">(</span>&amp;config.site<span class="o">)</span>
+   | |                                <span class="nt">------------</span> <span class="sb">`</span>config.site<span class="sb">`</span> is borrowed here
+...  |
+39 | |                 .required<span class="o">(</span><span class="nb">true</span><span class="o">)</span>,
+40 | |         <span class="o">)</span>
+   | |_________^ returns a value referencing data owned by the current <span class="k">function</span></code></pre></figure>
+
+<p>This makes sense, given Rust’s <a href="https://doc.rust-lang.org/1.8.0/book/ownership.html">ownership
+semantics</a>. The function
+<code class="highlighter-rouge">mk_app</code> takes <em>ownership</em> of <code class="highlighter-rouge">config</code>, but then it goes out of scope at the end
+of the function, so the resource is deallocated. It would be <em>very bad</em> if the
+compiler didn’t complain here, because the <code class="highlighter-rouge">&amp;config.site</code> would be a dangling
+pointer. Instead, we need to
+<a href="https://doc.rust-lang.org/1.8.0/book/references-and-borrowing.html">borrow</a> the
+config:</p>
+
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">pub</span> <span class="k">fn</span> <span class="n">mk_app</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="nv">'b</span><span class="o">&gt;</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">Config</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">App</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="nv">'b</span><span class="o">&gt;</span> <span class="p">{</span></code></pre></figure>
+
+<p>Of course, this wouldn’t be a true introductory Rust post if we didn’t have a
+few battles with the borrow checker. This signature is illegal because it is
+<a href="https://doc.rust-lang.org/nomicon/lifetime-elision.html">ambiguous</a>:</p>
+
+<figure class="highlight"><pre><code class="language-shell" data-lang="shell">error[E0621]: explicit lifetime required <span class="k">in </span>the <span class="nb">type </span>of <span class="sb">`</span>config<span class="sb">`</span>
+  <span class="nt">--</span><span class="o">&gt;</span> src/cli.rs:14:5
+   |
+13 |   pub fn mk_app&lt;<span class="s1">'a, '</span>b&gt;<span class="o">(</span>config: &amp;Config<span class="o">)</span> -&gt; App&lt;<span class="s1">'a, '</span>b&gt; <span class="o">{</span>
+   |                                 <span class="nt">-------</span> <span class="nb">help</span>: add explicit lifetime <span class="sb">`</span><span class="s1">'b` to the type of `config`: `&amp;'</span>b config::Config<span class="sb">`</span>
+14 | /     App::new<span class="o">(</span><span class="s2">"so"</span><span class="o">)</span>
+15 | |         .arg<span class="o">(</span>
+16 | |             Arg::with_name<span class="o">(</span><span class="s2">"site"</span><span class="o">)</span>
+17 | |                 .long<span class="o">(</span><span class="s2">"site"</span><span class="o">)</span>
+...  |
+38 | |                 .required<span class="o">(</span><span class="nb">true</span><span class="o">)</span>,
+39 | |         <span class="o">)</span>
+   | |_________^ lifetime <span class="sb">`</span><span class="s1">'b` required</span></code></pre></figure>
+
+<p>Here’s an oddity that might actually be a bug in the compiler message. If you
+add the <code class="highlighter-rouge">'b</code> lifetime so that <code class="highlighter-rouge">config: &amp;'b Config</code>, you’ll see that the lifetime
+is invalid. If we instead use <code class="highlighter-rouge">config: &amp;'a Config</code>, the compilation succeeds <img class="emoji" title=":tada:" alt=":tada:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f389.png" height="20" width="20">
+and we get the desired functionality.<sup id="fnref:3"><a href="#fn:3" class="footnote">2</a></sup></p>
+
+<p>But we’re not quite done, because we haven’t specified the default configured
+<code class="highlighter-rouge">limit</code>. And here’s where things get interesting! The <code class="highlighter-rouge">config.limit</code> has type
+<code class="highlighter-rouge">u16</code>, but as we saw above, the <code class="highlighter-rouge">default_value</code> function accepts a <code class="highlighter-rouge">&amp;str</code>. (To
+be pedantic, we saw that it accepts a <code class="highlighter-rouge">&amp;'a str</code>.) Luckily, all of these integer
+types have <code class="highlighter-rouge">ToString</code> implementations:</p>
+
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">pub</span> <span class="k">fn</span> <span class="n">mk_app</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="nv">'b</span><span class="o">&gt;</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="n">Config</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">App</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="nv">'b</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">limit</span> <span class="o">=</span> <span class="n">config</span><span class="py">.limit</span><span class="nf">.to_string</span><span class="p">();</span>
+    <span class="nn">App</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="s">"so"</span><span class="p">)</span>
+        <span class="c">// elided site arg</span>
+        <span class="nf">.arg</span><span class="p">(</span>
+            <span class="nn">Arg</span><span class="p">::</span><span class="nf">with_name</span><span class="p">(</span><span class="s">"limit"</span><span class="p">)</span>
+                <span class="nf">.long</span><span class="p">(</span><span class="s">"limit"</span><span class="p">)</span>
+                <span class="nf">.short</span><span class="p">(</span><span class="s">"l"</span><span class="p">)</span>
+                <span class="nf">.number_of_values</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="nf">.takes_value</span><span class="p">(</span><span class="k">true</span><span class="p">)</span>
+                <span class="nf">.default_value</span><span class="p">(</span><span class="o">&amp;</span><span class="n">limit</span><span class="p">)</span>
+                <span class="nf">.help</span><span class="p">(</span><span class="s">"Question limit per site query"</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="c">// elided query arg</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>But we’ve run into the same problem as above when we tried to return a reference
+to the owned <code class="highlighter-rouge">config</code>:</p>
+
+<figure class="highlight"><pre><code class="language-shell" data-lang="shell">15 | /     App::new<span class="o">(</span><span class="s2">"so"</span><span class="o">)</span>
+16 | |         .arg<span class="o">(</span>
+17 | |             Arg::with_name<span class="o">(</span><span class="s2">"site"</span><span class="o">)</span>
+18 | |                 .long<span class="o">(</span><span class="s2">"site"</span><span class="o">)</span>
+...  |
+31 | |                 .default_value<span class="o">(</span>&amp;limit<span class="o">)</span>
+   | |                                <span class="nt">------</span> <span class="sb">`</span>limit<span class="sb">`</span> is borrowed here
+...  |
+38 | |                 .required<span class="o">(</span><span class="nb">true</span><span class="o">)</span>,
+39 | |         <span class="o">)</span>
+   | |_________^ returns a value referencing data owned by the current <span class="k">function</span></code></pre></figure>
+
+<p>And again, it makes sense given Rust’s semantics around ownership and memory
+management. When we create the limit string <code class="highlighter-rouge">let limit =
+config.limit.to_string();</code>, the current scope owns that <code class="highlighter-rouge">limit</code>, but the memory
+is deallocated when it goes out of scope. So, just as above, if the borrow
+checker <em>did</em> let this code pass, we would have a dangling pointer within the
+<code class="highlighter-rouge">App</code>.</p>
+
+<p>All of this made sense to me. What was hard was accepting that my notion of how
+to use functions has fundamental differences with Rust’s semantics.
+I have it ingrained in me that if there’s some busy work like
+parsing this one config field involved in creating an App, this <em>should</em> be
+done by the <code class="highlighter-rouge">mk_app</code> function to keep my code DRY. That is, I don’t want to
+have to do such conversions outside of <code class="highlighter-rouge">mk_app</code> every time I call it. But, this
+kind of thinking will evidently conflict with Rust’s ownership semantics from
+time to time.</p>
+
+<p>It is my understanding that this is just how things are if a struct like <code class="highlighter-rouge">App</code>
+requires references like <code class="highlighter-rouge">&amp;str</code> in its construction. Someone needs to own those
+strings, and thus they need to be kept in scope, i.e. kept <em>alive</em>, for as long
+as the <code class="highlighter-rouge">App</code> lives. I’ve since reorganized my code so that the configuration retrieval
+and clap argument parsing all happens in the same place, so this isn’t an issue
+for me and the code is DRY. However, I’m not testing the CLI interface like I
+wanted to, because I don’t want tests to pull from the test runner’s home directory.
+Please comment (or pull request) if you have a good solution to this problem.</p>
+
+<h2 id="async">Async</h2>
+
+<p>Asynchronous programming in Rust was <em>very</em> daunting at first. For one, there’s
+a mess of options and it was hard to know what to use (tokio vs. async-std,
+etc.). And the tutorials and StackOverflow answers that you find for these
+options are likely to be out of date, given the rapid development of these
+various avenues for async support.</p>
+
+<p>This is one area where I found the Haskell implementation was easier; there, I
+know to reach for
+<a href="https://hackage.haskell.org/package/async-2.2.2/docs/Control-Concurrent-Async.html">async</a>
+and the library is incredibly easy to use. But of course,
+in some sense this is comparing apples to oranges; namely,
+Haskell has a runtime and a garbage collector.<sup id="fnref:4"><a href="#fn:4" class="footnote">3</a></sup> It <em>better</em> be easier to
+write asynchronous code with such tools available at runtime!</p>
+
+<p>That being said, once I decided to depend on tokio, it was <a href="https://github.com/samtay/so/commit/ec92f930344d364e3be359a41aebea78f8205fa7">relatively
+straight-forward</a>
+to switch to tokio’s runtime, and the compiler is pretty good at guiding you.</p>
+
+<p>For a demonstration of some common async tasks,
+<a href="https://github.com/samtay/so/commit/5f88657a75c4443ba93936e0f14bb3be0435fd41#diff-639fbc4ef05b315af92b4d836c31b023R87-R92">here</a>
+is the commit which gets results in the background, and
+<a href="https://github.com/samtay/so/commit/412676f8c99a93ee879c9c127a58b32dae50cdfa#diff-e2d87d7106c6198944f0115725f2a85bR114">here</a>
+is where I shoot off an arbitrary number of parallel requests.</p>
+
+<h2 id="libraries">Libraries</h2>
+
+<p>In my limited experience this past month, my take is that the libraries are
+numerous and excellent. I thought <code class="highlighter-rouge">so</code> might be a bit too much to chew while
+learning a new language, but it turns out it’s mostly glue code and all the
+heavy lifting is done by regularly maintained and <em>fairly</em> well-documented
+libraries. The current app is way faster and more feature-rich than my original
+Haskell implementation, which I spent much more time on.</p>
+
+<h4 id="tui-rs">tui-rs</h4>
+<p>After an initial survey of the landscape, I went with
+<a href="https://github.com/fdehau/tui-rs">tui-rs</a> as a TUI framework. I quickly ran into
+hurdles when it came time to deal with user input. That’s not to say you <em>can’t</em> deal
+with user input in tui-rs, but that you’ll be doing a lot more manual work to do
+so. And I’m not disparaging the library here; this just isn’t part of its goals.
+Here is an
+<a href="https://github.com/fdehau/tui-rs/blob/e789c671b038d516c347874e899be815b15caf25/examples/user_input.rs">example</a>
+demonstrating the work involved.</p>
+
+<h4 id="cursive">cursive</h4>
+
+<p>I ended up cutting my losses and trying out
+<a href="https://github.com/gyscos/Cursive">cursive</a>. This was <em>such</em>
+a good decision. The documentation is sort-of-lacking, but I was pleasantly
+surprised just how flexible this library is, in a general sense with its callback
+structure, and in small ergonomic ways such as
+accepting <code class="highlighter-rouge">Into&lt;String&gt;</code> etc. types of arguments in most of its API.
+Suffice it to say, if you are looking to build a TUI with some level of user
+interaction, cursive is a great choice. <em>But</em> you might have to explore its
+codebase rather than its
+<a href="https://docs.rs/cursive/0.15.0/cursive/index.html">docs.rs</a>. As with most of
+the TUI libraries I’ve come across, the
+<a href="https://github.com/gyscos/cursive/tree/master/examples">examples</a>  will also go
+a long way.</p>
+
+<h4 id="feature-flags-dependencies-and-orphans">Feature flags, dependencies, and orphans</h4>
+<p>Another thing I like about the ecosystem is the common motivation for
+slim dependencies and supporting a wide range of high-to-low level library usage via
+cargo <a href="https://doc.rust-lang.org/stable/cargo/reference/features.html#the-features-section">feature
+flags</a>.
+When libraries adhere to this pattern (which seems to be quite common), if you
+want to pull in less dependencies and only depend on what you need, you can just
+specify the proper feature flags for a library in your <code class="highlighter-rouge">Cargo.toml</code>, like this:</p>
+
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="n">reqwest</span> <span class="o">=</span> <span class="p">{</span> <span class="n">version</span> <span class="o">=</span> <span class="s">"0.10"</span><span class="p">,</span> <span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="s">"gzip"</span><span class="p">,</span> <span class="s">"json"</span><span class="p">]</span> <span class="p">}</span></code></pre></figure>
+
+<p>For some great examples of this, you can see the options available on the
+<a href="https://docs.rs/reqwest/0.10.6/reqwest/#optional-features">reqwest</a> crate or,
+taken to an even more extreme level,
+the <a href="https://docs.rs/tokio/0.2.21/tokio/index.html#feature-flags">tokio</a> crate.
+I would love to see more of this in Haskell’s libraries, starting with
+<a href="https://github.com/ekmett/lens/">lens</a>.  (Currently, if you want less
+dependencies you can depend on the duplicated
+<a href="https://github.com/monadfix/microlens">microlens</a> library.)</p>
+
+<p>This pattern can also alleviate the pain of orphans. In Rust, orphans are strictly
+disallowed. In Haskell, orphans result in warnings and thus programmers have
+more options in how to deal with them. The default “correct” solution is to use a newtype
+wrapper, but when this is cumbersome it’s not hard to find entire modules like</p>
+
+<figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="cp">{-# OPTIONS_GHC -fno-warn-orphans #-}</span>
+<span class="kr">module</span> <span class="nn">My.Namespace.Orphans</span> <span class="kr">where</span>
+<span class="c1">-- do bad things here</span></code></pre></figure>
+
+<p>This is especially common with things like JSON serialization &amp; deserialization.
+The most common orphans I see in Haskell are
+<a href="https://hackage.haskell.org/package/aeson"><code class="highlighter-rouge">aeson</code></a> instances, because if some
+library <code class="highlighter-rouge">acme</code> that has nothing to do with JSON exports a datatype <code class="highlighter-rouge">Foo</code>, why
+should they incur an <code class="highlighter-rouge">aeson</code> dependency for the unknown, possibly empty subset
+of library consumers that might want to serialize and deserialize <code class="highlighter-rouge">Foo</code>?
+<strong>But</strong> if <code class="highlighter-rouge">acme</code> instead added an optional library flag <code class="highlighter-rouge">json</code> (like the <code class="highlighter-rouge">reqwest</code>
+library above), then <code class="highlighter-rouge">acme</code> can provide the <em>optional</em> dependency and instances. It’s a
+win-win.</p>
+
+<h2 id="concluding-remarks">Concluding remarks</h2>
+<p>As a language, Haskell is hard to beat. It’s a thing of beauty. But the language
+itself isn’t everything, and in just about every other aspect (compiler,
+tooling, ecosystem, etc.) I’ve had a more enjoyable time with Rust over the past
+month. So I’m going to continue exploring it. I plan to start a new project at a
+lower level, closer to hardware, to see Rust in its more typical domain. If
+you have any project ideas please leave a comment.</p>
+
+<h2 id="footnotes">Footnotes</h2>
+<div class="footnotes">
+  <ol>
+    <li id="fn:2">
+      <p>Shout out to <a href="https://github.com/rust-lang/rustlings">rustlings</a> which really helped me get used to the syntax and semantics. If I find the time, I’d like to start an equivalent for Haskell. <a href="#fnref:2" class="reversefootnote">↩</a></p>
+    </li>
+    <li id="fn:3">
+      <p>Note that which lifetime parameter to use only depends on the internals of <code class="highlighter-rouge">App</code> and exactly which parts of that struct have the lifetimes <code class="highlighter-rouge">'a</code> and <code class="highlighter-rouge">'b</code>.  The solution here implies that it is the <em>first</em> lifetime parameter that specifies the lifetime of the borrowed default value strings. We could have also looked at the definition of <code class="highlighter-rouge">clap::App</code> to figure this out. <a href="#fnref:3" class="reversefootnote">↩</a></p>
+    </li>
+    <li id="fn:4">
+      <p>Or more precisely, any implementation of Haskell. <a href="#fnref:4" class="reversefootnote">↩</a></p>
+    </li>
+  </ol>
+</div>
+
+          </div>
+
+          
+          <script id="utterances_script" src="https://utteranc.es/client.js" repo="samtay/samtay.github.io" issue-term="pathname" label="comments" theme="github-light" crossorigin="anonymous" async>
+          </script>
+          <script>
+            // wait for utterances to load and send its first message.
+            addEventListener('message', event => {
+              var tone = localStorage.getItem('theme');
+              if (!tone || event.origin !== 'https://utteranc.es') {
+                return;
+              }
+              const message = {
+                type: 'set-theme',
+                theme: 'github-' + tone
+              };
+              const utterances = document.querySelector('iframe').contentWindow;
+              utterances.postMessage(message, 'https://utteranc.es');
+            });
+          </script>
+          
+
+          
+        </article>
+        <footer class="footer scrollappear">
+  <p>
+  Ramblings ϵ {Mathematics, Statistics, Haskell}.
+    © 2020. All rights reserved.
+    <!--<a href="/about" title="About me">Nielsen Ramon</a>. Download it <a href="https://github.com/nielsenramon/chalk" rel="noreferrer noopener" target="_blank" title="Download Chalk">here</a>.-->
+  </p>
+</footer>
+
+      </div>
+    </div>
+  </main>
+  
+
+<script src="/assets/vendor-477ef7ade179538494e13ef734def226f39f3144ff3911d1a03961bbbc4cb872.js" type="text/javascript"></script>
+
+
+  <script src="/assets/webfonts-96493456d319d1bf419afdf8701552d4d486fee6afd304897d4fd81eb4e0cc0b.js" type="text/javascript"></script>
+
+
+
+  <script src="/assets/scrollappear-e2da8ea567e418637e31266cc5302126eaa79f62a2273739086358b589a89ee6.js" type="text/javascript"></script>
+
+
+<script src="/assets/application-cfde13ac81ddaf4351b2e739603e2baf688d0fcc9aba613fe62bbb1c7b037fb9.js" type="text/javascript"></script>
+
+
+  <script src="/assets/themetoggle-592c116ce4dcad7dc732f6ffd55b682581fae9e8737bca3da323e802faf1367f.js" type="text/javascript"></script>
+
+</body>
+</html>
