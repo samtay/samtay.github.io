@@ -301,7 +301,7 @@ showLuckyAnswer question =
 
 ### Type Synonyms
 Good type synonyms can do wonders for readability, particularly for type
-constructors with common or canonical parameters. Consider the
+constructors with common or canonical parameters. Consider
 the noise of all the `Question [] Markdown` types you've seen in this post thus
 far. I suppose now is a good time as any to explain the need for such a
 parameterization: the `Question` datatype is defined as
