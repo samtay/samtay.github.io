@@ -177,9 +177,9 @@ from which very complex behavior emerges under the right conditions.
 It is one of many examples of <a href="https://en.wikipedia.org/wiki/Complex_systems">complex systems</a>.</p>
 
 <p>In a nutshell, there is a 2D grid of cells, each of which has two possible states: alive or dead.
-The grid evolves in discrete steps of time <code class="highlighter-rouge">t</code>. At time <code class="highlighter-rouge">t = 0</code>,
-we give the board some initial state. For all <code class="highlighter-rouge">t &gt; 0</code>,
-the grid evolves to step <code class="highlighter-rouge">t + 1</code> based on these simple rules:</p>
+The grid evolves in discrete steps of time <code class="language-plaintext highlighter-rouge">t</code>. At time <code class="language-plaintext highlighter-rouge">t = 0</code>,
+we give the board some initial state. For all <code class="language-plaintext highlighter-rouge">t &gt; 0</code>,
+the grid evolves to step <code class="language-plaintext highlighter-rouge">t + 1</code> based on these simple rules:</p>
 
 <ul>
   <li>Any live cell with exactly two or three live neighbours stays alive.</li>
@@ -209,13 +209,13 @@ a really cool library that is useful for exploring mathematical grids/graphs/lat
 <span class="kr">type</span> <span class="kt">Cell</span> <span class="o">=</span> <span class="kt">Index</span> <span class="kt">Board</span></code></pre></figure>
 
 <p>It was nice to do this first because I got <strong>a lot</strong> for free.
-Essentially my board looks like a mapping of <code class="highlighter-rouge">(x,y)</code> coordinates to cell states.
-In fact, the <code class="highlighter-rouge">toList</code> function that we get from the <code class="highlighter-rouge">Grid</code> typeclass  confirms this:</p>
+Essentially my board looks like a mapping of <code class="language-plaintext highlighter-rouge">(x,y)</code> coordinates to cell states.
+In fact, the <code class="language-plaintext highlighter-rouge">toList</code> function that we get from the <code class="language-plaintext highlighter-rouge">Grid</code> typeclass  confirms this:</p>
 
 <figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="err">λ</span><span class="o">&gt;</span> <span class="n">toList</span> <span class="o">$</span> <span class="n">blinker</span> <span class="mi">3</span> <span class="mi">3</span>
 <span class="p">[((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="kt">Dead</span><span class="p">),((</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="kt">Alive</span><span class="p">),((</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="kt">Dead</span><span class="p">),((</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="kt">Dead</span><span class="p">),((</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="kt">Alive</span><span class="p">),((</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="kt">Dead</span><span class="p">),((</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="kt">Dead</span><span class="p">),((</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="kt">Alive</span><span class="p">),((</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="kt">Dead</span><span class="p">)]</span></code></pre></figure>
 
-<p>I even get a <code class="highlighter-rouge">neighbours</code> function that returns all 8 neighbours of a cell
+<p>I even get a <code class="language-plaintext highlighter-rouge">neighbours</code> function that returns all 8 neighbours of a cell
 along with many more useful functions, so implementing
 game evolution was very straightforward:</p>
 
@@ -259,7 +259,7 @@ to improve the elegance and performance of this codebase.
 As it turns out, cellular automata are well represented by comonads.</p>
 
 <h3 id="definition">Definition</h3>
-<p>Let’s consider what the <em>dual</em> of the <code class="highlighter-rouge">Monad</code> type looks like:</p>
+<p>Let’s consider what the <em>dual</em> of the <code class="language-plaintext highlighter-rouge">Monad</code> type looks like:</p>
 
 <figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="c1">-- Monad definition (adapted)</span>
 <span class="kr">class</span> <span class="kt">Functor</span> <span class="o">=&gt;</span> <span class="kt">Monad</span> <span class="n">m</span> <span class="kr">where</span>
@@ -310,22 +310,22 @@ of small, similar computations. Sound familiar?</p>
   <span class="n">extend</span> <span class="o">::</span> <span class="p">(</span><span class="kt">Stream</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Stream</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">Stream</span> <span class="n">b</span>
   <span class="n">extend</span> <span class="n">f</span> <span class="n">s</span><span class="o">@</span><span class="p">(</span><span class="kt">Cons</span> <span class="kr">_</span> <span class="n">xs</span><span class="p">)</span> <span class="o">=</span> <span class="kt">Cons</span> <span class="p">(</span><span class="n">f</span> <span class="n">s</span><span class="p">)</span> <span class="p">(</span><span class="n">extend</span> <span class="n">f</span> <span class="n">xs</span><span class="p">)</span></code></pre></figure>
 
-<p>So <code class="highlighter-rouge">extract</code> is like <code class="highlighter-rouge">head</code> and <code class="highlighter-rouge">duplicate</code> is like <code class="highlighter-rouge">tails</code>.
-<code class="highlighter-rouge">extend</code> on the other hand looks a little <code class="highlighter-rouge">fmap</code>-y:</p>
+<p>So <code class="language-plaintext highlighter-rouge">extract</code> is like <code class="language-plaintext highlighter-rouge">head</code> and <code class="language-plaintext highlighter-rouge">duplicate</code> is like <code class="language-plaintext highlighter-rouge">tails</code>.
+<code class="language-plaintext highlighter-rouge">extend</code> on the other hand looks a little <code class="language-plaintext highlighter-rouge">fmap</code>-y:</p>
 
 <figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">fmap</span>   <span class="o">::</span> <span class="p">(</span>       <span class="n">a</span> <span class="o">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Stream</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">Stream</span> <span class="n">b</span>
 <span class="n">extend</span> <span class="o">::</span> <span class="p">(</span><span class="kt">Stream</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Stream</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">Stream</span> <span class="n">b</span></code></pre></figure>
 
-<p>Well, it’s sort of similar to <code class="highlighter-rouge">fmap</code>
+<p>Well, it’s sort of similar to <code class="language-plaintext highlighter-rouge">fmap</code>
 but the type signature is slightly different
-in that the function argument <code class="highlighter-rouge">f :: Stream a -&gt; b</code> accepts its first
-argument already of type <code class="highlighter-rouge">Stream a</code>.
-Consequently, <code class="highlighter-rouge">f</code> can <em>know</em> or be <em>context-aware</em> of the comonadic structure
-when it produces its return value of type <code class="highlighter-rouge">b</code>. This is where the power of
-comonad really shines. In this case, the context that <code class="highlighter-rouge">f</code> is aware of
+in that the function argument <code class="language-plaintext highlighter-rouge">f :: Stream a -&gt; b</code> accepts its first
+argument already of type <code class="language-plaintext highlighter-rouge">Stream a</code>.
+Consequently, <code class="language-plaintext highlighter-rouge">f</code> can <em>know</em> or be <em>context-aware</em> of the comonadic structure
+when it produces its return value of type <code class="language-plaintext highlighter-rouge">b</code>. This is where the power of
+comonad really shines. In this case, the context that <code class="language-plaintext highlighter-rouge">f</code> is aware of
 at <em>each</em> function call when mapping over the stream is a current element
-<code class="highlighter-rouge">x</code> (we’ll say at the current “cursor”) along with the whole tail of the list from
-<code class="highlighter-rouge">x</code> onwards.</p>
+<code class="language-plaintext highlighter-rouge">x</code> (we’ll say at the current “cursor”) along with the whole tail of the list from
+<code class="language-plaintext highlighter-rouge">x</code> onwards.</p>
 
 <p>This observation lends itself to the intuition we set out to build, namely that
 monads <em>produce</em> additional context
@@ -334,10 +334,10 @@ while comonads are <em>consumed</em> within a context.</p>
 <figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">bind</span>   <span class="o">::</span> <span class="p">(</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="n">m</span> <span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">m</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="n">m</span> <span class="n">b</span>
 <span class="n">extend</span> <span class="o">::</span> <span class="p">(</span><span class="n">m</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">m</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="n">m</span> <span class="n">b</span></code></pre></figure>
 
-<p>Note that <code class="highlighter-rouge">bind</code> accepts a function <code class="highlighter-rouge">g :: a -&gt; m b</code>
-that takes an <code class="highlighter-rouge">a</code> value and <em>produces</em> a contextual value <code class="highlighter-rouge">m b</code>.
-Contrast this with <code class="highlighter-rouge">extend</code> accepting a function <code class="highlighter-rouge">f :: m a -&gt; b</code>
-which has <code class="highlighter-rouge">f</code> <em>consuming</em> the contextual value <code class="highlighter-rouge">m a</code>.</p>
+<p>Note that <code class="language-plaintext highlighter-rouge">bind</code> accepts a function <code class="language-plaintext highlighter-rouge">g :: a -&gt; m b</code>
+that takes an <code class="language-plaintext highlighter-rouge">a</code> value and <em>produces</em> a contextual value <code class="language-plaintext highlighter-rouge">m b</code>.
+Contrast this with <code class="language-plaintext highlighter-rouge">extend</code> accepting a function <code class="language-plaintext highlighter-rouge">f :: m a -&gt; b</code>
+which has <code class="language-plaintext highlighter-rouge">f</code> <em>consuming</em> the contextual value <code class="language-plaintext highlighter-rouge">m a</code>.</p>
 
 <h4 id="zipper">Zipper</h4>
 
@@ -425,12 +425,12 @@ My base 1-dimensional zipper is defined as</p>
              <span class="p">,</span> <span class="n">_zi</span> <span class="o">::</span> <span class="kt">Int</span>
              <span class="p">}</span> <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Eq</span><span class="p">,</span> <span class="kt">Show</span><span class="p">)</span></code></pre></figure>
 
-<p>So “shifting left” will focus the first element of <code class="highlighter-rouge">_zl</code> and snoc <code class="highlighter-rouge">_zc</code> to <code class="highlighter-rouge">_zl</code>,
-while “shifting right” will focus the last element of <code class="highlighter-rouge">_zl</code> and cons <code class="highlighter-rouge">_zc</code> to <code class="highlighter-rouge">_zl</code>.
-I chose <code class="highlighter-rouge">Data.Sequence</code> because it has a nice API and is symmetric in
+<p>So “shifting left” will focus the first element of <code class="language-plaintext highlighter-rouge">_zl</code> and snoc <code class="language-plaintext highlighter-rouge">_zc</code> to <code class="language-plaintext highlighter-rouge">_zl</code>,
+while “shifting right” will focus the last element of <code class="language-plaintext highlighter-rouge">_zl</code> and cons <code class="language-plaintext highlighter-rouge">_zc</code> to <code class="language-plaintext highlighter-rouge">_zl</code>.
+I chose <code class="language-plaintext highlighter-rouge">Data.Sequence</code> because it has a nice API and is symmetric in
 time complexities when viewing either end of the sequence.</p>
 
-<p>So the Game of Life is then implemented as a nested <code class="highlighter-rouge">Z (Z a)</code>:</p>
+<p>So the Game of Life is then implemented as a nested <code class="language-plaintext highlighter-rouge">Z (Z a)</code>:</p>
 
 <figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="cd">-- | A modular game of life board</span>
 <span class="c1">--</span>
@@ -449,10 +449,10 @@ time complexities when viewing either end of the sequence.</p>
 <span class="kr">newtype</span> <span class="kt">ZZ</span> <span class="n">a</span> <span class="o">=</span> <span class="kt">ZZ</span> <span class="p">{</span> <span class="n">_unzz</span> <span class="o">::</span> <span class="kt">Z</span> <span class="p">(</span><span class="kt">Z</span> <span class="n">a</span><span class="p">)</span> <span class="p">}</span>
   <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Eq</span><span class="p">)</span></code></pre></figure>
 
-<p>You might be wondering where that <code class="highlighter-rouge">Cell</code> indexer comes into play.
-I ended up creating a <code class="highlighter-rouge">Zipper</code> class, which was a nice pattern because
-once <code class="highlighter-rouge">Z</code> had a <code class="highlighter-rouge">Zipper</code> instance, I could easily polymorphically use those
-class functions when writing the instance for the newtype <code class="highlighter-rouge">ZZ</code>. The class
+<p>You might be wondering where that <code class="language-plaintext highlighter-rouge">Cell</code> indexer comes into play.
+I ended up creating a <code class="language-plaintext highlighter-rouge">Zipper</code> class, which was a nice pattern because
+once <code class="language-plaintext highlighter-rouge">Z</code> had a <code class="language-plaintext highlighter-rouge">Zipper</code> instance, I could easily polymorphically use those
+class functions when writing the instance for the newtype <code class="language-plaintext highlighter-rouge">ZZ</code>. The class
 is larger than it needs to be, as I’m not even currently using all of its methods,
 but I think it is fairly future proof if I want to add more features to the app:</p>
 
@@ -505,8 +505,8 @@ but I think it is fairly future proof if I want to add more features to the app:
 
 <p>I don’t want there to be a billion lines of code in this article, so feel free to check out the
 <a href="https://github.com/samtay/conway/blob/master/src/Life.hs">source</a>
-if you want to see how those instances are defined for <code class="highlighter-rouge">Z</code> and <code class="highlighter-rouge">ZZ</code>.
-Once they are defined, writing the <code class="highlighter-rouge">Comonad</code> instance is much easier:</p>
+if you want to see how those instances are defined for <code class="language-plaintext highlighter-rouge">Z</code> and <code class="language-plaintext highlighter-rouge">ZZ</code>.
+Once they are defined, writing the <code class="language-plaintext highlighter-rouge">Comonad</code> instance is much easier:</p>
 
 <figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="kr">instance</span> <span class="kt">Comonad</span> <span class="kt">Z</span> <span class="kr">where</span>
   <span class="n">extract</span> <span class="o">=</span> <span class="n">cursor</span>
@@ -529,12 +529,12 @@ Once they are defined, writing the <code class="highlighter-rouge">Comonad</code
 <span class="n">compose</span> <span class="o">=</span> <span class="p">(</span><span class="n">foldr</span> <span class="p">(</span><span class="o">.</span><span class="p">)</span> <span class="n">id</span> <span class="o">.</span><span class="p">)</span> <span class="o">.</span> <span class="n">replicate</span></code></pre></figure>
 
 <p>It looks a little messy, but that’s probably just me being an amateur.
-Really all that <code class="highlighter-rouge">duplicate</code> needs to do is, for all indices <code class="highlighter-rouge">(i,j)</code>,
-replace the element at <code class="highlighter-rouge">(i,j)</code> with the argument <code class="highlighter-rouge">z</code> shifted west <code class="highlighter-rouge">i</code> times
-and shifted south <code class="highlighter-rouge">j</code> times; that is, the argument <code class="highlighter-rouge">z</code> with cursor/index focused
-at <code class="highlighter-rouge">(i,j)</code>.</p>
+Really all that <code class="language-plaintext highlighter-rouge">duplicate</code> needs to do is, for all indices <code class="language-plaintext highlighter-rouge">(i,j)</code>,
+replace the element at <code class="language-plaintext highlighter-rouge">(i,j)</code> with the argument <code class="language-plaintext highlighter-rouge">z</code> shifted west <code class="language-plaintext highlighter-rouge">i</code> times
+and shifted south <code class="language-plaintext highlighter-rouge">j</code> times; that is, the argument <code class="language-plaintext highlighter-rouge">z</code> with cursor/index focused
+at <code class="language-plaintext highlighter-rouge">(i,j)</code>.</p>
 
-<p>Finally, with <code class="highlighter-rouge">Zipper</code> and <code class="highlighter-rouge">Comonad</code> instances in place, here is the new <code class="highlighter-rouge">step</code>:</p>
+<p>Finally, with <code class="language-plaintext highlighter-rouge">Zipper</code> and <code class="language-plaintext highlighter-rouge">Comonad</code> instances in place, here is the new <code class="language-plaintext highlighter-rouge">step</code>:</p>
 
 <figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">step</span> <span class="o">::</span> <span class="kt">Board</span> <span class="o">-&gt;</span> <span class="kt">Board</span>
 <span class="n">step</span> <span class="o">=</span> <span class="n">extend</span> <span class="n">rule</span>
@@ -584,12 +584,12 @@ elems                    Math.Geometry.GridMap                src/Math/Geometry/
   <img src="/assets/comonadic-gol/initial-heap-e20a1a1e8443fd96f097676362af5dc08762fb6ea8b8d25e11ad4b1930b07cf2.png" alt="Initial Heap" class="zooming" data-rjs="/assets/comonadic-gol/initial-heap-e20a1a1e8443fd96f097676362af5dc08762fb6ea8b8d25e11ad4b1930b07cf2.png" data-zooming-width="576" data-zooming-height="384">
 </a></p>
 
-<p>We see there is quite a bit of memory spent in the <code class="highlighter-rouge">step</code> function.</p>
+<p>We see there is quite a bit of memory spent in the <code class="language-plaintext highlighter-rouge">step</code> function.</p>
 
 <h3 id="comonads-to-the-rescue">Comonads to the rescue</h3>
 <p>Now that the function evolving the game has cursor context
 and easy access to each cursor’s neighborhood,
-just a few <code class="highlighter-rouge">O(1)</code> lookups at the front and back of <code class="highlighter-rouge">Data.Sequence.Seq a</code> containers,
+just a few <code class="language-plaintext highlighter-rouge">O(1)</code> lookups at the front and back of <code class="language-plaintext highlighter-rouge">Data.Sequence.Seq a</code> containers,
 performance improves drammatically.</p>
 
 <ul>
@@ -678,7 +678,7 @@ duplicate.mkCol Life   src/Life.hs:(216,7)-(217,80)    1.2    0.5</code></pre></
   </main>
   
 
-<script src="/assets/vendor-477ef7ade179538494e13ef734def226f39f3144ff3911d1a03961bbbc4cb872.js" type="text/javascript"></script>
+<script src="/assets/vendor-130c9c254effc51f3283620bc635851da7b99c20901216948f11ba72ee13317f.js" type="text/javascript"></script>
 
 
   <script src="/assets/webfonts-96493456d319d1bf419afdf8701552d4d486fee6afd304897d4fd81eb4e0cc0b.js" type="text/javascript"></script>

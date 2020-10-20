@@ -188,12 +188,12 @@ audience. At the very least, you will need</p>
 
 <h1 id="motivation">Motivation</h1>
 
-<p>Let \(\mathcal{X}\) be some alphabet<sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup> and consider a probability
+<p>Let \(\mathcal{X}\) be some alphabet<sup id="fnref:1" role="doc-noteref"><a href="#fn:1" class="footnote">1</a></sup> and consider a probability
 distribution over the sample space \(\mathcal{X}^n\) with probability mass
 function \(\mu\). That is, letting \((X_1,\ldots,X_n)\) denote a random
 vector over this distribution,</p>
 
-<script type="math/tex; mode=display">\mu(x_1, \ldots, x_n) = \mathbb{P}(X_1 = x_1, \ldots, X_n = x_n).</script>
+\[\mu(x_1, \ldots, x_n) = \mathbb{P}(X_1 = x_1, \ldots, X_n = x_n).\]
 
 <p>In this fully general setting where the \(X_i\)’s can be arbitrarily interdependent,
 notice that \(\mu\) must be specified by \(O(|\mathcal{X}|^n)\) values. However,
@@ -217,7 +217,7 @@ algorithms.</p>
 domestic politics, partisanship and party alliance seem to increasingly determine an
 individual’s views on a given issue. This observation suggests the
 approximation that issues are conditionally independent given the party
-alliance is known. So suppose we pick an American<sup id="fnref:2"><a href="#fn:2" class="footnote">2</a></sup> at random and consider the
+alliance is known. So suppose we pick an American<sup id="fnref:2" role="doc-noteref"><a href="#fn:2" class="footnote">2</a></sup> at random and consider the
 probability space induced by three <!-- TODO count -->
 random variables <em>Party</em> \((P)\), <em>Gun Control</em> \((G)\), and <em>Health Care</em>
 \((H)\). For the sake of simplicity we will treat these as binary random variables,
@@ -228,17 +228,17 @@ i.e.</p>
 <p>where</p>
 
 <p>\begin{align}
-p^0 &amp;:= \text{republican} \\
-p^1 &amp;:= \text{democrat} \\
-g^0 &amp;:= \text{does not support stricter gun laws} \\
-g^1 &amp;:= \text{supports stricter gun laws} \\
-h^0 &amp;:= \text{does not support Medicare for all} \\
+p^0 &amp;:= \text{republican} \<br />
+p^1 &amp;:= \text{democrat} \<br />
+g^0 &amp;:= \text{does not support stricter gun laws} \<br />
+g^1 &amp;:= \text{supports stricter gun laws} \<br />
+h^0 &amp;:= \text{does not support Medicare for all} \<br />
 h^1 &amp;:= \text{supports Medicare for all}
 \end{align}</p>
 
 <p>As discussed above, a fully general probablistic model allows for arbitrary
 \(\mathbb{P}(P,G,H)\) probabilities for the \(2^n\) possible outcomes in
-this space.<sup id="fnref:3"><a href="#fn:3" class="footnote">3</a></sup> One such distribution is given in the table below.</p>
+this space.<sup id="fnref:3" role="doc-noteref"><a href="#fn:3" class="footnote">3</a></sup> One such distribution is given in the table below.</p>
 
 <table class="marginal-table">
   <thead>
@@ -309,14 +309,14 @@ P(h| p1) = (.77, .23)
 -->
 
 <p>While the specific joint probabilities are contrived, the marginal
-probabilities per party are based on real polling<sup id="fnref:4"><a href="#fn:4" class="footnote">4</a></sup>, so these
+probabilities per party are based on real polling<sup id="fnref:4" role="doc-noteref"><a href="#fn:4" class="footnote">4</a></sup>, so these
 values should fit roughly with our intuition.</p>
 
 <p>Let’s explore the dependence among these variables, first computing the
 probability that an individual favors Medicare for all:
 \begin{align}
- \mathbb{P}(H = h^1) &amp;= \sum_{p, g} \mathbb{P}(H = h^1, P = p, G = g) \\
-                     &amp;= 0.097 + 0.043 + 0.054 + 0.331 \\
+ \mathbb{P}(H = h^1) &amp;= \sum_{p, g} \mathbb{P}(H = h^1, P = p, G = g) \<br />
+                     &amp;= 0.097 + 0.043 + 0.054 + 0.331 \<br />
                      &amp;= 0.525
 \end{align}
 Marginally it is more likely that an individual is in
@@ -325,10 +325,10 @@ does not support stricter gun laws. How does this change the probability of the
 former issue?
 \begin{align}
  \mathbb{P}(H = h^1 | G = g^0)
-   &amp;= \frac{\mathbb{P}(H = h^1, G = g^0)}{\mathbb{P}(G = g^0)} \\
+   &amp;= \frac{\mathbb{P}(H = h^1, G = g^0)}{\mathbb{P}(G = g^0)} \<br />
    &amp;= \frac{\sum_{p}\mathbb{P}(G = g^0, H = h^1, P=p)}
-           {\sum_{p,h}\mathbb{P}(G = g^0, P=p, H=h)} \\
-   &amp;= \frac{0.097 + 0.054}{0.248+0.097+0.016+0.054} \\
+           {\sum_{p,h}\mathbb{P}(G = g^0, P=p, H=h)} \<br />
+   &amp;= \frac{0.097 + 0.054}{0.248+0.097+0.016+0.054} \<br />
    &amp;= 0.364
 \end{align}
 The conclusion to draw from this calculation is that \(H\) and \(G\) are
@@ -345,9 +345,9 @@ beforehand.</p>
 <p>\begin{align}
 \mathbb{P}(H = h^1 | P = p^1)
   &amp;= \frac{\mathbb{P}(H = h^1, P = p^1)}
-          {\mathbb{P}(P = p^1)} \\
+          {\mathbb{P}(P = p^1)} \<br />
   &amp;= \frac{0.054 + 0.331}
-          {0.500} \\
+          {0.500} \<br />
   &amp;= 0.77
 \end{align}</p>
 
@@ -355,8 +355,8 @@ beforehand.</p>
 \begin{align}
  \mathbb{P}(H = h^1 | G = g^0, P = p^1)
    &amp;= \frac{\mathbb{P}(H = h^1, G = g^0, P = p^1)}
-           {\mathbb{P}(G = g^0, P=p^1)} \\
-   &amp;= \frac{0.054}{0.016 + 0.054} \\
+           {\mathbb{P}(G = g^0, P=p^1)} \<br />
+   &amp;= \frac{0.054}{0.016 + 0.054} \<br />
    &amp;= 0.77
 \end{align}</p>
 
@@ -379,9 +379,9 @@ Thus we can write</p>
 
 <p>\begin{align}
 \mathbb{P}(P, G, H)
-  &amp;=  \mathbb{P}(P)\,\mathbb{P}\,(G, H \mid P) \\
-  &amp;=  \mathbb{P}(P) \,\mathbb{P}(G \mid P) \,\mathbb{P}(H \mid P) \\
-  &amp;\approx  O(2^{n-1}). \\
+  &amp;=  \mathbb{P}(P)\,\mathbb{P}\,(G, H \mid P) \<br />
+  &amp;=  \mathbb{P}(P) \,\mathbb{P}(G \mid P) \,\mathbb{P}(H \mid P) \<br />
+  &amp;\approx  O(2^{n-1}). \<br />
 \end{align}</p>
 
 <h1 id="bayesian-networks">Bayesian Networks</h1>
@@ -389,16 +389,16 @@ Thus we can write</p>
 Bayesian Network (BN) if there exists a directed acyclic graph G with nodes
 \(\{1,\ldots,n\}\) such that</p>
 
-<script type="math/tex; mode=display">\mu(x_1, \ldots, x_n) = \prod_{k = 1}^{n} \mu(x_k \mid x_{\pi(k)})</script>
+\[\mu(x_1, \ldots, x_n) = \prod_{k = 1}^{n} \mu(x_k \mid x_{\pi(k)})\]
 
 <p>where \(\pi(k)\) is the set of parents of node \(k\) in G. As implied by
 the definition, BNs will allow us to encode certain conditional
 independencies in a distribution in the form of a graph.</p>
 
 <p>First, note that in the general and arbitrarily dependent case, by repeatedly
-applying the defintion of conditional probability, one can derive<sup id="fnref:5"><a href="#fn:5" class="footnote">5</a></sup></p>
+applying the defintion of conditional probability, one can derive<sup id="fnref:5" role="doc-noteref"><a href="#fn:5" class="footnote">5</a></sup></p>
 
-<script type="math/tex; mode=display">\mu(x_1, \ldots, x_n) = \prod_{k = 1}^{n} \mu(x_k \mid x_1,\ldots,x_{k-1}).</script>
+\[\mu(x_1, \ldots, x_n) = \prod_{k = 1}^{n} \mu(x_k \mid x_1,\ldots,x_{k-1}).\]
 
 <p>which would be represented by the DAG below.</p>
 <p align="center">
@@ -414,7 +414,7 @@ graphs.</p>
 
 <p>In the example above we showed that \(\mu\) factors into</p>
 
-<script type="math/tex; mode=display">\mu(x_p, x_g, x_h) = \mu(x_p)\,\mu(x_g \mid x_p) \,\mu(x_h \mid x_p)</script>
+\[\mu(x_p, x_g, x_h) = \mu(x_p)\,\mu(x_g \mid x_p) \,\mu(x_h \mid x_p)\]
 
 <p>which can be represented by the graph below.</p>
 <p align="center">
@@ -424,7 +424,7 @@ graphs.</p>
 
 </p>
 <p>It takes some familiarity to read independencies implied by the graph
-structure.<sup id="fnref:6"><a href="#fn:6" class="footnote">6</a></sup> In this case, each node can influence the others, as
+structure.<sup id="fnref:6" role="doc-noteref"><a href="#fn:6" class="footnote">6</a></sup> In this case, each node can influence the others, as
 expected. However, since
 \(P\) and \(H\) are only connected via their single parent node \(P\), we
 can infer directly from the graph that they are conditionally independent given
@@ -465,25 +465,25 @@ called belief propagation for finding marginal probabilities.</p>
 
 <h1 id="footnotes">Footnotes</h1>
 
-<div class="footnotes">
+<div class="footnotes" role="doc-endnotes">
   <ol>
-    <li id="fn:1">
-      <p>Typically a finite set, e.g. \(\{0,1\}\). <a href="#fnref:1" class="reversefootnote">&#8617;</a></p>
+    <li id="fn:1" role="doc-endnote">
+      <p>Typically a finite set, e.g. \(\{0,1\}\). <a href="#fnref:1" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
     </li>
-    <li id="fn:2">
-      <p>Actually first remove the Independents and other parties, then pick a Democrat or Republican party member at random. (Sorry, it’s just easier to deal with a binary random variable!) <a href="#fnref:2" class="reversefootnote">&#8617;</a></p>
+    <li id="fn:2" role="doc-endnote">
+      <p>Actually first remove the Independents and other parties, then pick a Democrat or Republican party member at random. (Sorry, it’s just easier to deal with a binary random variable!) <a href="#fnref:2" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
     </li>
-    <li id="fn:3">
-      <p>Technically, because these probabilities must sum to one, the distribution is fully specified by the first \(2^n - 1\) values. <a href="#fnref:3" class="reversefootnote">&#8617;</a></p>
+    <li id="fn:3" role="doc-endnote">
+      <p>Technically, because these probabilities must sum to one, the distribution is fully specified by the first \(2^n - 1\) values. <a href="#fnref:3" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
     </li>
-    <li id="fn:4">
-      <p>Opinions on gun control and health care, conditional by party, are from polling by <a href="https://www.pewresearch.org/fact-tank/2019/10/16/share-of-americans-who-favor-stricter-gun-laws-has-increased-since-2017/ft_19-10-16_gunlaws_sizable-gender-education-differences-support-stricter-gun-laws_2/">Pew Research Center</a> and <a href="https://www.kff.org/health-reform/poll-finding/kff-health-tracking-poll-november-2019/">Kaiser Family Foundation</a>, respectively. <a href="#fnref:4" class="reversefootnote">&#8617;</a></p>
+    <li id="fn:4" role="doc-endnote">
+      <p>Opinions on gun control and health care, conditional by party, are from polling by <a href="https://www.pewresearch.org/fact-tank/2019/10/16/share-of-americans-who-favor-stricter-gun-laws-has-increased-since-2017/ft_19-10-16_gunlaws_sizable-gender-education-differences-support-stricter-gun-laws_2/">Pew Research Center</a> and <a href="https://www.kff.org/health-reform/poll-finding/kff-health-tracking-poll-november-2019/">Kaiser Family Foundation</a>, respectively. <a href="#fnref:4" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
     </li>
-    <li id="fn:5">
-      <p>See <a href="https://en.wikipedia.org/wiki/Chain_rule_(probability)#More_than_two_random_variables">wikipedia</a> for a derivation. <a href="#fnref:5" class="reversefootnote">&#8617;</a></p>
+    <li id="fn:5" role="doc-endnote">
+      <p>See <a href="https://en.wikipedia.org/wiki/Chain_rule_(probability)#More_than_two_random_variables">wikipedia</a> for a derivation. <a href="#fnref:5" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
     </li>
-    <li id="fn:6">
-      <p>I’d encourage anyone interested to refer to Daphne Koller’s <a href="https://www.coursera.org/learn/probabilistic-graphical-models#syllabus">coursera course</a> and associated textbook. <a href="#fnref:6" class="reversefootnote">&#8617;</a></p>
+    <li id="fn:6" role="doc-endnote">
+      <p>I’d encourage anyone interested to refer to Daphne Koller’s <a href="https://www.coursera.org/learn/probabilistic-graphical-models#syllabus">coursera course</a> and associated textbook. <a href="#fnref:6" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
     </li>
   </ol>
 </div>
@@ -532,7 +532,7 @@ called belief propagation for finding marginal probabilities.</p>
   </main>
   
 
-<script src="/assets/vendor-477ef7ade179538494e13ef734def226f39f3144ff3911d1a03961bbbc4cb872.js" type="text/javascript"></script>
+<script src="/assets/vendor-130c9c254effc51f3283620bc635851da7b99c20901216948f11ba72ee13317f.js" type="text/javascript"></script>
 
 
   <script src="/assets/webfonts-96493456d319d1bf419afdf8701552d4d486fee6afd304897d4fd81eb4e0cc0b.js" type="text/javascript"></script>

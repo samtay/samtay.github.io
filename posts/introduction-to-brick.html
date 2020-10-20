@@ -163,7 +163,7 @@
             <h2 id="introduction">Introduction</h2>
 
 <p>I’m going to give a short introduction to <a href="https://hackage.haskell.org/package/brick-0.18">brick</a>,
-a Haskell library for building terminal user interfaces. So far I’ve used <code class="highlighter-rouge">brick</code> to
+a Haskell library for building terminal user interfaces. So far I’ve used <code class="language-plaintext highlighter-rouge">brick</code> to
 implement <a href="https://github.com/samtay/conway">Conway’s Game of Life</a> and a
 <a href="https://github.com/samtay/tetris">Tetris clone</a>. I’ll explain the basics,
 walk through an example <a href="https://github.com/samtay/snake">snake</a> application, and then explain some more complicated scenarios.</p>
@@ -183,17 +183,17 @@ used as a reference in addition to the existing resources:</p>
 
 <h3 id="the-basic-idea">The basic idea</h3>
 
-<p><code class="highlighter-rouge">brick</code> is very declarative. Once your base application logic is in place, the interface
+<p><code class="language-plaintext highlighter-rouge">brick</code> is very declarative. Once your base application logic is in place, the interface
 is generally built by two functions: drawing and handling events. The drawing function</p>
 
 <figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">appDraw</span> <span class="o">::</span> <span class="n">s</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="kt">Widget</span> <span class="n">n</span><span class="p">]</span></code></pre></figure>
 
-<p>takes your app state <code class="highlighter-rouge">s</code> and produces the visuals <code class="highlighter-rouge">[Widget n]</code>.
+<p>takes your app state <code class="language-plaintext highlighter-rouge">s</code> and produces the visuals <code class="language-plaintext highlighter-rouge">[Widget n]</code>.
 The handler</p>
 
 <figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">appHandleEvent</span> <span class="o">::</span> <span class="n">s</span> <span class="o">-&gt;</span> <span class="kt">BrickEvent</span> <span class="n">n</span> <span class="n">e</span> <span class="o">-&gt;</span> <span class="kt">EventM</span> <span class="n">n</span> <span class="p">(</span><span class="kt">Next</span> <span class="n">s</span><span class="p">)</span></code></pre></figure>
 
-<p>takes your app state, an event (e.g. user presses the <code class="highlighter-rouge">'m'</code> key), and produces the resulting
+<p>takes your app state, an event (e.g. user presses the <code class="language-plaintext highlighter-rouge">'m'</code> key), and produces the resulting
 app state. <em>That’s pretty much it.</em></p>
 
 <h2 id="snake">snake</h2>
@@ -210,7 +210,7 @@ The full source code is <a href="https://github.com/samtay/snake">here</a>. This
 <p>The library makes it easy to separate the concerns of your application and the interface;
 I like to have a module with all of the core business logic that exports the core state of the app
 and functions for modifying it, and then have an interface module that just handles the setup,
-drawing, and handling events. So let’s just use the <code class="highlighter-rouge">simple</code> stack template and add two
+drawing, and handling events. So let’s just use the <code class="language-plaintext highlighter-rouge">simple</code> stack template and add two
 modules</p>
 
 <figure class="highlight"><pre><code class="language-plaintext" data-lang="plaintext">├── LICENSE
@@ -223,7 +223,7 @@ modules</p>
 │   └── UI.hs
 └── stack.yaml</code></pre></figure>
 
-<p>and our dependencies to <code class="highlighter-rouge">test.cabal</code></p>
+<p>and our dependencies to <code class="language-plaintext highlighter-rouge">test.cabal</code></p>
 
 <figure class="highlight"><pre><code class="language-plaintext" data-lang="plaintext">executable snake
   hs-source-dirs:      src
@@ -240,7 +240,7 @@ modules</p>
                      , random</code></pre></figure>
 
 <h3 id="snake-1">Snake</h3>
-<p>Since this tutorial is about <code class="highlighter-rouge">brick</code>, I’ll elide most of the implementation details
+<p>Since this tutorial is about <code class="language-plaintext highlighter-rouge">brick</code>, I’ll elide most of the implementation details
 of the actual game, but here are some of the key types and scaffolding:</p>
 
 <figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="cp">{-# LANGUAGE TemplateHaskell, FlexibleContexts #-}</span>
@@ -287,7 +287,7 @@ of the actual game, but here are some of the key types and scaffolding:</p>
 haven’t seen them. At first glance they may seem complicated (and the underlying
 theory arguably is), but using them as getters and setters is very straightforward.
 So, if you are following along because you are writing a terminal app like this, I’d
-recommend using them, but they are not required to use <code class="highlighter-rouge">brick</code>.</p>
+recommend using them, but they are not required to use <code class="language-plaintext highlighter-rouge">brick</code>.</p>
 
 <p>Here are the core functions for playing the game:</p>
 
@@ -316,18 +316,18 @@ recommend using them, but they are not required to use <code class="highlighter-
 <span class="n">initGame</span> <span class="o">::</span> <span class="kt">IO</span> <span class="kt">Game</span></code></pre></figure>
 
 <h3 id="ui">UI</h3>
-<p>To start, we need to determine what our <code class="highlighter-rouge">App s e n</code> type parameters are.
+<p>To start, we need to determine what our <code class="language-plaintext highlighter-rouge">App s e n</code> type parameters are.
 This will completely describe the interface application and be passed to one of the library’s
-<code class="highlighter-rouge">main</code> style functions for execution. Note that <code class="highlighter-rouge">s</code> is the app state, <code class="highlighter-rouge">e</code> is an event type,
-and <code class="highlighter-rouge">n</code> is a resource name. The <code class="highlighter-rouge">e</code> is abstracted so that we can provide custom events.
-The <code class="highlighter-rouge">n</code> is usually a custom sum type called <code class="highlighter-rouge">Name</code> which allows us to <em>name</em> particular viewports.
+<code class="language-plaintext highlighter-rouge">main</code> style functions for execution. Note that <code class="language-plaintext highlighter-rouge">s</code> is the app state, <code class="language-plaintext highlighter-rouge">e</code> is an event type,
+and <code class="language-plaintext highlighter-rouge">n</code> is a resource name. The <code class="language-plaintext highlighter-rouge">e</code> is abstracted so that we can provide custom events.
+The <code class="language-plaintext highlighter-rouge">n</code> is usually a custom sum type called <code class="language-plaintext highlighter-rouge">Name</code> which allows us to <em>name</em> particular viewports.
 This is important so that we can keep track of where the user currently has <em>focus</em>, such as
 typing in one of two textboxes; however, for this simple snake game we don’t need
 to worry about that.</p>
 
-<p>In simpler cases, the state <code class="highlighter-rouge">s</code> can directly coincide with a core datatype such as our <code class="highlighter-rouge">Snake.Game</code>.
+<p>In simpler cases, the state <code class="language-plaintext highlighter-rouge">s</code> can directly coincide with a core datatype such as our <code class="language-plaintext highlighter-rouge">Snake.Game</code>.
 In many cases however, it will be necessary to
-wrap the core state within the ui state <code class="highlighter-rouge">s</code> to keep track of things
+wrap the core state within the ui state <code class="language-plaintext highlighter-rouge">s</code> to keep track of things
 that are interface specific (more on this later).</p>
 
 <p>Let’s write out our app definition and leave some undefined functions:</p>
@@ -406,10 +406,10 @@ that are interface specific (more on this later).</p>
 
 <h4 id="custom-events">Custom Events</h4>
 
-<p>So far I’ve only used <code class="highlighter-rouge">brick</code> to make games which need to be redrawn as time passes,
-with or without user input. This requires using <code class="highlighter-rouge">Brick.customMain</code> with that <code class="highlighter-rouge">Tick</code>
-event type, and opening a forked process to <code class="highlighter-rouge">forever</code> feed that event type into
-the channel. Since this is a common scenario, there is a <code class="highlighter-rouge">Brick.BChan</code> module that makes
+<p>So far I’ve only used <code class="language-plaintext highlighter-rouge">brick</code> to make games which need to be redrawn as time passes,
+with or without user input. This requires using <code class="language-plaintext highlighter-rouge">Brick.customMain</code> with that <code class="language-plaintext highlighter-rouge">Tick</code>
+event type, and opening a forked process to <code class="language-plaintext highlighter-rouge">forever</code> feed that event type into
+the channel. Since this is a common scenario, there is a <code class="language-plaintext highlighter-rouge">Brick.BChan</code> module that makes
 this pretty quick:</p>
 
 <figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">main</span> <span class="o">::</span> <span class="kt">IO</span> <span class="nb">()</span>
@@ -421,10 +421,10 @@ this pretty quick:</p>
   <span class="n">g</span> <span class="o">&lt;-</span> <span class="n">initGame</span>
   <span class="n">void</span> <span class="o">$</span> <span class="n">customMain</span> <span class="p">(</span><span class="kt">V</span><span class="o">.</span><span class="n">mkVty</span> <span class="kt">V</span><span class="o">.</span><span class="n">defaultConfig</span><span class="p">)</span> <span class="p">(</span><span class="kt">Just</span> <span class="n">chan</span><span class="p">)</span> <span class="n">app</span> <span class="n">g</span></code></pre></figure>
 
-<p>We do need to import <code class="highlighter-rouge">Vty.Graphics</code> since <code class="highlighter-rouge">customMain</code> allows us to specify
-a custom <code class="highlighter-rouge">IO Vty.Graphics.Vty</code> handle, but we’re only customizing the existence of the
-event channel <code class="highlighter-rouge">BChan Tick</code>. The app is now bootstrapped, and all we need to do is
-implement <code class="highlighter-rouge">handleEvent</code>, <code class="highlighter-rouge">drawUI</code>, and <code class="highlighter-rouge">theMap</code> (handles styling).</p>
+<p>We do need to import <code class="language-plaintext highlighter-rouge">Vty.Graphics</code> since <code class="language-plaintext highlighter-rouge">customMain</code> allows us to specify
+a custom <code class="language-plaintext highlighter-rouge">IO Vty.Graphics.Vty</code> handle, but we’re only customizing the existence of the
+event channel <code class="language-plaintext highlighter-rouge">BChan Tick</code>. The app is now bootstrapped, and all we need to do is
+implement <code class="language-plaintext highlighter-rouge">handleEvent</code>, <code class="language-plaintext highlighter-rouge">drawUI</code>, and <code class="language-plaintext highlighter-rouge">theMap</code> (handles styling).</p>
 
 <h4 id="handling-events">Handling events</h4>
 
@@ -447,10 +447,10 @@ to the proper state modifiers.</p>
 <span class="n">handleEvent</span> <span class="n">g</span> <span class="p">(</span><span class="kt">VtyEvent</span> <span class="p">(</span><span class="kt">V</span><span class="o">.</span><span class="kt">EvKey</span> <span class="kt">V</span><span class="o">.</span><span class="kt">KEsc</span> <span class="kt">[]</span><span class="p">))</span>        <span class="o">=</span> <span class="n">halt</span> <span class="n">g</span>
 <span class="n">handleEvent</span> <span class="n">g</span> <span class="kr">_</span>                                     <span class="o">=</span> <span class="n">continue</span> <span class="n">g</span></code></pre></figure>
 
-<p>It’s probably obvious, but <code class="highlighter-rouge">continue</code> will continue execution with the supplied state value,
-which is then drawn. We can also <code class="highlighter-rouge">halt</code> to stop execution, which will essentially
-finish the evaluation of our <code class="highlighter-rouge">customMain</code> and result in <code class="highlighter-rouge">IO Game</code>, where the resulting
-game is the last value that we supplied to <code class="highlighter-rouge">halt</code>.</p>
+<p>It’s probably obvious, but <code class="language-plaintext highlighter-rouge">continue</code> will continue execution with the supplied state value,
+which is then drawn. We can also <code class="language-plaintext highlighter-rouge">halt</code> to stop execution, which will essentially
+finish the evaluation of our <code class="language-plaintext highlighter-rouge">customMain</code> and result in <code class="language-plaintext highlighter-rouge">IO Game</code>, where the resulting
+game is the last value that we supplied to <code class="language-plaintext highlighter-rouge">halt</code>.</p>
 
 <h4 id="drawing">Drawing</h4>
 
@@ -468,9 +468,9 @@ into regions with drawing functions for each one.</p>
 <span class="n">drawGrid</span> <span class="o">::</span> <span class="kt">Game</span> <span class="o">-&gt;</span> <span class="kt">Widget</span> <span class="kt">Name</span>
 <span class="n">drawGrid</span> <span class="o">=</span> <span class="n">undefined</span></code></pre></figure>
 
-<p>This will center the overall interface (<code class="highlighter-rouge">C.center</code>),
-put the stats and grid widgets horizontally side by side (<code class="highlighter-rouge">&lt;+&gt;</code>),
-and separate them by a 2-character width (<code class="highlighter-rouge">padRight (Pad 2)</code>).</p>
+<p>This will center the overall interface (<code class="language-plaintext highlighter-rouge">C.center</code>),
+put the stats and grid widgets horizontally side by side (<code class="language-plaintext highlighter-rouge">&lt;+&gt;</code>),
+and separate them by a 2-character width (<code class="language-plaintext highlighter-rouge">padRight (Pad 2)</code>).</p>
 
 <p>Let’s move forward with the stats column:</p>
 
@@ -496,10 +496,10 @@ and separate them by a 2-character width (<code class="highlighter-rouge">padRig
 <span class="n">gameOverAttr</span> <span class="o">::</span> <span class="kt">AttrName</span>
 <span class="n">gameOverAttr</span> <span class="o">=</span> <span class="s">"gameOver"</span></code></pre></figure>
 
-<p>I’m throwing in that <code class="highlighter-rouge">hLimit 11</code> to prevent the widget greediness caused by the outer <code class="highlighter-rouge">C.center</code>.
-I’m also using <code class="highlighter-rouge">vBox</code> to show some other options of aligning widgets; <code class="highlighter-rouge">vBox</code> and <code class="highlighter-rouge">hBox</code> align
+<p>I’m throwing in that <code class="language-plaintext highlighter-rouge">hLimit 11</code> to prevent the widget greediness caused by the outer <code class="language-plaintext highlighter-rouge">C.center</code>.
+I’m also using <code class="language-plaintext highlighter-rouge">vBox</code> to show some other options of aligning widgets; <code class="language-plaintext highlighter-rouge">vBox</code> and <code class="language-plaintext highlighter-rouge">hBox</code> align
 a list of widgets vertically and horizontally, respectfully. They can be thought of as folds
-over the binary <code class="highlighter-rouge">&lt;=&gt;</code> and <code class="highlighter-rouge">&lt;+&gt;</code> operations.</p>
+over the binary <code class="language-plaintext highlighter-rouge">&lt;=&gt;</code> and <code class="language-plaintext highlighter-rouge">&lt;+&gt;</code> operations.</p>
 
 <p>The score is straightforward, but it is the first border in this tutorial. Borders are well
 documented in the
@@ -507,13 +507,13 @@ documented in the
 and the Haddocks for that matter.</p>
 
 <p>We also only show the “game over” widget if the game is actually over.
-In that case, we are rendering the string widget with the <code class="highlighter-rouge">gameOverAttr</code> attribute name.
+In that case, we are rendering the string widget with the <code class="language-plaintext highlighter-rouge">gameOverAttr</code> attribute name.
 Attribute names are basically type safe <em>names</em> that we can assign to widgets to apply
 predetermined styles, similar to assigning a class name to a div in HTML and defining the
 CSS styles for that class elsewhere.</p>
 
-<p>Attribute names implement <code class="highlighter-rouge">IsString</code>, so they are easy to construct with
-the <code class="highlighter-rouge">OverloadedStrings</code> pragma.</p>
+<p>Attribute names implement <code class="language-plaintext highlighter-rouge">IsString</code>, so they are easy to construct with
+the <code class="language-plaintext highlighter-rouge">OverloadedStrings</code> pragma.</p>
 
 <p>Now for the main event:</p>
 
@@ -543,8 +543,8 @@ the <code class="highlighter-rouge">OverloadedStrings</code> pragma.</p>
 <span class="n">foodAttr</span> <span class="o">=</span> <span class="s">"foodAttr"</span>
 <span class="n">emptyAttr</span> <span class="o">=</span> <span class="s">"emptyAttr"</span></code></pre></figure>
 
-<p>There’s actually nothing new here! We’ve already covered all the <code class="highlighter-rouge">brick</code> functions necessary
-to draw the grid. My approach to grids is to render a square cell widget <code class="highlighter-rouge">cw</code> with different
+<p>There’s actually nothing new here! We’ve already covered all the <code class="language-plaintext highlighter-rouge">brick</code> functions necessary
+to draw the grid. My approach to grids is to render a square cell widget <code class="language-plaintext highlighter-rouge">cw</code> with different
 colors depending on the cell state. The easiest way to draw a colored square is to stick
 two characters side by side. If we assign an attribute with a matching foreground and background,
 then it doesn’t matter what the two characters are (provided that they aren’t some crazy
@@ -566,7 +566,7 @@ have to look in the <a href="http://hackage.haskell.org/package/vty">vty</a> pac
 to find what you need.</p>
 
 <p>Another thing to mention is that the attributes form a hierarchy and
-can be combined in a parent-child relationship via <code class="highlighter-rouge">mappend</code>. I haven’t
+can be combined in a parent-child relationship via <code class="language-plaintext highlighter-rouge">mappend</code>. I haven’t
 actually used this feature, but it does sound quite handy. For a more
 detailed discussion see the
 <a href="https://hackage.haskell.org/package/brick-0.18/docs/Brick-AttrMap.html">Brick.AttrMap</a> haddocks.</p>
@@ -575,12 +575,12 @@ detailed discussion see the
 
 <p>One difficult problem I encountered was implementing a variable speed in the GoL.
 I could have just used the same approach above with the minimum thread delay
-(corresponding to the maximum speed) and counted <code class="highlighter-rouge">Tick</code> events, only issuing an actual
-<code class="highlighter-rouge">step</code> in the game when the modular count of <code class="highlighter-rouge">Tick</code>s reached an amount corresponding to the
+(corresponding to the maximum speed) and counted <code class="language-plaintext highlighter-rouge">Tick</code> events, only issuing an actual
+<code class="language-plaintext highlighter-rouge">step</code> in the game when the modular count of <code class="language-plaintext highlighter-rouge">Tick</code>s reached an amount corresponding to the
 current game speed, but that’s kind of an ugly approach.</p>
 
-<p>Instead, I reached out to the author and he advised me to use a <code class="highlighter-rouge">TVar</code> within the app state.
-I had never used <code class="highlighter-rouge">TVar</code>, but it’s pretty easy!</p>
+<p>Instead, I reached out to the author and he advised me to use a <code class="language-plaintext highlighter-rouge">TVar</code> within the app state.
+I had never used <code class="language-plaintext highlighter-rouge">TVar</code>, but it’s pretty easy!</p>
 
 <figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">main</span> <span class="o">::</span> <span class="kt">IO</span> <span class="nb">()</span>
 <span class="n">main</span> <span class="o">=</span> <span class="kr">do</span>
@@ -593,13 +593,13 @@ I had never used <code class="highlighter-rouge">TVar</code>, but it’s pretty 
   <span class="n">customMain</span> <span class="p">(</span><span class="kt">V</span><span class="o">.</span><span class="n">mkVty</span> <span class="kt">V</span><span class="o">.</span><span class="n">defaultConfig</span><span class="p">)</span> <span class="p">(</span><span class="kt">Just</span> <span class="n">chan</span><span class="p">)</span> <span class="n">app</span> <span class="p">(</span><span class="n">initialGame</span> <span class="n">tv</span><span class="p">)</span>
     <span class="o">&gt;&gt;=</span> <span class="n">printResult</span></code></pre></figure>
 
-<p>The <code class="highlighter-rouge">tv &lt;- atomically $ newTVar (value :: a)</code> creates a new mutable reference to a value
-of type <code class="highlighter-rouge">a</code>, i.e. <code class="highlighter-rouge">TVar a</code>, and returns it in <code class="highlighter-rouge">IO</code>. In this case <code class="highlighter-rouge">value</code> is an <code class="highlighter-rouge">Int</code>
+<p>The <code class="language-plaintext highlighter-rouge">tv &lt;- atomically $ newTVar (value :: a)</code> creates a new mutable reference to a value
+of type <code class="language-plaintext highlighter-rouge">a</code>, i.e. <code class="language-plaintext highlighter-rouge">TVar a</code>, and returns it in <code class="language-plaintext highlighter-rouge">IO</code>. In this case <code class="language-plaintext highlighter-rouge">value</code> is an <code class="language-plaintext highlighter-rouge">Int</code>
 which represents the delay between game steps.
-Then in the forked process, we read the delay from the <code class="highlighter-rouge">TVar</code> reference and use that
-to space out the calls to <code class="highlighter-rouge">writeBChan chan Tick</code>.</p>
+Then in the forked process, we read the delay from the <code class="language-plaintext highlighter-rouge">TVar</code> reference and use that
+to space out the calls to <code class="language-plaintext highlighter-rouge">writeBChan chan Tick</code>.</p>
 
-<p>I store that same <code class="highlighter-rouge">tv :: TVar Int</code> in the brick app state, so that the user can change
+<p>I store that same <code class="language-plaintext highlighter-rouge">tv :: TVar Int</code> in the brick app state, so that the user can change
 the speed:</p>
 
 <figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">handleEvent</span> <span class="o">::</span> <span class="kt">Game</span> <span class="o">-&gt;</span> <span class="kt">BrickEvent</span> <span class="kt">Name</span> <span class="kt">Tick</span> <span class="o">-&gt;</span> <span class="kt">EventM</span> <span class="kt">Name</span> <span class="p">(</span><span class="kt">Next</span> <span class="kt">Game</span><span class="p">)</span>
@@ -631,7 +631,7 @@ the speed:</p>
 
 <h2 id="conclusion">Conclusion</h2>
 
-<p><code class="highlighter-rouge">brick</code> let’s you build TUIs very quickly. I was able to write <code class="highlighter-rouge">snake</code> along with this
+<p><code class="language-plaintext highlighter-rouge">brick</code> let’s you build TUIs very quickly. I was able to write <code class="language-plaintext highlighter-rouge">snake</code> along with this
 tutorial within a few hours. More complicated interfaces can be tougher, but if you can
 successfully separate the interface and core functionality, you’ll have an easier time
 tacking on the frontend.</p>
@@ -693,7 +693,7 @@ to figure stuff out, as <em>many</em> scenarios are covered throughout them.</p>
   </main>
   
 
-<script src="/assets/vendor-477ef7ade179538494e13ef734def226f39f3144ff3911d1a03961bbbc4cb872.js" type="text/javascript"></script>
+<script src="/assets/vendor-130c9c254effc51f3283620bc635851da7b99c20901216948f11ba72ee13317f.js" type="text/javascript"></script>
 
 
   <script src="/assets/webfonts-96493456d319d1bf419afdf8701552d4d486fee6afd304897d4fd81eb4e0cc0b.js" type="text/javascript"></script>

@@ -165,7 +165,7 @@ addition to debates regarding larger-scale patterns such as how to achieve
 error handling with the fewest headaches possible. I’ve found that whenever I
 enter a new environment and get exposed to other, smarter peoples’
 perspectives, my old code looks more and more wretched. So I was not surprised
-that upon revisiting <code class="highlighter-rouge">so</code>, I found code that horrified me and was in dire need
+that upon revisiting <code class="language-plaintext highlighter-rouge">so</code>, I found code that horrified me and was in dire need
 of refactoring, some of which may be of interest to budding Haskell developers.
 So, if you’re interested, let’s dive into some of these changes, enumerated
 here for convenience:</p>
@@ -191,11 +191,11 @@ animation:</p>
   <span class="kt">A</span><span class="o">.</span><span class="n">showCursor</span>
   <span class="n">return</span> <span class="n">res</span></code></pre></figure>
 
-<p>Here I have some <code class="highlighter-rouge">a :: Async a</code> that the user is waiting for, and I’m providing
-a nice animation for them while they wait. Once I get the <code class="highlighter-rouge">res :: a</code>, I need to
-clear and clean up the animation.  Whenever you want to execute some <code class="highlighter-rouge">action</code>
+<p>Here I have some <code class="language-plaintext highlighter-rouge">a :: Async a</code> that the user is waiting for, and I’m providing
+a nice animation for them while they wait. Once I get the <code class="language-plaintext highlighter-rouge">res :: a</code>, I need to
+clear and clean up the animation.  Whenever you want to execute some <code class="language-plaintext highlighter-rouge">action</code>
 which should always be preceded
-and followed by some other <code class="highlighter-rouge">pre_action</code> and <code class="highlighter-rouge">post_action</code> respectively,
+and followed by some other <code class="language-plaintext highlighter-rouge">pre_action</code> and <code class="language-plaintext highlighter-rouge">post_action</code> respectively,
 <a href="https://hackage.haskell.org/package/base-4.12.0.0/docs/Control-Exception.html#v:bracket">bracket</a>
 is the way to go:</p>
 
@@ -216,9 +216,9 @@ is the way to go:</p>
 
 <p>While the before and after code may look functionally the
 same, there is an important difference in behavior: exception
-handling. In my previous version, if <code class="highlighter-rouge">wait a</code> threw an exception, the animation
+handling. In my previous version, if <code class="language-plaintext highlighter-rouge">wait a</code> threw an exception, the animation
 would not be cleaned up! As the documentation for bracket explains, in the
-second version if <code class="highlighter-rouge">wait a</code> throws an exception, the animation clean up still
+second version if <code class="language-plaintext highlighter-rouge">wait a</code> throws an exception, the animation clean up still
 gets called, and <em>then</em> the exception is re-thrown to the same scope. This is
 the correct behavior.</p>
 
@@ -235,14 +235,14 @@ the correct behavior.</p>
     <span class="kt">Right</span> <span class="p">(</span><span class="n">q</span><span class="o">:</span><span class="kr">_</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Right</span> <span class="n">q</span>
     <span class="kt">Left</span> <span class="n">e</span>      <span class="o">-&gt;</span> <span class="kt">Left</span> <span class="n">e</span></code></pre></figure>
 
-<p>Here <code class="highlighter-rouge">queryLucky</code> is a hopeful version of <code class="highlighter-rouge">query</code> that just grabs the first
+<p>Here <code class="language-plaintext highlighter-rouge">queryLucky</code> is a hopeful version of <code class="language-plaintext highlighter-rouge">query</code> that just grabs the first
 search result from the StackExchange API. Consequently, instead of requesting
 the usual number of question results, we limit the request to a single
 question, so as to have a more efficient API call. So I want to run an inner
-<code class="highlighter-rouge">query :: App b</code> action with a temporarily modified configuration state,
-setting the limit to one, and <code class="highlighter-rouge">put</code> the initial state back in place once I’m
+<code class="language-plaintext highlighter-rouge">query :: App b</code> action with a temporarily modified configuration state,
+setting the limit to one, and <code class="language-plaintext highlighter-rouge">put</code> the initial state back in place once I’m
 done. This should trigger your bracket spidey-sense! What could go wrong if
-<code class="highlighter-rouge">query</code> throws an exception? The caller of <code class="highlighter-rouge">queryLucky</code> is left with what was
+<code class="language-plaintext highlighter-rouge">query</code> throws an exception? The caller of <code class="language-plaintext highlighter-rouge">queryLucky</code> is left with what was
 supposed to be a <em>temporarily</em> modified state! So let’s bracket this:</p>
 
 <figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">queryLucky</span> <span class="o">::</span> <span class="kt">App</span> <span class="p">(</span><span class="kt">Either</span> <span class="kt">Error</span> <span class="p">(</span><span class="kt">Question</span> <span class="kt">[]</span> <span class="kt">Markdown</span><span class="p">))</span>
@@ -257,23 +257,23 @@ supposed to be a <em>temporarily</em> modified state! So let’s bracket this:</
     <span class="kt">Right</span> <span class="p">(</span><span class="n">q</span><span class="o">:</span><span class="kr">_</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Right</span> <span class="n">q</span>
     <span class="kt">Left</span> <span class="n">e</span>      <span class="o">-&gt;</span> <span class="kt">Left</span> <span class="n">e</span></code></pre></figure>
 
-<p>Now regardless of what happens in <code class="highlighter-rouge">query</code>, we are assured that <code class="highlighter-rouge">put
+<p>Now regardless of what happens in <code class="language-plaintext highlighter-rouge">query</code>, we are assured that <code class="language-plaintext highlighter-rouge">put
 initialState</code> will be called afterwards. Note here that
-<code class="highlighter-rouge">bracket_ :: App a -&gt; App c -&gt; App b -&gt; App b</code> is a <a href="https://hackage.haskell.org/package/exceptions-0.10.4/docs/Control-Monad-Catch.html#v:bracket_">generic
+<code class="language-plaintext highlighter-rouge">bracket_ :: App a -&gt; App c -&gt; App b -&gt; App b</code> is a <a href="https://hackage.haskell.org/package/exceptions-0.10.4/docs/Control-Monad-Catch.html#v:bracket_">generic
  version</a>
- that runs in the <code class="highlighter-rouge">MonadMask App</code> instance, rather than <code class="highlighter-rouge">IO</code>. It is also a
- shorthand variant of <code class="highlighter-rouge">bracket</code> which doesn’t require passing values to the
+ that runs in the <code class="language-plaintext highlighter-rouge">MonadMask App</code> instance, rather than <code class="language-plaintext highlighter-rouge">IO</code>. It is also a
+ shorthand variant of <code class="language-plaintext highlighter-rouge">bracket</code> which doesn’t require passing values to the
  second and third actions, like we had to do above with the forked thread ID.
 Also, see in the same module other useful variants of
-the bracket pattern, such as <code class="highlighter-rouge">bracketOnError</code> or <code class="highlighter-rouge">onException</code> which only run
+the bracket pattern, such as <code class="language-plaintext highlighter-rouge">bracketOnError</code> or <code class="language-plaintext highlighter-rouge">onException</code> which only run
 the “release” action when an exception is thrown.</p>
 
 <h3 id="lambdacase">LambdaCase</h3>
-<p><a href="https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/glasgow_exts.html#extension-LambdaCase"><code class="highlighter-rouge">LambdaCase</code></a>
+<p><a href="https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/glasgow_exts.html#extension-LambdaCase"><code class="language-plaintext highlighter-rouge">LambdaCase</code></a>
 is one of my favorite extensions. It’s also arguably the smallest
 and simplest one available. Chances are if you are reading this, you are
 already aware of it, but I thought I’d include it here just in case.
-All it does is enable the <code class="highlighter-rouge">\case</code> syntactic sugar which is short for <code class="highlighter-rouge">\a -&gt;
+All it does is enable the <code class="language-plaintext highlighter-rouge">\case</code> syntactic sugar which is short for <code class="language-plaintext highlighter-rouge">\a -&gt;
 case a of</code>, but it cleans up code surprisingly well.
 Here is an example of an unnecessarily named function:</p>
 
@@ -286,7 +286,7 @@ Here is an example of an unnecessarily named function:</p>
         <span class="kr">then</span> <span class="n">exitWithError</span> <span class="s">"No results found. Try a different question."</span>
         <span class="kr">else</span> <span class="n">void</span> <span class="o">$</span> <span class="n">runStateT</span> <span class="p">(</span><span class="n">runByline</span> <span class="n">runPrompt</span><span class="p">)</span> <span class="p">(</span><span class="n">initPromptState</span> <span class="n">qs</span><span class="p">)</span></code></pre></figure>
 
-<p>The <code class="highlighter-rouge">runner</code> function is poorly named and an unnecessary binding. Here’s a
+<p>The <code class="language-plaintext highlighter-rouge">runner</code> function is poorly named and an unnecessary binding. Here’s a
 version with LambdaCase, which let’s the information flow a bit more cleanly:</p>
 
 <figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">execPrompt</span> <span class="o">::</span> <span class="kt">Async</span> <span class="p">(</span><span class="kt">Either</span> <span class="kt">Error</span> <span class="p">[</span><span class="kt">Question</span> <span class="kt">[]</span> <span class="kt">Markdown</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">App</span> <span class="nb">()</span>
@@ -297,26 +297,26 @@ version with LambdaCase, which let’s the information flow a bit more cleanly:<
 
 <h3 id="error-handling">Error Handling</h3>
 <p>What jumped out the most to me, and probably to you as well by now, is just how many
-<code class="highlighter-rouge">App (Either Error a)</code> types are floating around.
+<code class="language-plaintext highlighter-rouge">App (Either Error a)</code> types are floating around.
 While there’s nothing inherently wrong with passing
-<code class="highlighter-rouge">Either e a</code> types around, even frequently, generally speaking this is a code
-smell, particularly if they are nested directly within an <code class="highlighter-rouge">App</code>-esque monad
+<code class="language-plaintext highlighter-rouge">Either e a</code> types around, even frequently, generally speaking this is a code
+smell, particularly if they are nested directly within an <code class="language-plaintext highlighter-rouge">App</code>-esque monad
 stack. The issue is that, in most of these places along the application flow, I
-don’t particularly care about the <code class="highlighter-rouge">Either e</code> context and am simply bookkeeping to
+don’t particularly care about the <code class="language-plaintext highlighter-rouge">Either e</code> context and am simply bookkeeping to
 have errors bubble up to a top-level (or nearer-to-top-level) error handler.</p>
 
-<p>There a number of ways for me to avoid this bookkeeping and replace <code class="highlighter-rouge">App (Either
-Error a)</code>’s with <code class="highlighter-rouge">App a</code>’s, so as to have a cleaner flow of information.
-Because my errors were really only used closer to the <code class="highlighter-rouge">main</code> entry point, I
+<p>There a number of ways for me to avoid this bookkeeping and replace <code class="language-plaintext highlighter-rouge">App (Either
+Error a)</code>’s with <code class="language-plaintext highlighter-rouge">App a</code>’s, so as to have a cleaner flow of information.
+Because my errors were really only used closer to the <code class="language-plaintext highlighter-rouge">main</code> entry point, I
 chose to use exceptions. In particular because I am using asynchronous
 processes for a friendlier user interface, it made sense to have a
-<a href="https://hackage.haskell.org/package/exceptions-0.10.4/docs/Control-Monad-Catch.html#t:MonadMask"><code class="highlighter-rouge">MonadMask</code></a>
+<a href="https://hackage.haskell.org/package/exceptions-0.10.4/docs/Control-Monad-Catch.html#t:MonadMask"><code class="language-plaintext highlighter-rouge">MonadMask</code></a>
 instance. Similar refactoring could be accomplished with
-<a href="http://hackage.haskell.org/package/mtl-2.2.2/docs/Control-Monad-Except.html#t:MonadError"><code class="highlighter-rouge">MonadError</code></a>,
-or even just putting errors into your <code class="highlighter-rouge">MonadState</code> transformer; it really just
-depends on the use case and style preference.<sup id="fnref:3"><a href="#fn:3" class="footnote">1</a></sup></p>
+<a href="http://hackage.haskell.org/package/mtl-2.2.2/docs/Control-Monad-Except.html#t:MonadError"><code class="language-plaintext highlighter-rouge">MonadError</code></a>,
+or even just putting errors into your <code class="language-plaintext highlighter-rouge">MonadState</code> transformer; it really just
+depends on the use case and style preference.<sup id="fnref:3" role="doc-noteref"><a href="#fn:3" class="footnote">1</a></sup></p>
 
-<p>For this code, the <code class="highlighter-rouge">Either Error a</code> was only coming from one place, namely the
+<p>For this code, the <code class="language-plaintext highlighter-rouge">Either Error a</code> was only coming from one place, namely the
 decoding of the JSON response from Stack Exchange:</p>
 
 <figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="n">seRequest</span>
@@ -344,10 +344,10 @@ decoding of the JSON response from Stack Exchange:</p>
     <span class="kt">Right</span> <span class="kt">[]</span> <span class="o">-&gt;</span> <span class="n">throwM</span> <span class="kt">NoResultsError</span>
     <span class="kt">Right</span> <span class="n">qs</span> <span class="o">-&gt;</span> <span class="n">pure</span> <span class="n">qs</span></code></pre></figure>
 
-<p>With these changes, the rest of the code between <code class="highlighter-rouge">main</code> and <code class="highlighter-rouge">seRequest</code> can be
+<p>With these changes, the rest of the code between <code class="language-plaintext highlighter-rouge">main</code> and <code class="language-plaintext highlighter-rouge">seRequest</code> can be
 cleaner and just concern itself with the underlying question and answer data
 coming from the StackExchange API. At the top level, instead of dealing with
-the <code class="highlighter-rouge">Either Error</code> we deal with the exception. Originally the code looked something like:</p>
+the <code class="language-plaintext highlighter-rouge">Either Error</code> we deal with the exception. Originally the code looked something like:</p>
 
 <figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="c1">-- Simplified main example</span>
 <span class="n">main</span> <span class="o">::</span> <span class="kt">IO</span> <span class="nb">()</span>
@@ -367,7 +367,7 @@ the <code class="highlighter-rouge">Either Error</code> we deal with the excepti
   <span class="n">print</span> <span class="n">qas</span></code></pre></figure>
 
 <p>Furthermore, even if a few of the intermediary functions along my application
-flow required the <code class="highlighter-rouge">Either Error</code> context, there would still likely be a net
+flow required the <code class="language-plaintext highlighter-rouge">Either Error</code> context, there would still likely be a net
 benefit to change to exceptions. I could still reference any possible errors
 within the application flow, and choose whether or not the exception should
 bubble up, like so:</p>
@@ -381,18 +381,18 @@ bubble up, like so:</p>
 
 <p>In this example I want to continue the same application flow if the error is
 simply that the query returned no results from the search API, a reasonable
-thing to do.<sup id="fnref:4"><a href="#fn:4" class="footnote">2</a></sup> But for other bona fide exceptions such as a JSON decoding
-issue, I <code class="highlighter-rouge">throwM e</code> to continue to let the exception bubble up, halting
+thing to do.<sup id="fnref:4" role="doc-noteref"><a href="#fn:4" class="footnote">2</a></sup> But for other bona fide exceptions such as a JSON decoding
+issue, I <code class="language-plaintext highlighter-rouge">throwM e</code> to continue to let the exception bubble up, halting
 execution until the next exception catcher. Some readers may be opposed to
 this latter version aesthetically, and I sympathize, but if it cleans up the
-ugly juggling of <code class="highlighter-rouge">Either</code> types in 10 other locations, the maintenance benefit
+ugly juggling of <code class="language-plaintext highlighter-rouge">Either</code> types in 10 other locations, the maintenance benefit
 outweighs the “purity” aesthetic.</p>
 
 <p>To play devil’s advocate, I do think in the current state of
-the codebase, <code class="highlighter-rouge">MonadError e m</code> is a great fit, especially given that I am only
+the codebase, <code class="language-plaintext highlighter-rouge">MonadError e m</code> is a great fit, especially given that I am only
 dealing with a single type of error. And for the scope of this application, now
 and in the future, that’s probably a fine choice. However, after seeing the
-headaches that can come from using <code class="highlighter-rouge">MonadError</code> as an application gets more
+headaches that can come from using <code class="language-plaintext highlighter-rouge">MonadError</code> as an application gets more
 complex, and the reconciliation required of different types of errors in
 various parts of a growing application, I personally feel some bias against the approach.</p>
 
@@ -409,9 +409,9 @@ section.</p>
 
 <h3 id="nonemptylist">NonEmptyList</h3>
 <p>I think this was on my TODO list even back in 2018, but of course if I am
-throwing a <code class="highlighter-rouge">NoResultsError</code>, why am I using a data type <code class="highlighter-rouge">[]</code> that allows for no
-results? And worse, having to redundantly handle the <code class="highlighter-rouge">[]</code> case in three locations? Enter
-<a href="https://hackage.haskell.org/package/base-4.12.0.0/docs/Data-List-NonEmpty.html#t:NonEmpty"><code class="highlighter-rouge">NonEmptyList</code></a>
+throwing a <code class="language-plaintext highlighter-rouge">NoResultsError</code>, why am I using a data type <code class="language-plaintext highlighter-rouge">[]</code> that allows for no
+results? And worse, having to redundantly handle the <code class="language-plaintext highlighter-rouge">[]</code> case in three locations? Enter
+<a href="https://hackage.haskell.org/package/base-4.12.0.0/docs/Data-List-NonEmpty.html#t:NonEmpty"><code class="language-plaintext highlighter-rouge">NonEmptyList</code></a>
 which allows for safer code and peace of mind. Now instead of handling
 the empty case at the prompt</p>
 
@@ -433,9 +433,9 @@ we can type-safely access the first element of the answers list:</p>
 <h3 id="type-synonyms">Type Synonyms</h3>
 <p>Good type synonyms can do wonders for readability, particularly for type
 constructors with common or canonical parameters. Consider
-the noise of all the <code class="highlighter-rouge">Question [] Markdown</code> types you’ve seen in this post thus
+the noise of all the <code class="language-plaintext highlighter-rouge">Question [] Markdown</code> types you’ve seen in this post thus
 far. I suppose now is a good time as any to explain the need for such a
-parameterization: the <code class="highlighter-rouge">Question</code> datatype is defined as</p>
+parameterization: the <code class="language-plaintext highlighter-rouge">Question</code> datatype is defined as</p>
 
 <figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="kr">data</span> <span class="kt">Question</span> <span class="n">t</span> <span class="n">a</span> <span class="o">=</span> <span class="kt">Question</span>
   <span class="p">{</span> <span class="n">_qId</span>      <span class="o">::</span> <span class="kt">Int</span>
@@ -452,14 +452,14 @@ parameterization: the <code class="highlighter-rouge">Question</code> datatype i
   <span class="p">,</span> <span class="n">_aAccepted</span> <span class="o">::</span> <span class="kt">Bool</span>
   <span class="p">}</span> <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Show</span><span class="p">,</span> <span class="kt">Functor</span><span class="p">)</span></code></pre></figure>
 
-<p>and <code class="highlighter-rouge">t</code> is parameterized because, while most of the application iterates over
-answers in a <code class="highlighter-rouge">NonEmpty</code> container, there are areas within the brick
+<p>and <code class="language-plaintext highlighter-rouge">t</code> is parameterized because, while most of the application iterates over
+answers in a <code class="language-plaintext highlighter-rouge">NonEmpty</code> container, there are areas within the brick
 implementation that need to be able to iterate over questions and answers in
 brick’s <a href="https://hackage.haskell.org/package/brick-0.52/docs/Brick-Widgets-List.html">list widget</a>
 container. Because they are nested, without this parameterization, we would
-essentially need to duplicate datatypes for the brick interface. The <code class="highlighter-rouge">a</code> is
-just the content type of the answers, which is initially just raw <code class="highlighter-rouge">Text</code> but
-later is parsed into a <code class="highlighter-rouge">Markdown</code> AST.</p>
+essentially need to duplicate datatypes for the brick interface. The <code class="language-plaintext highlighter-rouge">a</code> is
+just the content type of the answers, which is initially just raw <code class="language-plaintext highlighter-rouge">Text</code> but
+later is parsed into a <code class="language-plaintext highlighter-rouge">Markdown</code> AST.</p>
 
 <p>But, as noted above, that means I’ve added this type parameter noise everywhere
 in my application when only <em>one place</em>, the brick implementation, uses a
@@ -475,7 +475,7 @@ different parameter. We can de-noise this using a type synonym:</p>
   <span class="p">,</span> <span class="n">_qBody</span>    <span class="o">::</span> <span class="n">a</span>
   <span class="p">}</span> <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Functor</span><span class="p">)</span></code></pre></figure>
 
-<p>Now I can use <code class="highlighter-rouge">Question Text</code> or <code class="highlighter-rouge">Question Markdown</code> in all of the above code
+<p>Now I can use <code class="language-plaintext highlighter-rouge">Question Text</code> or <code class="language-plaintext highlighter-rouge">Question Markdown</code> in all of the above code
 snippets. Furthermore, I can add another type synonym specific to the brick
 interface to use there:</p>
 
@@ -487,13 +487,13 @@ interface to use there:</p>
 
 <h3 id="footnotes">Footnotes</h3>
 
-<div class="footnotes">
+<div class="footnotes" role="doc-endnotes">
   <ol>
-    <li id="fn:3">
-      <p>See <a href="https://wiki.haskell.org/Error_vs._Exception">here</a> for a more detailed look at the distinction between errors and exceptions, and <a href="https://markkarpov.com/tutorial/exceptions.html">here</a> for an excellent dive into community opinions on the matter. <a href="#fnref:3" class="reversefootnote">&#8617;</a></p>
+    <li id="fn:3" role="doc-endnote">
+      <p>See <a href="https://wiki.haskell.org/Error_vs._Exception">here</a> for a more detailed look at the distinction between errors and exceptions, and <a href="https://markkarpov.com/tutorial/exceptions.html">here</a> for an excellent dive into community opinions on the matter. <a href="#fnref:3" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
     </li>
-    <li id="fn:4">
-      <p>In my case, <code class="highlighter-rouge">NoResultsError</code> is still worthwhile as an exception because the application immediately bails on no results. Again, there’s no single right way to handle this, but I tend to agree with those reading who think that <code class="highlighter-rouge">NoResultsError</code> should be classified separately from say <code class="highlighter-rouge">JSONDecodingError</code>. <a href="#fnref:4" class="reversefootnote">&#8617;</a></p>
+    <li id="fn:4" role="doc-endnote">
+      <p>In my case, <code class="language-plaintext highlighter-rouge">NoResultsError</code> is still worthwhile as an exception because the application immediately bails on no results. Again, there’s no single right way to handle this, but I tend to agree with those reading who think that <code class="language-plaintext highlighter-rouge">NoResultsError</code> should be classified separately from say <code class="language-plaintext highlighter-rouge">JSONDecodingError</code>. <a href="#fnref:4" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
     </li>
   </ol>
 </div>
@@ -542,7 +542,7 @@ interface to use there:</p>
   </main>
   
 
-<script src="/assets/vendor-477ef7ade179538494e13ef734def226f39f3144ff3911d1a03961bbbc4cb872.js" type="text/javascript"></script>
+<script src="/assets/vendor-130c9c254effc51f3283620bc635851da7b99c20901216948f11ba72ee13317f.js" type="text/javascript"></script>
 
 
   <script src="/assets/webfonts-96493456d319d1bf419afdf8701552d4d486fee6afd304897d4fd81eb4e0cc0b.js" type="text/javascript"></script>

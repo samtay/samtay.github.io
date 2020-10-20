@@ -174,7 +174,7 @@ simple-yet-still-incredibly-useful extensions.</p>
 <p>The motivating example that I recently came across at work is implementing an exception
 hierarchy. In fact, I wasn’t even writing a full blown exception hierarchy. All I wanted
 to do was have an exception handler that catches all exceptions that have a certain
-typeclass <code class="highlighter-rouge">HasHttpStatus</code> which looks like</p>
+typeclass <code class="language-plaintext highlighter-rouge">HasHttpStatus</code> which looks like</p>
 
 <figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="kr">data</span> <span class="kt">HttpStatus</span> <span class="o">=</span> <span class="kt">HttpStatus</span>
   <span class="p">{</span> <span class="n">httpStatusCode</span>    <span class="o">::</span> <span class="kt">Int</span>
@@ -214,7 +214,7 @@ errors so I can return the appropriate http status:</p>
       <span class="n">sendHttpStatus</span> <span class="p">(</span><span class="kt">Status</span> <span class="mi">500</span> <span class="s">"Internal Server Error"</span><span class="p">)</span>
   <span class="p">]</span></code></pre></figure>
 
-<p>My first attempt simply mimicked the definition of the <code class="highlighter-rouge">Exception</code> and <code class="highlighter-rouge">SomeException</code>
+<p>My first attempt simply mimicked the definition of the <code class="language-plaintext highlighter-rouge">Exception</code> and <code class="language-plaintext highlighter-rouge">SomeException</code>
 types.</p>
 
 <figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="kr">data</span> <span class="kt">SomeHttpException</span>
@@ -231,10 +231,10 @@ types.</p>
   <span class="n">toHttpStatus</span> <span class="p">(</span><span class="kt">SomeHttpException</span> <span class="n">e</span><span class="p">)</span> <span class="o">=</span> <span class="n">toHttpStatus</span> <span class="n">e</span></code></pre></figure>
 
 <p>This is on the right track, but I initially (and ignorantly) thought this would be enough
-to use my handler above. Of course, nothing was being caught by the <code class="highlighter-rouge">SomeHttpException</code>
+to use my handler above. Of course, nothing was being caught by the <code class="language-plaintext highlighter-rouge">SomeHttpException</code>
 handler. Instead, it became clear after looking in the
 <a href="http://hackage.haskell.org/package/base-4.12.0.0/docs/Control-Exception.html#t:Exception">Control.Exception</a>
-documentation that I would need to write custom <code class="highlighter-rouge">Exception</code>
+documentation that I would need to write custom <code class="language-plaintext highlighter-rouge">Exception</code>
 instances for all of my http errors. So my final pull request looked just like what the
 documentation advises (and is what is most likely familiar to anyone who has implemented
 an exception hierarchy in Haskell):</p>
@@ -261,15 +261,15 @@ an exception hierarchy in Haskell):</p>
   <span class="n">toException</span> <span class="o">=</span> <span class="n">httpExceptionToException</span>
   <span class="n">fromException</span> <span class="o">=</span> <span class="n">httpExceptionFromException</span></code></pre></figure>
 
-<p>With these <code class="highlighter-rouge">Exception</code> instances, my handler defined above works as expected. I didn’t
+<p>With these <code class="language-plaintext highlighter-rouge">Exception</code> instances, my handler defined above works as expected. I didn’t
 like having to duplicate these instances (in my case there were quite a few more instances
 to write), but I trusted that this was the accepted solution since it was in the
 documentation and I came up dry googling for better solutions.</p>
 
 <h2 id="derivingvia">DerivingVia</h2>
 <p>However, a colleage at work (<a href="https://github.com/asivitz"><strong>@asivitz</strong></a> on GitHub, for credit) spotted the
-duplicate instances and refactored this by enabling <code class="highlighter-rouge">DerivingVia</code>. With this approach, we
-need only write an <code class="highlighter-rouge">Exception</code> instance for one newtype wrapper, and then we can auto-derive
+duplicate instances and refactored this by enabling <code class="language-plaintext highlighter-rouge">DerivingVia</code>. With this approach, we
+need only write an <code class="language-plaintext highlighter-rouge">Exception</code> instance for one newtype wrapper, and then we can auto-derive
 the rest of our http error instances via the newtype wrapper:</p>
 
 <figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="kr">newtype</span> <span class="kt">HttpException</span> <span class="n">e</span> <span class="o">=</span> <span class="kt">HttpException</span> <span class="n">e</span>
@@ -285,7 +285,7 @@ the rest of our http error instances via the newtype wrapper:</p>
     <span class="n">toException</span> <span class="o">=</span> <span class="n">httpExceptionToException</span>
     <span class="n">fromException</span> <span class="o">=</span> <span class="n">httpExceptionFromException</span></code></pre></figure>
 
-<p>Now we can use this <code class="highlighter-rouge">HttpException</code> wrapper instance in our deriving clauses.
+<p>Now we can use this <code class="language-plaintext highlighter-rouge">HttpException</code> wrapper instance in our deriving clauses.
 The error types will instead be defined as:</p>
 
 <figure class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="kr">data</span> <span class="kt">NotFoundError</span> <span class="o">=</span> <span class="kt">NotFoundError</span>
@@ -295,8 +295,8 @@ The error types will instead be defined as:</p>
   <span class="kr">deriving</span> <span class="kt">Exception</span> <span class="n">via</span> <span class="p">(</span><span class="kt">HttpException</span> <span class="kt">UnauthorizedError</span><span class="p">)</span></code></pre></figure>
 
 <p>The syntax is wonderfully clear here. It is evident when reading the deriving
-clause above that the exception instance for <code class="highlighter-rouge">e</code> is precisely the one that we
-have defined for <code class="highlighter-rouge">HttpException e</code>.  So our <code class="highlighter-rouge">SomeHttpException</code> handler will
+clause above that the exception instance for <code class="language-plaintext highlighter-rouge">e</code> is precisely the one that we
+have defined for <code class="language-plaintext highlighter-rouge">HttpException e</code>.  So our <code class="language-plaintext highlighter-rouge">SomeHttpException</code> handler will
 still catch both of these exceptions, but we get to remove our explicit
 typeclass implementations.</p>
 
@@ -349,7 +349,7 @@ derive via.</p>
   </main>
   
 
-<script src="/assets/vendor-477ef7ade179538494e13ef734def226f39f3144ff3911d1a03961bbbc4cb872.js" type="text/javascript"></script>
+<script src="/assets/vendor-130c9c254effc51f3283620bc635851da7b99c20901216948f11ba72ee13317f.js" type="text/javascript"></script>
 
 
   <script src="/assets/webfonts-96493456d319d1bf419afdf8701552d4d486fee6afd304897d4fd81eb4e0cc0b.js" type="text/javascript"></script>
