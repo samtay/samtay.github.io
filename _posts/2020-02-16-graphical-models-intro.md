@@ -70,11 +70,11 @@ i.e.
 where
 
 \begin{align}
-p^0 &:= \text{republican} \\\
-p^1 &:= \text{democrat} \\\
-g^0 &:= \text{does not support stricter gun laws} \\\
-g^1 &:= \text{supports stricter gun laws} \\\
-h^0 &:= \text{does not support Medicare for all} \\\
+p^0 &:= \text{republican} \\\\\
+p^1 &:= \text{democrat} \\\\\
+g^0 &:= \text{does not support stricter gun laws} \\\\\
+g^1 &:= \text{supports stricter gun laws} \\\\\
+h^0 &:= \text{does not support Medicare for all} \\\\\
 h^1 &:= \text{supports Medicare for all}
 \end{align}
 
@@ -108,8 +108,8 @@ values should fit roughly with our intuition.
 Let's explore the dependence among these variables, first computing the
 probability that an individual favors Medicare for all:
 \begin{align}
- \mathbb{P}(H = h^1) &= \sum_{p, g} \mathbb{P}(H = h^1, P = p, G = g) \\\
-                     &= 0.097 + 0.043 + 0.054 + 0.331 \\\
+ \mathbb{P}(H = h^1) &= \sum_{p, g} \mathbb{P}(H = h^1, P = p, G = g) \\\\\
+                     &= 0.097 + 0.043 + 0.054 + 0.331 \\\\\
                      &= 0.525
 \end{align}
 Marginally it is more likely that an individual is in
@@ -118,10 +118,10 @@ does not support stricter gun laws. How does this change the probability of the
 former issue?
 \begin{align}
  \mathbb{P}(H = h^1 | G = g^0)
-   &= \frac{\mathbb{P}(H = h^1, G = g^0)}{\mathbb{P}(G = g^0)} \\\
+   &= \frac{\mathbb{P}(H = h^1, G = g^0)}{\mathbb{P}(G = g^0)} \\\\\
    &= \frac{\sum_{p}\mathbb{P}(G = g^0, H = h^1, P=p)}
-           {\sum_{p,h}\mathbb{P}(G = g^0, P=p, H=h)} \\\
-   &= \frac{0.097 + 0.054}{0.248+0.097+0.016+0.054} \\\
+           {\sum_{p,h}\mathbb{P}(G = g^0, P=p, H=h)} \\\\\
+   &= \frac{0.097 + 0.054}{0.248+0.097+0.016+0.054} \\\\\
    &= 0.364
 \end{align}
 The conclusion to draw from this calculation is that \\(H\\) and \\(G\\) are
@@ -138,9 +138,9 @@ beforehand.
 \begin{align}
 \mathbb{P}(H = h^1 | P = p^1)
   &= \frac{\mathbb{P}(H = h^1, P = p^1)}
-          {\mathbb{P}(P = p^1)} \\\
+          {\mathbb{P}(P = p^1)} \\\\\
   &= \frac{0.054 + 0.331}
-          {0.500} \\\
+          {0.500} \\\\\
   &= 0.77
 \end{align}
 
@@ -148,8 +148,8 @@ Again, suppose we also observe \\(g^0\\):
 \begin{align}
  \mathbb{P}(H = h^1 | G = g^0, P = p^1)
    &= \frac{\mathbb{P}(H = h^1, G = g^0, P = p^1)}
-           {\mathbb{P}(G = g^0, P=p^1)} \\\
-   &= \frac{0.054}{0.016 + 0.054} \\\
+           {\mathbb{P}(G = g^0, P=p^1)} \\\\\
+   &= \frac{0.054}{0.016 + 0.054} \\\\\
    &= 0.77
 \end{align}
 
@@ -172,9 +172,9 @@ Thus we can write
 
 \begin{align}
 \mathbb{P}(P, G, H)
-  &=  \mathbb{P}(P)\,\mathbb{P}\,(G, H \mid P) \\\
-  &=  \mathbb{P}(P) \,\mathbb{P}(G \mid P) \,\mathbb{P}(H \mid P) \\\
-  &\approx  O(2^{n-1}). \\\
+  &=  \mathbb{P}(P)\,\mathbb{P}\,(G, H \mid P) \\\\\
+  &=  \mathbb{P}(P) \,\mathbb{P}(G \mid P) \,\mathbb{P}(H \mid P) \\\\\
+  &\approx  O(2^{n-1}). \\\\\
 \end{align}
 
 # Bayesian Networks
