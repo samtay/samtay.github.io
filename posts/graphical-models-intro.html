@@ -228,11 +228,11 @@ i.e.</p>
 <p>where</p>
 
 <p>\begin{align}
-p^0 &amp;:= \text{republican} \<br />
-p^1 &amp;:= \text{democrat} \<br />
-g^0 &amp;:= \text{does not support stricter gun laws} \<br />
-g^1 &amp;:= \text{supports stricter gun laws} \<br />
-h^0 &amp;:= \text{does not support Medicare for all} \<br />
+p^0 &amp;:= \text{republican} \\<br />
+p^1 &amp;:= \text{democrat} \\<br />
+g^0 &amp;:= \text{does not support stricter gun laws} \\<br />
+g^1 &amp;:= \text{supports stricter gun laws} \\<br />
+h^0 &amp;:= \text{does not support Medicare for all} \\<br />
 h^1 &amp;:= \text{supports Medicare for all}
 \end{align}</p>
 
@@ -315,8 +315,8 @@ values should fit roughly with our intuition.</p>
 <p>Let’s explore the dependence among these variables, first computing the
 probability that an individual favors Medicare for all:
 \begin{align}
- \mathbb{P}(H = h^1) &amp;= \sum_{p, g} \mathbb{P}(H = h^1, P = p, G = g) \<br />
-                     &amp;= 0.097 + 0.043 + 0.054 + 0.331 \<br />
+ \mathbb{P}(H = h^1) &amp;= \sum_{p, g} \mathbb{P}(H = h^1, P = p, G = g) \\<br />
+                     &amp;= 0.097 + 0.043 + 0.054 + 0.331 \\<br />
                      &amp;= 0.525
 \end{align}
 Marginally it is more likely that an individual is in
@@ -325,10 +325,10 @@ does not support stricter gun laws. How does this change the probability of the
 former issue?
 \begin{align}
  \mathbb{P}(H = h^1 | G = g^0)
-   &amp;= \frac{\mathbb{P}(H = h^1, G = g^0)}{\mathbb{P}(G = g^0)} \<br />
+   &amp;= \frac{\mathbb{P}(H = h^1, G = g^0)}{\mathbb{P}(G = g^0)} \\<br />
    &amp;= \frac{\sum_{p}\mathbb{P}(G = g^0, H = h^1, P=p)}
-           {\sum_{p,h}\mathbb{P}(G = g^0, P=p, H=h)} \<br />
-   &amp;= \frac{0.097 + 0.054}{0.248+0.097+0.016+0.054} \<br />
+           {\sum_{p,h}\mathbb{P}(G = g^0, P=p, H=h)} \\<br />
+   &amp;= \frac{0.097 + 0.054}{0.248+0.097+0.016+0.054} \\<br />
    &amp;= 0.364
 \end{align}
 The conclusion to draw from this calculation is that \(H\) and \(G\) are
@@ -345,9 +345,9 @@ beforehand.</p>
 <p>\begin{align}
 \mathbb{P}(H = h^1 | P = p^1)
   &amp;= \frac{\mathbb{P}(H = h^1, P = p^1)}
-          {\mathbb{P}(P = p^1)} \<br />
+          {\mathbb{P}(P = p^1)} \\<br />
   &amp;= \frac{0.054 + 0.331}
-          {0.500} \<br />
+          {0.500} \\<br />
   &amp;= 0.77
 \end{align}</p>
 
@@ -355,8 +355,8 @@ beforehand.</p>
 \begin{align}
  \mathbb{P}(H = h^1 | G = g^0, P = p^1)
    &amp;= \frac{\mathbb{P}(H = h^1, G = g^0, P = p^1)}
-           {\mathbb{P}(G = g^0, P=p^1)} \<br />
-   &amp;= \frac{0.054}{0.016 + 0.054} \<br />
+           {\mathbb{P}(G = g^0, P=p^1)} \\<br />
+   &amp;= \frac{0.054}{0.016 + 0.054} \\<br />
    &amp;= 0.77
 \end{align}</p>
 
@@ -379,9 +379,9 @@ Thus we can write</p>
 
 <p>\begin{align}
 \mathbb{P}(P, G, H)
-  &amp;=  \mathbb{P}(P)\,\mathbb{P}\,(G, H \mid P) \<br />
-  &amp;=  \mathbb{P}(P) \,\mathbb{P}(G \mid P) \,\mathbb{P}(H \mid P) \<br />
-  &amp;\approx  O(2^{n-1}). \<br />
+  &amp;=  \mathbb{P}(P)\,\mathbb{P}\,(G, H \mid P) \\<br />
+  &amp;=  \mathbb{P}(P) \,\mathbb{P}(G \mid P) \,\mathbb{P}(H \mid P) \\<br />
+  &amp;\approx  O(2^{n-1}). \\<br />
 \end{align}</p>
 
 <h1 id="bayesian-networks">Bayesian Networks</h1>
@@ -532,20 +532,20 @@ called belief propagation for finding marginal probabilities.</p>
   </main>
   
 
-<script src="/assets/vendor-130c9c254effc51f3283620bc635851da7b99c20901216948f11ba72ee13317f.js" type="text/javascript"></script>
+<script type="text/javascript" src="/assets/vendor-130c9c254effc51f3283620bc635851da7b99c20901216948f11ba72ee13317f.js"></script>
 
 
-  <script src="/assets/webfonts-96493456d319d1bf419afdf8701552d4d486fee6afd304897d4fd81eb4e0cc0b.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/assets/webfonts-96493456d319d1bf419afdf8701552d4d486fee6afd304897d4fd81eb4e0cc0b.js"></script>
 
 
 
-  <script src="/assets/scrollappear-e2da8ea567e418637e31266cc5302126eaa79f62a2273739086358b589a89ee6.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/assets/scrollappear-e2da8ea567e418637e31266cc5302126eaa79f62a2273739086358b589a89ee6.js"></script>
 
 
-<script src="/assets/application-cfde13ac81ddaf4351b2e739603e2baf688d0fcc9aba613fe62bbb1c7b037fb9.js" type="text/javascript"></script>
+<script type="text/javascript" src="/assets/application-cfde13ac81ddaf4351b2e739603e2baf688d0fcc9aba613fe62bbb1c7b037fb9.js"></script>
 
 
-  <script src="/assets/themetoggle-592c116ce4dcad7dc732f6ffd55b682581fae9e8737bca3da323e802faf1367f.js" type="text/javascript"></script>
+  <script type="text/javascript" src="/assets/themetoggle-592c116ce4dcad7dc732f6ffd55b682581fae9e8737bca3da323e802faf1367f.js"></script>
 
 </body>
 </html>
