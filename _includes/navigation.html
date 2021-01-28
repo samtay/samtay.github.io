@@ -36,6 +36,14 @@
         </a>
       </li>
     {% endif %}
+    {% if site.social.kofi %}
+      <li>
+        <a href="https://ko-fi.com/{{ site.social.kofi }}" rel="noreferrer noopener" target="_blank"
+           title="Buy me a coffee">
+          {% include svg-icon.html icon="kofi" %}
+        </a>
+      </li>
+    {% endif %}
     {% if site.social.gitlab %}
       <li>
         <a href="https://gitlab.com/{{ site.social.gitlab }}" rel="noreferrer noopener" target="_blank" title="GitLab">
@@ -162,16 +170,9 @@
         </a>
       </li>
     {% endif %}
-    {% if site.rss_enabled == true %}
-      <li>
-        <a href="{{ 'feed.xml' | relative_url }}" rel="noreferrer noopener" target="_blank" title="RSS">
-          {% include svg-icon.html icon="rss" %}
-        </a>
-      </li>
-    {% endif %}
     {% if site.theme_toggle == true %}
       <li>
-        <a onclick="toggle()" title="Toggle Theme">
+        <a onclick="toggle()" title="Toggle theme">
           {% include svg-icon.html icon="theme" %}
         </a>
       </li>

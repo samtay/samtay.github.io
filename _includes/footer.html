@@ -1,7 +1,15 @@
 <footer class="footer {% if site.scrollappear_enabled %}scrollappear{% endif %}">
   <p>
+  <span>
   Ramblings ϵ {Mathematics, Statistics, Haskell}.
     &copy; 2020. All rights reserved.
+    {% if site.rss_enabled == true %}
+      <a href="{{ 'feed.xml' | relative_url }}" rel="noreferrer noopener" target="_blank" title="RSS"
+         width="16px" height="16px">
+        {% include svg-icon.html icon="rss" %}
+      </a>
+    {% endif %}
     <!--<a href="{{ 'about' | relative_url }}" title="About me">Nielsen Ramon</a>. Download it <a href="https://github.com/nielsenramon/chalk" rel="noreferrer noopener" target="_blank" title="Download Chalk">here</a>.-->
+  </span>
   </p>
 </footer>

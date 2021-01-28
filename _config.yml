@@ -8,7 +8,7 @@ url: https://samtay.github.io
 
 # Optional settings
 
-about_enabled: true # Change to true if you wish to show an icon in the navigation that redirects to the about page
+about_enabled: false # Change to true if you wish to show an icon in the navigation that redirects to the about page
 discus_identifier: # samtay
 utterances_repo: samtay/samtay.github.io
 ga_analytics: # Add your GA Tracking Id
@@ -18,13 +18,14 @@ scrollappear_enabled: true # Change to false to disable
 tag_nav_enabled: false # TODO Change to true if you wish to show an additional 'tag-list' navigation below the header
 theme_toggle: true # Change to true if you wish to show an icon in the navigation for dynamic theme toggling
 social:
+  github: samtay # Add your GitHub handle
+  email: # sam.chong.tay@pm.me # Add your Email address
+  kofi: samtay
   dribbble: # Add your Dribbble handle
   facebook: # Add your Facebook handle
   flickr: # Add your Flickr handle
-  github: samtay # Add your GitHub handle
   linkedin: # sam-tay-b997b35b # Add your LinkedIn handle
   twitter: # Add your Twitter handle
-  email: sam.chong.tay@gmail.com # Add your Email address
   bitcoin: # Add your Bitcoin link or address
   ethereum: # Add your Ethereum link or address
   gitlab: # Add your GitLab handle
