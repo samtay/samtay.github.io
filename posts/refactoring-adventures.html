@@ -252,7 +252,7 @@ the bracket pattern, such as <code class="language-plaintext highlighter-rouge">
 the “release” action when an exception is thrown.</p>
 
 <h3 id="lambdacase">LambdaCase</h3>
-<p><a href="https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/glasgow_exts.html#extension-LambdaCase"><code class="language-plaintext highlighter-rouge">LambdaCase</code></a>
+<p><a href="https://downloads.haskell.org/ghc/latest/docs/html/users_guide/exts/lambda_case.html"><code class="language-plaintext highlighter-rouge">LambdaCase</code></a>
 is one of my favorite extensions. It’s also arguably the smallest
 and simplest one available. Chances are if you are reading this, you are
 already aware of it, but I thought I’d include it here just in case.
@@ -297,7 +297,7 @@ processes for a friendlier user interface, it made sense to have a
 instance. Similar refactoring could be accomplished with
 <a href="http://hackage.haskell.org/package/mtl-2.2.2/docs/Control-Monad-Except.html#t:MonadError"><code class="language-plaintext highlighter-rouge">MonadError</code></a>,
 or even just putting errors into your <code class="language-plaintext highlighter-rouge">MonadState</code> transformer; it really just
-depends on the use case and style preference.<sup id="fnref:3" role="doc-noteref"><a href="#fn:3" class="footnote">1</a></sup></p>
+depends on the use case and style preference.<sup id="fnref:3" role="doc-noteref"><a href="#fn:3" class="footnote" rel="footnote">1</a></sup></p>
 
 <p>For this code, the <code class="language-plaintext highlighter-rouge">Either Error a</code> was only coming from one place, namely the
 decoding of the JSON response from Stack Exchange:</p>
@@ -364,7 +364,7 @@ bubble up, like so:</p>
 
 <p>In this example I want to continue the same application flow if the error is
 simply that the query returned no results from the search API, a reasonable
-thing to do.<sup id="fnref:4" role="doc-noteref"><a href="#fn:4" class="footnote">2</a></sup> But for other bona fide exceptions such as a JSON decoding
+thing to do.<sup id="fnref:4" role="doc-noteref"><a href="#fn:4" class="footnote" rel="footnote">2</a></sup> But for other bona fide exceptions such as a JSON decoding
 issue, I <code class="language-plaintext highlighter-rouge">throwM e</code> to continue to let the exception bubble up, halting
 execution until the next exception catcher. Some readers may be opposed to
 this latter version aesthetically, and I sympathize, but if it cleans up the
@@ -536,20 +536,20 @@ interface to use there:</p>
   </main>
   
 
-<script type="text/javascript" src="/assets/vendor-130c9c254effc51f3283620bc635851da7b99c20901216948f11ba72ee13317f.js"></script>
+<script src="/assets/vendor-130c9c254effc51f3283620bc635851da7b99c20901216948f11ba72ee13317f.js" type="text/javascript"></script>
 
 
-  <script type="text/javascript" src="/assets/webfonts-96493456d319d1bf419afdf8701552d4d486fee6afd304897d4fd81eb4e0cc0b.js"></script>
+  <script src="/assets/webfonts-96493456d319d1bf419afdf8701552d4d486fee6afd304897d4fd81eb4e0cc0b.js" type="text/javascript"></script>
 
 
 
-  <script type="text/javascript" src="/assets/scrollappear-e2da8ea567e418637e31266cc5302126eaa79f62a2273739086358b589a89ee6.js"></script>
+  <script src="/assets/scrollappear-e2da8ea567e418637e31266cc5302126eaa79f62a2273739086358b589a89ee6.js" type="text/javascript"></script>
 
 
-<script type="text/javascript" src="/assets/application-cfde13ac81ddaf4351b2e739603e2baf688d0fcc9aba613fe62bbb1c7b037fb9.js"></script>
+<script src="/assets/application-cfde13ac81ddaf4351b2e739603e2baf688d0fcc9aba613fe62bbb1c7b037fb9.js" type="text/javascript"></script>
 
 
-  <script type="text/javascript" src="/assets/themetoggle-592c116ce4dcad7dc732f6ffd55b682581fae9e8737bca3da323e802faf1367f.js"></script>
+  <script src="/assets/themetoggle-592c116ce4dcad7dc732f6ffd55b682581fae9e8737bca3da323e802faf1367f.js" type="text/javascript"></script>
 
 </body>
 </html>
