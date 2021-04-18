@@ -135,7 +135,7 @@ the bracket pattern, such as `bracketOnError` or `onException` which only run
 the "release" action when an exception is thrown.
 
 ### LambdaCase
-[`LambdaCase`](https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/glasgow_exts.html#extension-LambdaCase)
+[`LambdaCase`](https://downloads.haskell.org/ghc/latest/docs/html/users_guide/exts/lambda_case.html)
 is one of my favorite extensions. It's also arguably the smallest
 and simplest one available. Chances are if you are reading this, you are
 already aware of it, but I thought I'd include it here just in case.

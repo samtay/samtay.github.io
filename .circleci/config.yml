@@ -51,7 +51,7 @@ jobs:
       - run:
           name: test
           command: |
-            bundle exec htmlproofer ./_site --url-swap "https\://samtay.github.io:" --only-4xx --allow-hash-href --assume-extension --check-opengraph --url-ignore "feed.xml,/angel.co/"
+            bundle exec htmlproofer ./_site --url-swap "https\://ko-fi.com/samtay:,https\://samtay.github.io:" --only-4xx --allow-hash-href --assume-extension --check-opengraph --url-ignore "feed.xml,/angel.co/"
 
       - run:
           name: deploy to github.io

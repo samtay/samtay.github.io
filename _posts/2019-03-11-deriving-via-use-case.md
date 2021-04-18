@@ -11,7 +11,7 @@ redirect_from:
 ## Introduction
 
 I am going to show a small but practical scenario for which
-[DerivingVia](https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/glasgow_exts.html#deriving-via),
+[DerivingVia](https://downloads.haskell.org/ghc/latest/docs/html/users_guide/exts/deriving_via.html),
 a language extension introduced in GHC 8.6, is a natural solution.
 The extension is aptly named, as it extends the customizability of deriving
 clauses, namely to allow you to specify that a type should derive a typeclass
