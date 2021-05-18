@@ -2,7 +2,7 @@
 layout: post
 title: My first foray into Rust
 description: A story of coming to Rust from Haskell
-tags: [rust, haskell]
+tags: [rust, haskell, tui]
 ---
 
 ## The language

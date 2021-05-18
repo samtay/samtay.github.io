@@ -177,3 +177,12 @@ table.marginal-table {
     padding: 4px 16px;
   }
 }
+
+.citation {
+  sup {
+    font-size: inherit;
+    vertical-align: inherit;
+    line-height: inherit;
+    position: inherit;
+  }
+}

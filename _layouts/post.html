@@ -13,7 +13,7 @@
             {% include article/info-footer.html post=page %}
           </header>
 
-          <div class="article-content">
+          <div class="article-content {% if page.citation %}citation{% endif %}">
             {{ content }}
           </div>
 
