@@ -178,6 +178,21 @@ table.marginal-table {
   }
 }
 
+table.grid-table {
+  border: 1px solid black;
+  margin: 0 auto 30px;
+  border-collapse: collapse;
+  th {
+    border: 1px solid black;
+  }
+  td {
+    border: 1px solid black;
+  }
+  td, th {
+    padding: 4px 4px;
+  }
+}
+
 .citation {
   sup {
     font-size: inherit;
