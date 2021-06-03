@@ -417,8 +417,8 @@ body {
   -webkit-font-smoothing: antialiased;
   font-weight: 400;
   line-height: 1.8;
-  color: #d2cfcf;
-  background: #121111; }
+  color: #615b5b;
+  background: #fff; }
 
 p {
   margin: 0;
@@ -442,7 +442,7 @@ h1 {
   font-size: 25.6px;
   font-weight: 400;
   letter-spacing: -.03em;
-  color: #ebeaea; }
+  color: #121111; }
 
 h2 {
   font-size: 24px;
@@ -473,13 +473,13 @@ h6 {
   h3 {
     font-size: 20px; } }
 a {
-  color: #d2cfcf;
+  color: #615b5b;
   text-decoration: underline;
   transition: color 0.2s linear; }
   a:hover, a:active {
-    color: #ada8a8; }
+    color: #393636; }
   a:focus {
-    color: #ada8a8;
+    color: #393636;
     outline: none; }
 
 svg {
@@ -492,7 +492,7 @@ ol {
 
 abbr {
   cursor: help;
-  border-bottom: 1px dotted #393636; }
+  border-bottom: 1px dotted #ebeaea; }
 
 blockquote {
   padding: 0 0 4px 15px;
@@ -508,7 +508,7 @@ hr {
   margin: 0;
   border-top: 0;
   border-right: 0;
-  border-bottom: 1px solid #393636;
+  border-bottom: 1px solid #ebeaea;
   border-left: 0; }
 
 img {
@@ -541,6 +541,17 @@ table.marginal-table {
   table.marginal-table td, table.marginal-table th {
     padding: 4px 16px; }
 
+table.grid-table {
+  border: 1px solid black;
+  margin: 0 auto 30px;
+  border-collapse: collapse; }
+  table.grid-table th {
+    border: 1px solid black; }
+  table.grid-table td {
+    border: 1px solid black; }
+  table.grid-table td, table.grid-table th {
+    padding: 4px 4px; }
+
 .citation sup {
   font-size: inherit;
   vertical-align: inherit;
@@ -551,7 +562,7 @@ table.marginal-table {
   display: block;
   padding-top: 35px;
   margin-bottom: 85px;
-  border-top: 1px solid #393636; }
+  border-top: 1px solid #ebeaea; }
   .footer p {
     font-size: 15px;
     color: #ada8a8; }
@@ -706,7 +717,7 @@ table.marginal-table {
     position: relative;
     display: block;
     padding: 50px 0;
-    border-bottom: 1px solid #393636; }
+    border-bottom: 1px solid #ebeaea; }
     .article-list li:last-child {
       border-bottom: 0; }
     .article-list li.article-pagination {
@@ -730,9 +741,9 @@ table.marginal-table {
           margin: -2px 8px 0 8px;
           fill: #888181; }
         .article-list li.article-pagination a:hover svg {
-          fill: #ebeaea; }
+          fill: #121111; }
         .article-list li.article-pagination a:hover {
-          color: #ebeaea; }
+          color: #121111; }
 
 .article-list-item a {
   text-decoration: none; }
@@ -740,14 +751,14 @@ table.marginal-table {
     position: relative;
     display: block;
     padding-right: 25px;
-    color: #ebeaea;
+    color: #121111;
     border-bottom: 1px solid transparent; }
     .article-list-item a h5 svg {
       width: 16px;
       height: 16px;
       vertical-align: middle;
       margin: -2px 8px 0 8px;
-      fill: #ebeaea;
+      fill: #121111;
       opacity: 0;
       transition: opacity 0.2s linear; }
   .article-list-item a:hover h5 svg {
@@ -756,7 +767,7 @@ table.marginal-table {
   display: block;
   margin: 12px 0 10px;
   font-size: 15px;
-  color: #888181; }
+  color: #615b5b; }
 
 .article-list-footer {
   display: block; }
@@ -764,14 +775,14 @@ table.marginal-table {
   .article-list-footer a {
     display: inline-block;
     font-size: 12px;
-    color: #615b5b;
+    color: #ada8a8;
     text-transform: uppercase;
     vertical-align: middle; }
   .article-list-footer a {
     margin-right: 7.5px;
-    color: #ada8a8; }
+    color: #615b5b; }
     .article-list-footer a:hover {
-      color: #fff; }
+      color: #121111; }
     .article-list-footer a:last-child {
       margin-right: 0; }
 
@@ -796,12 +807,12 @@ table.marginal-table {
   display: block;
   padding-bottom: 30px;
   margin-bottom: 30px;
-  border-bottom: 1px solid #393636; }
+  border-bottom: 1px solid #ebeaea; }
   .article-header p {
     display: block;
     margin: 12px 0 10px;
     font-size: 16px;
-    color: #888181; }
+    color: #615b5b; }
   .article-header a {
     text-decoration: none; }
 
@@ -820,7 +831,7 @@ table.marginal-table {
     display: block;
     margin-bottom: 10px;
     font-family: "Lato", Helvetica, Arial, sans-serif;
-    color: #ebeaea; }
+    color: #121111; }
   .article-content blockquote p {
     margin-bottom: 0; }
   .article-content img.emoji {
@@ -833,7 +844,7 @@ table.marginal-table {
   display: block;
   padding-top: 20px;
   margin-top: 30px;
-  border-top: 1px solid #393636; }
+  border-top: 1px solid #ebeaea; }
 
 .article-share {
   display: block;
@@ -886,14 +897,14 @@ table.marginal-table {
 .header-nav {
   display: block;
   padding: 75px 0 20px;
-  border-bottom: 1px solid #393636; }
+  border-bottom: 1px solid #ebeaea; }
 
 .header-logo {
   display: inline-block;
   font-family: "Cormorant Garamond", Courier, serif;
   font-size: 36px;
   font-weight: 700;
-  color: #fff;
+  color: #000;
   text-decoration: none; }
 
 .header-links {
@@ -909,14 +920,14 @@ table.marginal-table {
       margin-left: 0; }
     .header-links li a {
       font-size: 18px;
-      color: #ada8a8;
+      color: #393636;
       cursor: pointer; }
       .header-links li a svg {
         width: 16px;
         height: 16px;
-        fill: #ada8a8; }
+        fill: #393636; }
       .header-links li a:hover svg {
-        fill: #fff; }
+        fill: #121111; }
 
 .header-tags {
   padding: 0;
@@ -927,10 +938,10 @@ table.marginal-table {
     padding-right: 10px; }
     .header-tags li a {
       display: inline-block;
-      color: #ada8a8;
+      color: #393636;
       text-decoration: none; }
       .header-tags li a:hover {
-        color: #fff; }
+        color: #121111; }
 
 @media all and (max-width: 520px) {
   .header-nav {
@@ -956,7 +967,7 @@ table.marginal-table {
   margin: 30px 0;
   overflow: auto;
   font-weight: 400;
-  background-color: #050505;
+  background: #faf9f9;
   border-radius: 4px; }
   .highlight pre {
     margin: 0; }
@@ -964,203 +975,206 @@ table.marginal-table {
 .highlighter-rouge {
   padding: 2px 4px;
   font-size: 14px;
-  color: #f92672;
-  background: #050505;
-  border: 1px solid #393636;
+  color: #d14;
+  background: #faf9f9;
+  border: 1px solid #ebeaea;
   border-radius: 1px; }
 
 @media all and (max-width: 767px) {
   .highlight {
+    padding: 25px;
     font-size: 14px; } }
-.highlight pre {
-  background-color: #050505; }
-
-.highlight .hll {
-  background-color: #050505; }
-
 .highlight .c {
-  color: #75715e; }
+  font-style: italic;
+  color: #998; }
 
 .highlight .err {
-  color: #960050;
-  background-color: #1e0010; }
+  color: #a61717;
+  background-color: #e3d2d2; }
 
 .highlight .k {
-  color: #66d9ef; }
-
-.highlight .l {
-  color: #ae81ff; }
-
-.highlight .n {
-  color: #f8f8f2; }
+  font-weight: bold; }
 
 .highlight .o {
-  color: #f92672; }
-
-.highlight .p {
-  color: #f8f8f2; }
+  font-weight: bold; }
 
 .highlight .cm {
-  color: #75715e; }
+  font-style: italic;
+  color: #998; }
 
 .highlight .cp {
-  color: #75715e; }
+  font-weight: bold;
+  color: #999; }
 
 .highlight .c1 {
-  color: #75715e; }
+  font-style: italic;
+  color: #998; }
 
 .highlight .cs {
-  color: #75715e; }
+  font-style: italic;
+  font-weight: bold;
+  color: #999; }
+
+.highlight .gd {
+  color: #000;
+  background-color: #fdd; }
+
+.highlight .gd .x {
+  color: #000;
+  background-color: #faa; }
 
 .highlight .ge {
   font-style: italic; }
 
+.highlight .gr {
+  color: #a00; }
+
+.highlight .gh {
+  color: #999; }
+
+.highlight .gi {
+  color: #000;
+  background-color: #dfd; }
+
+.highlight .gi .x {
+  color: #000;
+  background-color: #afa; }
+
+.highlight .go {
+  color: #888; }
+
+.highlight .gp {
+  color: #555; }
+
 .highlight .gs {
   font-weight: bold; }
 
+.highlight .gu {
+  color: #aaa; }
+
+.highlight .gt {
+  color: #a00; }
+
 .highlight .kc {
-  color: #66d9ef; }
+  font-weight: bold; }
 
 .highlight .kd {
-  color: #66d9ef; }
-
-.highlight .kn {
-  color: #f92672; }
+  font-weight: bold; }
 
 .highlight .kp {
-  color: #66d9ef; }
+  font-weight: bold; }
 
 .highlight .kr {
-  color: #66d9ef; }
+  font-weight: bold; }
 
 .highlight .kt {
-  color: #66d9ef; }
-
-.highlight .ld {
-  color: #e6db74; }
+  font-weight: bold;
+  color: #458; }
 
 .highlight .m {
-  color: #ae81ff; }
+  color: #099; }
 
 .highlight .s {
-  color: #e6db74; }
+  color: #d14; }
 
 .highlight .na {
-  color: #a6e22e; }
+  color: #008080; }
 
 .highlight .nb {
-  color: #f8f8f2; }
+  color: #0086b3; }
 
 .highlight .nc {
-  color: #a6e22e; }
+  font-weight: bold;
+  color: #458; }
 
 .highlight .no {
-  color: #66d9ef; }
-
-.highlight .nd {
-  color: #a6e22e; }
+  color: #008080; }
 
 .highlight .ni {
-  color: #f8f8f2; }
+  color: #800080; }
 
 .highlight .ne {
-  color: #a6e22e; }
+  font-weight: bold;
+  color: #900; }
 
 .highlight .nf {
-  color: #a6e22e; }
-
-.highlight .nl {
-  color: #f8f8f2; }
+  font-weight: bold;
+  color: #900; }
 
 .highlight .nn {
-  color: #f8f8f2; }
-
-.highlight .nx {
-  color: #a6e22e; }
-
-.highlight .py {
-  color: #f8f8f2; }
+  color: #555; }
 
 .highlight .nt {
-  color: #f92672; }
+  color: #000080; }
 
 .highlight .nv {
-  color: #f8f8f2; }
+  color: #008080; }
 
 .highlight .ow {
-  color: #f92672; }
+  font-weight: bold; }
 
 .highlight .w {
-  color: #f8f8f2; }
+  color: #bbb; }
 
 .highlight .mf {
-  color: #ae81ff; }
+  color: #099; }
 
 .highlight .mh {
-  color: #ae81ff; }
+  color: #099; }
 
 .highlight .mi {
-  color: #ae81ff; }
+  color: #099; }
 
 .highlight .mo {
-  color: #ae81ff; }
+  color: #099; }
 
 .highlight .sb {
-  color: #e6db74; }
+  color: #d14; }
 
 .highlight .sc {
-  color: #e6db74; }
+  color: #d14; }
 
 .highlight .sd {
-  color: #e6db74; }
+  color: #d14; }
 
 .highlight .s2 {
-  color: #e6db74; }
+  color: #d14; }
 
 .highlight .se {
-  color: #ae81ff; }
+  color: #d14; }
 
 .highlight .sh {
-  color: #e6db74; }
+  color: #d14; }
 
 .highlight .si {
-  color: #e6db74; }
+  color: #d14; }
 
 .highlight .sx {
-  color: #e6db74; }
+  color: #d14; }
 
 .highlight .sr {
-  color: #e6db74; }
+  color: #009926; }
 
 .highlight .s1 {
-  color: #e6db74; }
+  color: #d14; }
 
 .highlight .ss {
-  color: #e6db74; }
+  color: #990073; }
 
 .highlight .bp {
-  color: #f8f8f2; }
+  color: #999; }
 
 .highlight .vc {
-  color: #f8f8f2; }
+  color: #008080; }
 
 .highlight .vg {
-  color: #f8f8f2; }
+  color: #008080; }
 
 .highlight .vi {
-  color: #f8f8f2; }
+  color: #008080; }
 
 .highlight .il {
-  color: #ae81ff; }
-
-.highlight .gu {
-  color: #75715e; }
-
-.highlight .gd {
-  color: #f92672; }
-
-.highlight .gi {
-  color: #a6e22e; }
+  color: #099; }
 
 .appear {
   visibility: hidden;

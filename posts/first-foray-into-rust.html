@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <title>Sam Tay | My first foray into Rust</title>
-  <meta name="description" content="A story of coming to Rust from Haskell">
+  <meta name="description" content="A story of coming to Rust from Haskell.">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <meta property="og:title" content="My first foray into Rust">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://samtay.github.io/posts/first-foray-into-rust">
-  <meta property="og:description" content="A story of coming to Rust from Haskell">
+  <meta property="og:description" content="A story of coming to Rust from Haskell.">
   <meta property="og:site_name" content="Sam Tay">
 
   <meta name="google-site-verification" content="3Dks-zyFcUXhgficK-VIzu2wp9gCz8fNjM7sAQDYhMg" />
@@ -18,7 +18,7 @@
   <meta name="twitter:card" content="summary">
   <meta name="twitter:url" content="https://samtay.github.io/posts/first-foray-into-rust">
   <meta name="twitter:title" content="My first foray into Rust">
-  <meta name="twitter:description" content="A story of coming to Rust from Haskell">
+  <meta name="twitter:description" content="A story of coming to Rust from Haskell.">
 
   
     <meta property="og:image" content="https://samtay.github.io/assets/og-image-3e064e056de498416888818acb79cc563228f840bfd7208599f86578773563da.jpg">
@@ -36,8 +36,8 @@
   
 
     
-      <link rel="stylesheet" type="text/css" title="light" id="light" href="/assets/light-9b08b7ff4223641e9abac83f58be31a2aa988d84559c755b5f37c58f97f3971c.css">
-      <link rel="stylesheet" type="text/css" title="dark" id="dark" href="/assets/dark-5a4570e6840e7392c7e452fb00d5769e820b84bfe23e7125d23ff49036f02f8e.css" disabled="true">
+      <link rel="stylesheet" type="text/css" title="light" id="light" href="/assets/light-5d5f211c029dc5bf825b1ef6dcc679eebc04ff2e40364cdb74aa439ef2b88d45.css">
+      <link rel="stylesheet" type="text/css" title="dark" id="dark" href="/assets/dark-0aee6f7891e4f4cd5eb42630b09545a260ca97f65e10f068cb2f2a64bada6ca2.css" disabled="true">
     
 
   
@@ -113,7 +113,7 @@
         <article class="article scrollappear">
           <header class="article-header">
             <h1>My first foray into Rust</h1>
-            <p>A story of coming to Rust from Haskell</p>
+            <p>A story of coming to Rust from Haskell.</p>
             <div class="article-list-footer">
   <span class="article-list-date">
     July 3, 2020
@@ -122,7 +122,7 @@
   <span class="article-list-minutes">
     
     
-      12 minute read
+      14 minute read
     
   </span>
   <span class="article-list-divider">-</span>
@@ -347,23 +347,122 @@ is deallocated when it goes out of scope. So, just as above, if the borrow
 checker <em>did</em> let this code pass, we would have a dangling pointer within the
 <code class="language-plaintext highlighter-rouge">App</code>.</p>
 
-<p>All of this made sense to me. What was hard was accepting that my notion of how
-to use functions has fundamental differences with Rust’s semantics.
-I have it ingrained in me that if there’s some busy work like
-parsing this one config field involved in creating an App, this <em>should</em> be
-done by the <code class="language-plaintext highlighter-rouge">mk_app</code> function to keep my code DRY. That is, I don’t want to
-have to do such conversions outside of <code class="language-plaintext highlighter-rouge">mk_app</code> every time I call it. But, this
-kind of thinking will evidently conflict with Rust’s ownership semantics from
-time to time.</p>
-
 <p>It is my understanding that this is just how things are if a struct like <code class="language-plaintext highlighter-rouge">App</code>
-requires references like <code class="language-plaintext highlighter-rouge">&amp;str</code> in its construction. Someone needs to own those
-strings, and thus they need to be kept in scope, i.e. kept <em>alive</em>, for as long
-as the <code class="language-plaintext highlighter-rouge">App</code> lives. I’ve since reorganized my code so that the configuration retrieval
-and clap argument parsing all happens in the same place, so this isn’t an issue
-for me and the code is DRY. However, I’m not testing the CLI interface like I
-wanted to, because I don’t want tests to pull from the test runner’s home directory.
-Please comment (or pull request) if you have a good solution to this problem.</p>
+requires references such as <code class="language-plaintext highlighter-rouge">&amp;str</code> in its construction. Someone needs to own
+those strings, and thus they need to be kept in scope, i.e. kept <em>alive</em>, for as
+long as the <code class="language-plaintext highlighter-rouge">App</code> lives. Notice that if I wasn’t dealing with a struct
+definition from an external crate, I could just modify the struct to take a
+<code class="language-plaintext highlighter-rouge">String</code> or a <code class="language-plaintext highlighter-rouge">Box</code> to put the parsed limit on the heap, instead of the stack,
+so that its lifetime would persist past the current function call. So, this
+isn’t really a pitfall of Rust, but rather, Rust’s semantics have guaranteed
+that this library will only be used in the way the authors intended. I’ve since
+reorganized my code so that the configuration retrieval and clap argument
+parsing all happen in the same place, as below.</p>
+
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="c">/// CLI opts</span>
+<span class="k">pub</span> <span class="k">struct</span> <span class="n">Opts</span> <span class="p">{</span>
+    <span class="k">pub</span> <span class="n">list_sites</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="k">pub</span> <span class="n">print_config_path</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="k">pub</span> <span class="n">update_sites</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="k">pub</span> <span class="n">set_api_key</span><span class="p">:</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="k">pub</span> <span class="n">query</span><span class="p">:</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="k">pub</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c">/// Get CLI opts, starting with defaults produced</span>
+<span class="c">/// from `mk_config` and matching args with `get_matches`.</span>
+<span class="k">fn</span> <span class="n">get_opts_with</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">G</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mk_config</span><span class="p">:</span> <span class="n">F</span><span class="p">,</span> <span class="n">get_matches</span><span class="p">:</span> <span class="n">G</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Opts</span><span class="o">&gt;</span>
+<span class="k">where</span>
+    <span class="n">F</span><span class="p">:</span> <span class="nf">FnOnce</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Config</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="n">G</span><span class="p">:</span> <span class="k">for</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span> <span class="nf">FnOnce</span><span class="p">(</span><span class="n">App</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="nv">'_</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">ArgMatches</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="p">{</span>
+    <span class="k">let</span> <span class="n">config</span> <span class="o">=</span> <span class="nf">mk_config</span><span class="p">()</span><span class="o">?</span><span class="p">;</span>
+    <span class="k">let</span> <span class="n">limit</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">config</span><span class="py">.limit</span><span class="nf">.to_string</span><span class="p">();</span>
+    <span class="k">let</span> <span class="n">clapp</span> <span class="o">=</span> <span class="nn">App</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="s">"so"</span><span class="p">)</span>
+        <span class="nf">.arg</span><span class="p">(</span>
+            <span class="nn">Arg</span><span class="p">::</span><span class="nf">with_name</span><span class="p">(</span><span class="s">"limit"</span><span class="p">)</span>
+                <span class="nf">.long</span><span class="p">(</span><span class="s">"limit"</span><span class="p">)</span>
+                <span class="nf">.short</span><span class="p">(</span><span class="s">"l"</span><span class="p">)</span>
+                <span class="nf">.number_of_values</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="nf">.takes_value</span><span class="p">(</span><span class="k">true</span><span class="p">)</span>
+                <span class="nf">.default_value</span><span class="p">(</span><span class="o">&amp;</span><span class="n">limit</span><span class="p">)</span>
+                <span class="nf">.help</span><span class="p">(</span><span class="s">"Question limit per site query"</span><span class="p">),</span>
+        <span class="p">);</span> <span class="c">// other args elided for the sake of brevity</span>
+    <span class="k">let</span> <span class="n">matches</span> <span class="o">=</span> <span class="nf">get_matches</span><span class="p">(</span><span class="n">clapp</span><span class="p">);</span>
+    <span class="nf">Ok</span><span class="p">(</span><span class="n">Opts</span> <span class="p">{</span>
+        <span class="n">config</span><span class="p">:</span> <span class="n">Config</span> <span class="p">{</span>
+            <span class="n">limit</span><span class="p">:</span> <span class="n">matches</span><span class="nf">.value_of</span><span class="p">(</span><span class="s">"limit"</span><span class="p">),</span>
+            <span class="c">// etc.</span>
+        <span class="p">},</span>
+        <span class="n">list_sites</span><span class="p">:</span> <span class="n">matches</span><span class="nf">.is_present</span><span class="p">(</span><span class="s">"list-sites"</span><span class="p">),</span>
+        <span class="c">// etc.</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+
+<span class="c">/// Get CLI opts with defaults pulled</span>
+<span class="c">/// from user configuration</span>
+<span class="k">pub</span> <span class="k">fn</span> <span class="nf">get_opts</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Opts</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="nf">get_opts_with</span><span class="p">(</span><span class="nn">Config</span><span class="p">::</span><span class="n">new</span><span class="p">,</span> <span class="p">|</span><span class="n">a</span><span class="p">|</span> <span class="n">a</span><span class="nf">.get_matches</span><span class="p">())</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>The solution here can be seen directly in the type signature: the function of
+type <code class="language-plaintext highlighter-rouge">G</code> where <code class="language-plaintext highlighter-rouge">G: for&lt;'a&gt; FnOnce(App&lt;'a, '_&gt;) -&gt; ArgMatches&lt;'a&gt;</code> is the only
+place where the <code class="language-plaintext highlighter-rouge">App</code>’s lifetime is mentioned, yet the function on the whole
+just returns <code class="language-plaintext highlighter-rouge">Opts</code> with no <code class="language-plaintext highlighter-rouge">'a</code>. Thus, the <code class="language-plaintext highlighter-rouge">App</code> is allocated and completely
+deallocated by the time this function completes, and there are no more dangling
+pointers.</p>
+
+<p>Honestly, it doesn’t feel like idiomatic Rust to have these two higher-order
+function arguments. But, it works, and it allows me to test the CLI interface
+like I wanted.</p>
+
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="nd">#[cfg(test)]</span>
+<span class="k">mod</span> <span class="n">tests</span> <span class="p">{</span>
+    <span class="k">use</span> <span class="nn">super</span><span class="p">::</span><span class="o">*</span><span class="p">;</span>
+    <span class="k">use</span> <span class="nn">crate</span><span class="p">::</span><span class="nn">config</span><span class="p">::</span><span class="n">SearchEngine</span><span class="p">;</span>
+
+    <span class="k">fn</span> <span class="nf">defaults</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="n">Config</span> <span class="p">{</span>
+        <span class="n">Config</span> <span class="p">{</span>
+            <span class="n">api_key</span><span class="p">:</span> <span class="nf">Some</span><span class="p">(</span><span class="nn">String</span><span class="p">::</span><span class="nf">from</span><span class="p">(</span><span class="s">"my key"</span><span class="p">)),</span>
+            <span class="n">limit</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
+            <span class="n">lucky</span><span class="p">:</span> <span class="k">false</span><span class="p">,</span>
+            <span class="n">sites</span><span class="p">:</span> <span class="nd">vec!</span><span class="p">[</span>
+                <span class="nn">String</span><span class="p">::</span><span class="nf">from</span><span class="p">(</span><span class="s">"some"</span><span class="p">),</span>
+                <span class="nn">String</span><span class="p">::</span><span class="nf">from</span><span class="p">(</span><span class="s">"sites"</span><span class="p">),</span>
+                <span class="nn">String</span><span class="p">::</span><span class="nf">from</span><span class="p">(</span><span class="s">"yeah"</span><span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">search_engine</span><span class="p">:</span> <span class="nn">SearchEngine</span><span class="p">::</span><span class="n">DuckDuckGo</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">fn</span> <span class="nf">mk_config</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Config</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="nf">Ok</span><span class="p">(</span><span class="nf">defaults</span><span class="p">())</span>
+    <span class="p">}</span>
+
+    <span class="nd">#[test]</span>
+    <span class="k">fn</span> <span class="nf">test_defaults</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="n">opts</span> <span class="o">=</span> <span class="nf">get_opts_with</span><span class="p">(</span><span class="n">mk_config</span><span class="p">,</span> <span class="p">|</span><span class="n">a</span><span class="p">|</span> <span class="p">{</span>
+            <span class="n">a</span><span class="nf">.get_matches_from</span><span class="p">(</span>
+                <span class="nd">vec!</span><span class="p">[</span><span class="s">"so"</span><span class="p">,</span> <span class="s">"how do I exit Vim"</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="p">});</span>
+
+        <span class="nd">assert_eq!</span><span class="p">(</span><span class="n">opts</span><span class="nf">.unwrap</span><span class="p">()</span><span class="py">.config</span><span class="p">,</span> <span class="nf">defaults</span><span class="p">());</span>
+    <span class="p">}</span>
+
+    <span class="nd">#[test]</span>
+    <span class="nd">#[should_panic]</span>
+    <span class="k">fn</span> <span class="nf">test_conflicts</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nf">get_opts_with</span><span class="p">(</span><span class="n">mk_config</span><span class="p">,</span> <span class="p">|</span><span class="n">a</span><span class="p">|</span> <span class="p">{</span>
+            <span class="n">a</span><span class="nf">.get_matches_from_safe</span><span class="p">(</span>
+                <span class="nd">vec!</span><span class="p">[</span><span class="s">"so"</span><span class="p">,</span> <span class="s">"--lucky"</span><span class="p">,</span> <span class="s">"--no-lucky"</span><span class="p">]</span>
+            <span class="p">)</span><span class="nf">.unwrap</span><span class="p">()</span>
+        <span class="p">})</span>
+        <span class="nf">.unwrap</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="c">// etc.</span>
+<span class="p">}</span></code></pre></figure>
 
 <h2 id="async">Async</h2>
 
