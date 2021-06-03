@@ -222,23 +222,125 @@ is deallocated when it goes out of scope. So, just as above, if the borrow
 checker _did_ let this code pass, we would have a dangling pointer within the
 `App`.
 
-All of this made sense to me. What was hard was accepting that my notion of how
-to use functions has fundamental differences with Rust's semantics.
-I have it ingrained in me that if there's some busy work like
-parsing this one config field involved in creating an App, this _should_ be
-done by the `mk_app` function to keep my code DRY. That is, I don't want to
-have to do such conversions outside of `mk_app` every time I call it. But, this
-kind of thinking will evidently conflict with Rust's ownership semantics from
-time to time.
-
 It is my understanding that this is just how things are if a struct like `App`
-requires references like `&str` in its construction. Someone needs to own those
-strings, and thus they need to be kept in scope, i.e. kept _alive_, for as long
-as the `App` lives. I've since reorganized my code so that the configuration retrieval
-and clap argument parsing all happens in the same place, so this isn't an issue
-for me and the code is DRY. However, I'm not testing the CLI interface like I
-wanted to, because I don't want tests to pull from the test runner's home directory.
-Please comment (or pull request) if you have a good solution to this problem.
+requires references such as `&str` in its construction. Someone needs to own
+those strings, and thus they need to be kept in scope, i.e. kept _alive_, for as
+long as the `App` lives. Notice that if I wasn't dealing with a struct
+definition from an external crate, I could just modify the struct to take a
+`String` or a `Box` to put the parsed limit on the heap, instead of the stack,
+so that its lifetime would persist past the current function call. So, this
+isn't really a pitfall of Rust, but rather, Rust's semantics have guaranteed
+that this library will only be used in the way the authors intended. I've since
+reorganized my code so that the configuration retrieval and clap argument
+parsing all happen in the same place, as below.
+{% highlight rust %}
+/// CLI opts
+pub struct Opts {
+    pub list_sites: bool,
+    pub print_config_path: bool,
+    pub update_sites: bool,
+    pub set_api_key: Option<String>,
+    pub query: Option<String>,
+    pub config: Config,
+}
+
+/// Get CLI opts, starting with defaults produced
+/// from `mk_config` and matching args with `get_matches`.
+fn get_opts_with<F, G>(mk_config: F, get_matches: G) -> Result<Opts>
+where
+    F: FnOnce() -> Result<Config>,
+    G: for<'a> FnOnce(App<'a, '_>) -> ArgMatches<'a>,
+{
+    let config = mk_config()?;
+    let limit = &config.limit.to_string();
+    let clapp = App::new("so")
+        .arg(
+            Arg::with_name("limit")
+                .long("limit")
+                .short("l")
+                .number_of_values(1)
+                .takes_value(true)
+                .default_value(&limit)
+                .help("Question limit per site query"),
+        ); // other args elided for the sake of brevity
+    let matches = get_matches(clapp);
+    Ok(Opts {
+        config: Config {
+            limit: matches.value_of("limit"),
+            // etc.
+        },
+        list_sites: matches.is_present("list-sites"),
+        // etc.
+    })
+}
+
+/// Get CLI opts with defaults pulled
+/// from user configuration
+pub fn get_opts() -> Result<Opts> {
+    get_opts_with(Config::new, |a| a.get_matches())
+}
+{% endhighlight %}
+
+The solution here can be seen directly in the type signature: the function of
+type `G` where `G: for<'a> FnOnce(App<'a, '_>) -> ArgMatches<'a>` is the only
+place where the `App`'s lifetime is mentioned, yet the function on the whole
+just returns `Opts` with no `'a`. Thus, the `App` is allocated and completely
+deallocated by the time this function completes, and there are no more dangling
+pointers.
+
+Honestly, it doesn't feel like idiomatic Rust to have these two higher-order
+function arguments. But, it works, and it allows me to test the CLI interface
+like I wanted.
+
+{% highlight rust %}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::config::SearchEngine;
+
+    fn defaults() -> Config {
+        Config {
+            api_key: Some(String::from("my key")),
+            limit: 64,
+            lucky: false,
+            sites: vec![
+                String::from("some"),
+                String::from("sites"),
+                String::from("yeah"),
+            ],
+            search_engine: SearchEngine::DuckDuckGo,
+        }
+    }
+
+    fn mk_config() -> Result<Config> {
+        Ok(defaults())
+    }
+
+    #[test]
+    fn test_defaults() {
+        let opts = get_opts_with(mk_config, |a| {
+            a.get_matches_from(
+                vec!["so", "how do I exit Vim"]
+            )
+        });
+
+        assert_eq!(opts.unwrap().config, defaults());
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_conflicts() {
+        get_opts_with(mk_config, |a| {
+            a.get_matches_from_safe(
+                vec!["so", "--lucky", "--no-lucky"]
+            ).unwrap()
+        })
+        .unwrap();
+    }
+
+    // etc.
+}
+{% endhighlight %}
 
 ## Async
 
