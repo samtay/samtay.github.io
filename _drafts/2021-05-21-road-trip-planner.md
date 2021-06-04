@@ -127,7 +127,7 @@ jq -r "$filter" campgrounds.json > amenities.facts
 
 Of course, to plan a realistic road trip it would be best to use actual
 directions from something like OpenStreetMap or Google Maps. But, since I have
-time limitations, let's just use the [haversine
+time limitations, I'm just using the [haversine
 formula](https://en.wikipedia.org/wiki/Haversine_formula) for now. Luckily, the
 rust ecosystem is plentiful, so this doesn't take much code. First,
 the types:

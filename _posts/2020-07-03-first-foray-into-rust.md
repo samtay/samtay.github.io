@@ -447,8 +447,7 @@ As a language, Haskell is hard to beat. It's a thing of beauty. But the language
 itself isn't everything, and in just about every other aspect (compiler,
 tooling, ecosystem, etc.) I've had a more enjoyable time with Rust over the past
 month. So I'm going to continue exploring it. I plan to start a new project at a
-lower level, closer to hardware, to see Rust in its more typical domain. If
-you have any project ideas please leave a comment.
+lower level, closer to hardware, to see Rust in its more typical domain.
 
 ## Footnotes
 [^1]: I don't want to hate on the language, but at the same time I don't think it's all that controversial to simply _acknowledge_ issues such as community fragmentation around build tools (cabal, stack, nix), lack of IDE, etc.
