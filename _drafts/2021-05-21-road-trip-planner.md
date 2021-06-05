@@ -218,8 +218,8 @@ I defined some types and let souffle know where to find the relation facts.
 .input amenities(filename="amenities.facts")
 {% endhighlight %}
 
-Next, some useful helper relations -- restrict our attention to campgrounds that
-actually fit our RV, and have a commutative distance relation:
+Next, I made some useful helper relations -- restrict our attention to
+campgrounds that actually fit our RV, and have a commutative distance relation:
 
 {% highlight c++ %}
 // Campgrounds that fit our RV
@@ -516,9 +516,9 @@ you can see how this condition might result in unwanted road trip plans. That
 is, the restriction I defined earlier as `100 <= segment_length <= 600` is
 misleading, as it doesn't actually guarantee 100mi of progress.
 
-And so this motivates the last improvement: instead of making sure we drive
-100mi between stops, instead make sure that the next stop is at least 100mi
-closer to the final destination.
+And so this motivates the last improvement: rather than ensuring we drive 100mi
+between stops, instead ensure that the next stop is at least 100mi closer to the
+final destination.
 
 {% highlight c++ %}
 // Optimized road trip segments
@@ -572,7 +572,7 @@ FLAGS:
 
 ## Conclusion
 
-This was a fun exercie, but the resulting planner isn't as useful as it could
+This was a fun exercise, but the resulting planner isn't as useful as it could
 be. The main missing ingredients are ordering and choice. While souffle supports
 a single arbitrary choice from a given domain, what I'd really like to be able
 to do is specify preferences, i.e. first choose from campgrounds with wifi
