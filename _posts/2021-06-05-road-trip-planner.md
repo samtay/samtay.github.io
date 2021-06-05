@@ -16,7 +16,9 @@ Our road trip has constraints, such as:
 3. Ensuring the park has a campground that allows our 34' motor home
 
 For the final project of my Database Management Systems course, I chose to use
-Datalog to find potential road trips that fit all of these constraints.
+Datalog to find potential road trips that fit all of these constraints. This
+post walks through this exploration. The final result is
+[here](https://github.com/samtay/road-trip-planner).
 
 ## Data
 
@@ -540,14 +542,13 @@ another, and the only reason there are even as many as 17 plans is simply
 because each park has multiple RV campgrounds.
 
 Furthermore, this last improvement allows me to accomplish what I set out to do:
-changing the minimum progress to 400mi allows Souffle to output 3032 road trip
+changing the minimum progress to 400mi allows Souffle to output 3,032 road trip
 plans from the Everglades to Mount Rainier in under a second.
 
 ## CLI tool
 
 I've parameterized the start and end locations into a small CLI tool to run this
 [road trip planner](https://github.com/samtay/road-trip-planner):
-road-trip-planner
 
 {% highlight shell %}
 ❯ road-trip-planner --help
@@ -580,7 +581,7 @@ service and dump stations, and if there are none, then settle for cell service,
 etc.. Something like Postgres' `coalesce` function would make this planner much
 more useful.
 
-Future improvements I have in mind for this planner:
+Future improvements I have in mind for this planner are the following:
 
 1. Include the cell, internet, and dump amenities in the enumeration output.
    These can then be externally counted, so that plans can be sorted by stops
