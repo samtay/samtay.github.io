@@ -22,10 +22,8 @@ Datalog to find potential road trips that fit all of these constraints.
 
 First, I had to gather park data. Fortunately, the National Park Service offers
 a free [API](https://www.nps.gov/subjects/developer/api-documentation.htm) from
-which I can get most of the necessary information. Of course, I could use some
-lightweight Rust libraries to accomplish this menial work, but given that I only
-have a weekend or two to write this, let's just hack up some scripts real quick
-and rely on common tools like [curl](https://curl.se/) and
+which I can get most of the necessary information. This is pretty quick, given
+common tools like [curl](https://curl.se/) and
 [jq](https://stedolan.github.io/jq/).
 
 {% highlight bash %}
@@ -152,7 +150,9 @@ impl LocationRow {
     /// Distance to another location in miles
     pub fn distance_to(&self, other: &LocationRow) -> f64 {
         const MILES_PER_METER: f64 = 0.000621371;
-        let meters = self.coordinate().haversine_distance(&other.coordinate());
+        let meters = self
+            .coordinate()
+            .haversine_distance(&other.coordinate());
         return meters * MILES_PER_METER;
     }
 }
@@ -172,9 +172,9 @@ fn generate_distances() -> Result<()> {
         .has_headers(false)
         .delimiter(b'\t')
         .from_path("data/location.facts")?
-        .into_deserialize()
-        .filter_map(|x: std::result::Result<LocationRow, csv::Error>| x.ok())
-        .combinations(2);
+        .into_deserialize::<LocationRow>()
+        .filter_map(|x| x.ok())
+        .combinations_with_replacement(2);
     let mut writer = csv::WriterBuilder::new()
         .has_headers(false)
         .delimiter(b'\t')
@@ -192,166 +192,425 @@ fn generate_distances() -> Result<()> {
 
 ## Datalog
 
-During my DBMS course, we used
-[souffle](https://souffle-lang.github.io/index.html) for the Datalog homework.
-As I started writing the queries to generate a road trip, however, I hit a snag
-or two.
+This road trip planner uses the
+[souffle](https://souffle-lang.github.io/index.html) dialect of Datalog.  First,
+I defined some types and let souffle know where to find the relation facts.
 
-First, I defined some types and let souffle know where to find the relation
-facts.
-{% highlight code %}
+{% highlight bash %}
 .type ParkId <: symbol
 .type CampId <: symbol
 .type Name <: symbol
 .type Distance <: float
 
 .decl camp(camp:CampId, park: ParkId, name:Name)
-.input camp(filename="data/campground.facts")
+.input camp(filename="campground.facts")
 
 .decl park(park:ParkId, name:Name)
-.input park(filename="data/park.facts")
+.input park(filename="park.facts")
 
-.decl distance(camp1:CampId, camp2:CampId, dist: Distance)
-.input distance(filename="data/distance.facts")
+.decl distance(camp1:CampId, camp2:CampId, dist:Distance)
+.input distance(filename="distance.facts")
 
 .decl location(camp:CampId, lat:float, long: float)
-.input location(filename="data/location.facts")
+.input location(filename="location.facts")
+
+.decl amenities(camp:CampId, rv:number, internet:symbol, cell:symbol, dump:symbol)
+.input amenities(filename="amenities.facts")
 {% endhighlight %}
 
-Next I define a reasonable park-to-park segment of the road trip
+Next, some useful helper relations -- restrict our attention to campgrounds that
+actually fit our RV, and have a commutative distance relation:
 
-{% highlight code %}
-// Distance between stops shouldn't exceed 500 miles
-.decl segment_candidate_attempt(from:CampId, to:CampId, l:Distance)
-segment_candidate_attempt(f, t, l) :-
-  (distance(f,t,l) ; distance(t,f,l)),
-  l <= 500.
+{% highlight c++ %}
+// Campgrounds that fit our RV
+// Note: some campgrounds just report 0 but allow RVs
+.decl rv_camp(id:CampId)
+rv_camp(id) :- camp(id, _, _),
+  amenities(id, rv_len, _, _, _),
+  (rv_len = 0 ; rv_len >= 34).
+
+// Distances between campgrounds that fit our RV
+.decl rv_dist(camp1:CampId, camp2:CampId, dist:Distance)
+rv_dist(from, to, len) :-
+  distance(from, to, len), rv_camp(from), rv_camp(to).
+rv_dist(to, from, len) :-
+  distance(from, to, len), rv_camp(from), rv_camp(to).
 {% endhighlight %}
 
-Here's where the problem starts to surface, and it's an expressivity problem.
-I need to assemble these segments into singular road trips. Since I'm starting
-from Florida, I can start there:
+Next I define all possible road trip segments. These exceed 100mi to make useful
+progress between stops, but are limited to 600mi so they can fit easily in one
+weekend. Also, I need to make sure that the direction of these segments is
+oriented in the general direction of the final destination. There's a few ways
+to do this. We could restrict the segments in the general NW direction; that is,
+make sure that northward progress exceeds eastward, and western progress exceeds
+southward. (For example, it's okay to backtrack east 100mi if we make 500mi
+progress north.)
 
-{% highlight code %}
-.decl road_trip_segment_attempt(from:CampId, to:CampId, accumLen: float)
-.output road_trip_segment_attempt(IO=stdout)
-
-road_trip_segment_attempt(f, t, d) :-
-  camp(f, _, "Flamingo Campground"), segment_candidate_attempt(f, t, d).
+{% highlight c++ %}
+// Optimized road trip segments
+// 1. Limit 600mi between stops
+// 2. Exceed 100mi between stops
+// 3. Go northwest (generally) to make progress from FL to WA
+.decl segment(camp1:CampId, camp2:CampId, dist:Distance)
+segment(from, to, len) :-
+  rv_dist(from, to, len),
+  100 <= len, len <= 600,
+  location(from, f_lat, f_long),
+  location(to, t_lat, t_long),
+  (f_long - t_long > f_lat - t_lat),
+  (t_lat - f_lat > t_long - f_long).
 {% endhighlight %}
 
-But how can I finish this definition? I can try to just assemble segments
-starting from Florida, limiting the total length of the road trip:
+Another option would be to just make sure that we're closing in on the final
+destination. For example, let's say we want to make it to an RV campground near
+Mount Rainier. Then
+{% highlight c++ %}
+// End location near Mount Rainier
+.decl camp_near_seattle(camp:CampId)
+camp_near_seattle(c) :- camp(c, "mora", "Cougar Rock Campground").
 
-{% highlight code %}
-road_trip_segment_attempt(f, t, acc+d) :-
-  road_trip_segment_attempt(_, f, acc),
-  segment_candidate_attempt(f, t, d),
-  acc+d < 3000.
+// Optimized road trip segments
+// 1. Limit 600mi between stops
+// 2. Exceed 100mi between stops
+// 3. Make progress towards final destination
+.decl segment(camp1:CampId, camp2:CampId, dist:Distance)
+segment(from, to, len) :-
+  rv_dist(from, to, len),
+  100 <= len, len <= 600,
+  rv_dist(from, end, dist_from),
+  rv_dist(to, end, dist_to),
+  dist_from > dist_to,
+  camp_near_seattle(end).
+{% endhighlight %}
+is also a reasonable `segment` defintion, and is more portable for finding road
+trips to other locations. In addition, having Mount Rainier be a sink of this
+directed graph alleviates the need for a flimsy stopping condition in the road
+trip planner, as souffle can just iterate until the distance to the final
+destination goes to zero.
+
+Finally, the question remains how to assemble these segments into road trip
+plans. There are a few options.
+
+#### Naive Enumeration
+
+This is perhaps the first obvious solution, essentially the transitive closure
+of this directed graph of segments.
+
+{% highlight c++ %}
+.decl road_trip_segment(from:CampId, to:CampId, acc:Distance)
+road_trip_segment(f, t, d) :-
+  camp(f, "ever", "Flamingo Campground"),
+  segment(f, t, d).
+road_trip_segment(f, t, acc+d) :-
+  road_trip_segment(_, f, acc),
+  segment(f, t, d).
 {% endhighlight %}
 
-But this doesn't really give us a road trip from FL to WA. Instead, this results
-in all paths starting in the Everglades with total weight less than 3000. Worse
-still, there's no restriction on visiting past stops, so this relation will even
-return trips that just go back and forth between the Everglades and the nearest
-park until the distance traveled hits 3000mi (and unfortunately, that problem
-can't be solved by a simple `!road_trip_segment_attempt(t, _, _)` as this would
-introduce a cyclic negation, disallowed in souffle).
+This doesn't generate single road trip plans, but rather generates all
+campgrounds reachable along the segments defined above, starting from the
+Flamingo Campground in the Everglades, and of course stopping at the sink Mount
+Rainier (as long as it can indeed reach Mount Rainier with the segment
+constraints). However, with the definitions thus far, the order of magnitude of
+these combinations is infeasible to compute in souffle, at least on my laptop.
 
-Luckily for me, my problem domain is narrow: I'm going from FL to WA. Thus, I
-can be smarter about what constitutes a reasonable road trip segment:
-
-{% highlight code %}
-// Distance between stops shouldn't exceed 500 miles
-// We're going from FL to WA so don't backtrack east
-segment_candidate(f, t, l) :-
-  (distance(f,t,l) ; distance(t,f,l)),
-  l <= 500,
-  location(f, _, f_long),
-  location(t, _, t_long),
-  f_long >= t_long.
-{% endhighlight %}
-
-It's important to note that this is not a great restriction to have. It's very
-possible that I'm excluding reasonable roadtrips that make northward progress
-at the expense of backtracking east. What I'm really missing in souffle is the
-ability to require that our road trip relation _ends_ in WA.
-
-However, even with this restriction, I still have a big problem. The
-`road_trip_segment` relation is generating all the reasonable park-to-park
-segments, but there's no way to narrow in on a _particular_ itinerary.
-That is, for each `from: CampId`, there are many `to: CampId`'s. There might be
-three parks I can reasonably travel to initially from the Everglades, and then
-four parks I can reasonably travel to from each of those, etc. Yet, the whole point
-of this exercise was to actually output a _plan_.
+#### Functional Dependencies
 
 After some digging in the documentation, I found that souffle recently added
 support for [functional dependencies](https://souffle-lang.github.io/choice),
-which allows us to do exactly that; namely, express a dependency `from -> to`
-and non-deterministically choose the `to` campground. This is currently
-unreleased, and requires building souffle from a recent commit.
+that is, we can express a dependency `from -> to` and non-deterministically
+choose a single `to` campground for each `from`. This is currently unreleased,
+and requires building souffle from a recent commit. The code is the same as
+above except an extra `choice-domain from` clause:
 
-{% highlight code %}
+{% highlight c++ %}
 // Generate a non-deterministic path
-.decl road_trip_segment(from:CampId, to:CampId, dist: Distance, stop_ix: number) choice-domain from, to
-
-// Start somewhere in the Everglades
-road_trip_segment(f, t, d, 1) :-
-  camp(f, "ever", _),
-  segment_candidate(f, t, d).
-
-road_trip_segment(f, t, acc+d, ix+1) :-
-  road_trip_segment(_, f, acc, ix),
-  segment_candidate(f, t, d).
+.decl road_trip_segment(from:CampId, to:CampId, acc:Distance)
+  choice-domain from
 {% endhighlight %}
 
-I'll print out a demonstration of this, just as a sanity check that this matches
-intuition:
-{% highlight code %}
-.decl ex(p1: Name, p2: Name, d: Distance, ix: number)
-.output ex(IO=stdout)
-ex(p1, p2, d, ix) :-
-  road_trip_segment(f, t, d, ix),
-  camp(f, pid1, _),
-  camp(t, pid2, _),
-  park(pid1, p1),
-  park(pid2, p2).
-{% endhighlight %}
-and this results in the following plan:
+The plus side: this does result in a road trip from FL to WA that fits our
+constraints.
 
-| From | To | Distance | Stop |
-|:---:|:---:|:---:|:---:|
-| Everglades National Park | Big Cypress National Preserve | 74.79 | 1 |
-| Big Cypress National Preserve | Gulf Islands National Seashore | 539.45 | 2 |
-| Gulf Islands National Seashore | Gulf Islands National Seashore | 630.54 | 3 |
-| Gulf Islands National Seashore | Ozark National Scenic Riverways | 1121.16 | 4 |
-| Ozark National Scenic Riverways | Buffalo National River | 1217.57 | 5 |
-| Buffalo National River | Lake Meredith National Recreation Area | 1703.88 | 6 |
-| Lake Meredith National Recreation Area | Rocky Mountain National Park | 2100.08 | 7 |
-| Rocky Mountain National Park | Bighorn Canyon National Recreation Area | 2459.57 | 8 |
-| Bighorn Canyon National Recreation Area | Glacier National Park | 2821 | 9 |
-| Glacier National Park | North Cascades National Park | 3146.20 | 10 |
-| North Cascades National Park | Oregon Caves National Monument & Preserve | 3614.40 | 11 |
-| Oregon Caves National Monument & Preserve | Redwood National and State Parks | 3674.95 | 12 |
-| Redwood National and State Parks | Olympic National Park | 4107.31 | 13 |
+| Stop | Park Campground | Distance |
+|:---:|:---:|:---:|
+| 1 | Everglades National Park: Flamingo Campground | 0 |
+| 2 | Gulf Islands National Seashore: Fort Pickens Campground Loop A | 527.19 |
+| 3 | Ozark National Scenic Riverways: Alley Spring Campground | 1056.47 |
+| 4 | Lake Meredith National Recreation Area: Blue Creek | 1632.46 |
+| 5 | Glen Canyon National Recreation Area: Beehives Campground | 2185.89 |
+| 6 | Great Basin National Park: Baker Creek Campground | 2391.80 |
+| 7 | Whiskeytown National Recreation Area: Brandy Creek RV | 2847.99 |
+| 8 | North Cascades National Park: Colonial Creek South Campground | 3410.27 |
+| 9 | Mount Rainier National Park: Cougar Rock Campground | 3546.77 |
 {:.grid-table}
 
-So, this _sort of_ works. The plus side: I now have a reasonable road trip plan that goes from
-the Everglades up to the Olympic National Forest. There are thirteen stops, each
-at national parks and no singular trips greater than 500mi.
+The downside is that this only results in a _single_ plan; although
+the result is "non-deterministic", it is not actually _random_. Repeatedly
+running the souffle planner always outputs the same plan. Thus, we cannot
+perform any optimizations for preferred amenities or total trip length.
+Furthermore, in some ways we just got lucky that this successfully resulted in a
+plan. For instance, suppose this chosen path goes directly northwest for the
+first 7 stops to Bighorn Canyon, but then encounters a northwestward dead end,
+with no other campgrounds within 600mi to the west or north; then there would be
+no more campgrounds to travel to that decrease the distance to the final
+destination, i.e. Bighorn is a leaf in the directed graph of segments. However, it might
+have been possible to avoid this dead end by going straight west a few
+stops earlier.
 
-But, there are significant drawbacks here:
+#### Min/Max Choice
 
-1. No optimizations for preferred amenities.
-2. No optimization for limiting total trip length.
-3. No possible backtracking on longitude.
-4. **Only a single plan output**
+Instead of having souffle choose the next campground non-deterministically, I
+could choose a specific one, for example to minimize the distance between stops.
 
-These drawbacks are related, and #4 is the clincher. Souffle refers to this
-choice domain as "non-deterministic", but, the choice is not random. If this
-program is run multiple times, the output is the same. What I'd really like is
-to generate a set of many plans, so that I can explore and optimize among them
-to find plans that are ideal for my particular needs.
+{% highlight c++ %}
+.decl road_trip_segment(from:CampId, to:CampId, acc:Distance)
+  choice-domain from
 
-# TODO
-1. Choose to explore either crepe, datafrog, or differential-dataflow
+road_trip_segment(f, t, d) :-
+  camp(f, "ever", "Flamingo Campground"), segment(f, t, d).
+road_trip_segment(f, t, acc+d) :-
+  road_trip_segment(_, f, acc),
+  d = min l : segment(f, t, l).
+{% endhighlight %}
+
+This generates the following plan, with many more stops than before:
+
+| Stop | Park Campground | Distance |
+|:---:|:---:|:---:|
+| 1 | Everglades National Park: Flamingo Campground | 0 |
+| 2 | Gulf Islands National Seashore: Fort Pickens Campground Loop A | 527.19 |
+| 3 | Natchez Trace Parkway: Rocky Springs Campground, Milepost 54.8. | 768.80 |
+| 4 | Hot Springs National Park: Gulpha Gorge Campground | 981.03 |
+| 5 | Buffalo National River: Woolum | 1081.46 |
+| 6 | Lake Meredith National Recreation Area: Cedar Canyon Campground | 1549.38 |
+| 7 | Bandelier National Monument: Juniper Family Campground | 1831.56 |
+| 8 | Mesa Verde National Park: Morefield Campground | 1989.07 |
+| 9 | Curecanti National Recreation Area: Ponderosa Campground | 2092.99 |
+| 10 | Arches National Park: Devils Garden Campground | 2216.85 |
+| 11 | Dinosaur National Monument: Split Mountain Group Campground | 2333.38 |
+| 12 | Grand Teton National Park: Gros Ventre Campground | 2564.26 |
+| 13 | Craters Of The Moon National Monument & Preserve: Lava Flow Campground | 2709.51 |
+| 14 | Glacier National Park: Two Medicine | 3057.03 |
+| 15 | Lake Roosevelt National Recreation Area: North Gorge Campground | 3269.73 |
+| 16 | North Cascades National Park: Colonial Creek South Campground | 3410.73 |
+| 17 | Olympic National Park: Heart O' the Hills Campground | 3527.01 |
+| 18 | Mount Rainier National Park: Cougar Rock Campground | 3643.42 |
+{:.grid-table}
+
+However, this suffers from the same drawbacks. To demonstrate, an attempt to
+choose the max distance between stops results in a dead end half-way through the
+trip:
+
+{% highlight c++ %}
+.decl road_trip_segment(from:CampId, to:CampId, acc:Distance)
+  choice-domain from
+road_trip_segment(f, t, d) :-
+  camp(f, "ever", "Flamingo Campground"), segment(f, t, d).
+road_trip_segment(f, t, acc+d) :-
+  road_trip_segment(_, f, acc),
+  d = max l : segment(f, t, l).
+{% endhighlight %}
+| Stop | Park Campground | Distance |
+|:---:|:---:|:---:|
+| 1 | Everglades National Park: Flamingo Campground | 0 |
+| 2 | Gulf Islands National Seashore: Fort Pickens Campground Loop A | 527.19 |
+| 3 | Ozark National Scenic Riverways: Pulltite Campground | 1068.55 |
+| 4 | Sleeping Bear Dunes National Lakeshore: D. H. Day Campground | 1662.30 |
+| 5 | Pictured Rocks National Lakeshore: Hurricane River Campground | 1784.65 |
+{:.grid-table}
+
+#### Recursive Types
+
+The final part of this exploration leverages the souffle type system, which
+allows for arbitrary records, algebraic data types, and recursion. For
+convenience, I'll define a `Segment` representing an ordered pair of campgrounds
+{% highlight c++ %}
+.type Segment = [from:CampId, to:CampId]
+{% endhighlight %}
+and a cons list of them called `Path`
+{% highlight c++ %}
+.type Path = [tail:Path, head:Segment]
+{% endhighlight %}
+
+To demonstrate the utility here, let's look at the naive enumeration utilizing
+these types:
+{% highlight c++ %}
+.decl road_trip(x: Path)
+road_trip([nil, [f, t]]) :-
+  camp(f, "ever", "Flamingo Campground"),
+  segment(f, t, _).
+road_trip([tail, [f,t]]) :-
+  road_trip(tail),
+  tail=[tail2, [start, f]],
+  segment(f, t, _).
+{% endhighlight %}
+Of course, what I mentioned above is still true, as is; this generates way too many
+segments to compute in a timely manner. But, notice the output is much
+cleaner. Instead of a relation filled with arbitrary segments that would be
+annoying to assemble into possible road trips, we actually have a relation that
+is filled with individual road trips of type `Path`. Some of them might not make it
+all the way to WA, as was shown in the max choice example above, but we could
+filter those out afterwards, e.g.
+
+{% highlight c++ %}
+.decl successful_road_trip(x: Path)
+.output successful_road_trip(IO=stdout)
+successful_road_trip(path) :-
+  road_trip(path),
+  path=[tail, [f, end]],
+  camp_near_seattle(end).
+{% endhighlight %}
+
+As a demonstration, the number of plans generated to go from Yellowstone to the
+Badlands totals 29,376, with the first plans being more direct, such as:
+
+<h5 style="text-align: center;">Plan 1</h5>
+
+| Stop | Park Campground | Distance |
+|:---:|:---:|:---:|
+| 1 | Yellowstone National Park: Bridge Bay Campground | 0 |
+| 2 | Badlands National Park: Cedar Pass Campground | 424.14 |
+{:.grid-table}
+
+and proceedingly more winding:
+
+<h5 style="text-align: center;">Plan 100</h5>
+
+| Stop | Park Campground | Distance |
+|:---:|:---:|:---:|
+| 1 | Yellowstone National Park: Mammoth Campground | 0 |
+| 2 | Bighorn Canyon National Recreation Area: Horseshoe Bend Campgroun | 118.95 |
+| 3 | Badlands National Park: Cedar Pass Campground | 441.72 |
+{:.grid-table}
+
+<h5 style="text-align: center;">Plan 1000</h5>
+
+| Stop | Park Campground | Distance |
+|:---:|:---:|:---:|
+| 1 | Yellowstone National Park: Bridge Bay Campground | 0 |
+| 2 | Dinosaur National Monument: Gates of Lodore Campground | 274.63 |
+| 3 | Bighorn Canyon National Recreation Area: Barry's Landing & Trail Creek Campground | 578.70 |
+| 4 | Theodore Roosevelt National Park: Juniper Campground | 868.24 |
+| 5 | Badlands National Park: Cedar Pass Campground | 1142.63 |
+{:.grid-table}
+
+<h5 style="text-align: center;">Plan 10000</h5>
+
+| Stop | Park Campground | Distance |
+|:---:|:---:|:---:|
+| 1 | Yellowstone National Park: Indian Creek Campground | 0 |
+| 2 | Dinosaur National Monument: Split Mountain Group Campground | 316.09 |
+| 3 | Yellowstone National Park: Lewis Lake Campground | 590.41 |
+| 4 | Dinosaur National Monument: Gates of Lodore Campground | 851.58 |
+| 5 | Yellowstone National Park: Pebble Creek Campground | 1147.70 |
+| 5 | Theodore Roosevelt National Park: Roundup Group Horse Camp | 1496.24 |
+| 5 | Badlands National Park: Cedar Pass Campground | 1733.97 |
+{:.grid-table}
+
+and so on. Clearly the 10,000th plan above is absurd, and the reason is _not_
+just because I'm using haversine distances. The reason did not become clear to
+me until I looked at these parks on a map. The main problem is the progress
+condition just cares about any nonzero progress towards the destination; if
+you imagine a circle spiraling in towards the final destination at the center,
+you can see how this condition might result in unwanted road trip plans. That
+is, the restriction I defined earlier as `100 <= segment_length <= 600` is
+misleading, as it doesn't actually guarantee 100mi of progress.
+
+And so this motivates the last improvement: instead of making sure we drive
+100mi between stops, instead make sure that the next stop is at least 100mi
+closer to the final destination.
+
+{% highlight c++ %}
+// Optimized road trip segments
+// 1. Limit 600mi between stops
+// 2. Make 100mi progress towards final destination
+.decl segment(camp1:CampId, camp2:CampId, dist:Distance)
+segment(from, to, len) :-
+  rv_dist(from, to, len),
+  len <= 600,
+  rv_dist(from, end, dist_from),
+  rv_dist(to, end, dist_to),
+  dist_from - dist_to > 100,
+  camp_near_seattle(end).
+{% endhighlight %}
+
+Huzzah! Now, the enumeration only outputs 17 plans, with at most one intermediary
+stop. This is much more reasonable for two parks that are only 500mi from one
+another, and the only reason there are even as many as 17 plans is simply
+because each park has multiple RV campgrounds.
+
+Furthermore, this last improvement allows me to accomplish what I set out to do:
+changing the minimum progress to 400mi allows Souffle to output 3032 road trip
+plans from the Everglades to Washington in under a second.
+
+## CLI tool
+
+I've parameterized the start and end locations into a small CLI tool to run this
+[road trip planner](https://github.com/samtay/road-trip-planner):
+road-trip-planner
+
+{% highlight shell %}
+❯ road-trip-planner --help
+road-trip-planner 0.0.1
+Sam Tay, samctay@pm.me
+Generates road trip plans via national parks
+
+USAGE:
+    road-trip-planner [FLAGS] <from> <to>
+
+ARGS:
+    <from>    Starting park code (e.g. ever)
+    <to>      Ending park code (e.g. olym)
+
+FLAGS:
+    -e, --enumerate    Enumerate all trips
+    -h, --help         Prints help information
+        --min          Use minimum distance between stops
+    -r, --refresh      Use fresh NPS data
+    -V, --version      Prints version information
+{% endhighlight %}
+
+## Conclusion
+
+This was a fun exercie, but the resulting planner isn't as useful as it could
+be. The main missing ingredients are ordering and choice. While souffle supports
+a single arbitrary choice from a given domain, what I'd really like to be able
+to do is specify preferences, i.e. first choose from campgrounds with wifi
+service and dump stations, and if there are none, then settle for cell service,
+etc.. Something like Postgres' `coalesce` function would make this planner much
+more useful.
+
+At some point in my journey, I did lose faith in souffle and
+looked at other options, such as
+
+1. [Datafrog](https://github.com/rust-lang/datafrog)
+2. [Differential Dataflow](https://github.com/TimelyDataflow/differential-dataflow)
+3. [Crepe](https://github.com/ekzhang/crepe)
+
+I found it hard to evaluate what each library is capable of just from initial
+glances at their documentation, but in the end I chose to explore Crepe because (1)
+Datafrog's documentation is lacking and (2) it seems to me that there is a high
+complexity cost to Differential Dataflow, and the payoff is the performance of
+queries given changes to existing input data, which doesn't apply here.
+
+However, while having datalog embedded within a Rust program is convenient in
+many ways, it quickly became apparent that crepe is (currently) strictly less
+powerful than souffle.  The ability to inline Rust really only comes into play
+when expressing boolean relationships, which souffle can already do. The
+implementation I came up with is on
+[GitHub](https://github.com/samtay/road-trip-planner/blob/main/src/crepe.rs),
+but the code is not worth including here. It looks just like a limited version
+of the souffle planner with different syntax.
+
+Future improvements I have in mind for this planner:
+
+1. Include the cell, internet, and dump amenities in the enumeration output.
+   These can then be externally counted, so that plans can be sorted by stops
+   with the most cell service, or to filter plans that include at least one dump
+   stop every 500mi, etc..
+2. A few more things should be parameterized from the CLI, such as the RV
+   length, minimum progress and maximum segment distance. The minimum progress
+   turns out to be a very important parameter, and makes the difference of
+   whether or not the computation finishes in a second or days.
+3. Call out to an API for actual driving distance and/or time, instead of using
+   the haversine approximation.
