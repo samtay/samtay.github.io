@@ -7,6 +7,14 @@
     <atom:link href="https://samtay.github.io/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>Road Trip Planner</title>
+        <description>Planning a road trip with Datalog.</description>
+        <pubDate>Sat, 05 Jun 2021 00:00:00 +0000</pubDate>
+        <link>https://samtay.github.io/posts/road-trip-planner</link>
+        <guid isPermaLink="true">https://samtay.github.io/posts/road-trip-planner</guid>
+      </item>
+    
+      <item>
         <title>Simple Verifiable Elections</title>
         <description>How cryptography can increase both security and confidence in our elections.</description>
         <pubDate>Fri, 18 Dec 2020 00:00:00 +0000</pubDate>

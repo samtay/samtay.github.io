@@ -1,0 +1,1030 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Sam Tay | Road Trip Planner</title>
+  <meta name="description" content="Planning a road trip with Datalog.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta property="og:title" content="Road Trip Planner">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://samtay.github.io/posts/road-trip-planner">
+  <meta property="og:description" content="Planning a road trip with Datalog.">
+  <meta property="og:site_name" content="Sam Tay">
+
+  <meta name="google-site-verification" content="3Dks-zyFcUXhgficK-VIzu2wp9gCz8fNjM7sAQDYhMg" />
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:url" content="https://samtay.github.io/posts/road-trip-planner">
+  <meta name="twitter:title" content="Road Trip Planner">
+  <meta name="twitter:description" content="Planning a road trip with Datalog.">
+
+  
+    <meta property="og:image" content="https://samtay.github.io/assets/og-image-3e064e056de498416888818acb79cc563228f840bfd7208599f86578773563da.jpg">
+    <meta name="twitter:image" content="https://samtay.github.io/assets/og-image-3e064e056de498416888818acb79cc563228f840bfd7208599f86578773563da.jpg">
+  
+
+  <link href="https://samtay.github.io/feed.xml" type="application/rss+xml" rel="alternate" title="Sam Tay Last 10 blog posts" />
+
+  
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon-light/apple-touch-icon-2d18f0eb077831f89079d4eaddf7310f9bd08fa824ca5c783e7338fbeb8a6895.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-light/favicon-32x32-c058adc4fb4eddc2f534aafb6fd568728d834a6c006a6190abc2ac8c6ff72931.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-light/favicon-16x16-a5643dace800e8ed2f3c81d1e869f7783da139177b63cb7e087bae5b3036f694.png">
+  <link rel="manifest" href="/assets/favicon-light/site-7a9e07ce1f7386689917602ddc5a75750ad842e605ff764f67173529c181bf04.webmanifest">
+
+  
+
+    
+      <link rel="stylesheet" type="text/css" title="light" id="light" href="/assets/light-c9d000ee0a55d95890ac27c63da900ae1fd8ccb28aa1746dfebb210e820d1080.css">
+      <link rel="stylesheet" type="text/css" title="dark" id="dark" href="/assets/dark-c756875fad60153562d30c936c6505ea85b1b7197918febe91d90092f6f4190f.css" disabled="true">
+    
+
+  
+
+  
+
+</head>
+
+<body>
+  <main>
+    <div class="grid grid-centered">
+      <div class="grid-cell">
+        <nav class="header-nav scrollappear">
+  <a href="/" class="header-logo" title="Sam Tay">Sam Tay</a>
+  <ul class="header-links">
+    
+    
+    
+    
+    
+      <li>
+        <a href="https://github.com/samtay" rel="noreferrer noopener" target="_blank" title="GitHub">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-github">
+  <use href="/assets/github-094f81040819f34343ee6ffff0980f17e2807b08b595eaaf66ae3554934fd78d.svg#icon-github" xlink:href="/assets/github-094f81040819f34343ee6ffff0980f17e2807b08b595eaaf66ae3554934fd78d.svg#icon-github"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+      <li>
+        <a href="https://ko-fi.com/samtay" rel="noreferrer noopener" target="_blank"
+           title="Buy me a coffee">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-kofi">
+  <use href="/assets/kofi-5ee0d2aac2f0cf0db41ef15f44c97e375c06847913d6b66eb69cb93c1a039d4b.svg#icon-kofi" xlink:href="/assets/kofi-5ee0d2aac2f0cf0db41ef15f44c97e375c06847913d6b66eb69cb93c1a039d4b.svg#icon-kofi"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      <li>
+        <a onclick="toggle()" title="Toggle theme">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-theme">
+  <use href="/assets/theme-66869e0bf8dab34bae1c86bda400327b772e0be69e8dc28d3ede896e771320ed.svg#icon-theme" xlink:href="/assets/theme-66869e0bf8dab34bae1c86bda400327b772e0be69e8dc28d3ede896e771320ed.svg#icon-theme"></use>
+</svg>
+
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+
+
+        <article class="article scrollappear">
+          <header class="article-header">
+            <h1>Road Trip Planner</h1>
+            <p>Planning a road trip with Datalog.</p>
+            <div class="article-list-footer">
+  <span class="article-list-date">
+    June 5, 2021
+  </span>
+  <span class="article-list-divider">-</span>
+  <span class="article-list-minutes">
+    
+    
+      19 minute read
+    
+  </span>
+  <span class="article-list-divider">-</span>
+  <div class="article-list-tags">
+    
+      
+      <a href="/tag/rust" title="See all posts with tag 'Rust'">Rust</a>
+    
+      
+      <a href="/tag/datalog" title="See all posts with tag 'Datalog'">Datalog</a>
+    
+  </div>
+</div>
+
+          </header>
+
+          <div class="article-content ">
+            <p>At the time of writing, my wife and I are in the process of converting a <a href="https://cptdb.ca/wiki/index.php/Blue_Bird_CS_Bus">2000
+Blue Bird CSRE 3408</a> into a
+motor home. After spending a winter exploring the coast of Florida, we plan to
+road trip across the continental US, stopping at national parks along the way.
+Our road trip has constraints, such as:</p>
+
+<ol>
+  <li>Limiting the total road trip length,</li>
+  <li>Limiting the distance between stops,</li>
+  <li>Ensuring the park has a campground that allows our 34’ motor home</li>
+</ol>
+
+<p>For the final project of my Database Management Systems course, I chose to use
+Datalog to find potential road trips that fit all of these constraints. This
+post walks through this exploration. The final result is
+<a href="https://github.com/samtay/road-trip-planner">here</a>.</p>
+
+<h2 id="data">Data</h2>
+
+<p>First, I had to gather park data. Fortunately, the National Park Service offers
+a free <a href="https://www.nps.gov/subjects/developer/api-documentation.htm">API</a> from
+which I can get most of the necessary information. This is pretty quick, given
+common tools like <a href="https://curl.se/">curl</a> and
+<a href="https://stedolan.github.io/jq/">jq</a>.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/usr/bin/env bash</span>
+<span class="nb">set</span> <span class="nt">-eo</span> pipefail
+
+<span class="nb">mkdir</span> <span class="nt">-p</span> data
+
+<span class="c"># get total number of campgrounds</span>
+<span class="nv">total</span><span class="o">=</span><span class="si">$(</span>curl <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"X-Api-Key: </span><span class="nv">$NPS_API_KEY</span><span class="s2">"</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"accept: application/json"</span> <span class="se">\</span>
+  <span class="nt">-X</span> GET <span class="s2">"https://developer.nps.gov/api/v1/campgrounds?limit=0"</span> |
+    jq <span class="nt">-r</span> <span class="s1">'.total'</span>
+<span class="si">)</span>
+
+<span class="c"># fetch all those campgrounds</span>
+curl <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"X-Api-Key: </span><span class="nv">$NPS_API_KEY</span><span class="s2">"</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"accept: application/json"</span> <span class="se">\</span>
+  <span class="nt">-X</span> GET <span class="s2">"https://developer.nps.gov/api/v1/campgrounds?limit=</span><span class="nv">$total</span><span class="s2">"</span> |
+  jq <span class="nt">-c</span> <span class="s1">'.data'</span> <span class="o">&gt;</span> data/campgrounds.json</code></pre></figure>
+
+<p>And we can do the same thing for their <code class="language-plaintext highlighter-rouge">parks</code> endpoint.</p>
+
+<p><strong>Pro tip</strong>: if you’re like me and need to re-learn Bash syntax every time you
+use it, check out <a href="https://www.shellcheck.net/">shellcheck</a>; when combined with
+a filewatcher like <a href="https://github.com/watchexec/watchexec">watchexec</a>, this can
+really speed up your Bash wpm. E.g.</p>
+
+<figure class="highlight"><pre><code class="language-code" data-lang="code">$ watchexec --watch bin -- shellcheck bin/*
+
+In bin/fetch_nps_data line 16:
+  -H 'X-Api-Key: $NPS_API_KEY' \
+     ^-----------------------^ SC2016: Expressions don't expand in single quotes, use double quotes for that.</code></pre></figure>
+
+<p>Next, a little more jq-fu to coerce some of this json into tab separated fact
+files for Datalog:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/usr/bin/env bash</span>
+<span class="nb">set</span> <span class="nt">-eo</span> pipefail
+
+<span class="nb">cd </span>data
+
+<span class="c"># parks</span>
+<span class="nv">filter</span><span class="o">=</span><span class="si">$(</span><span class="nb">cat</span> <span class="o">&lt;&lt;-</span><span class="no">jqfilter</span><span class="sh">
+    .[]
+  | [.parkCode, .fullName]
+  | @tsv
+</span><span class="no">jqfilter
+</span><span class="si">)</span>
+jq <span class="nt">-r</span> <span class="s2">"</span><span class="nv">$filter</span><span class="s2">"</span> parks.json <span class="o">&gt;</span> park.facts
+
+<span class="c"># campgrounds</span>
+<span class="nv">filter</span><span class="o">=</span><span class="si">$(</span><span class="nb">cat</span> <span class="o">&lt;&lt;-</span><span class="no">jqfilter</span><span class="sh">
+    .[]
+  | select(.accessibility.rvAllowed == "1")
+  | [.id, .parkCode, .name]
+  | @tsv
+</span><span class="no">jqfilter
+</span><span class="si">)</span>
+jq <span class="nt">-r</span> <span class="s2">"</span><span class="nv">$filter</span><span class="s2">"</span> campgrounds.json <span class="o">&gt;</span> campground.facts
+
+<span class="c"># campground locations</span>
+<span class="nv">filter</span><span class="o">=</span><span class="si">$(</span><span class="nb">cat</span> <span class="o">&lt;&lt;-</span><span class="no">jqfilter</span><span class="sh">
+    .[]
+  | select(
+      .accessibility.rvAllowed == "1"
+      and .latitude != ""
+      and .longitude != ""
+    )
+  | [.id, .latitude, .longitude]
+  | @tsv
+</span><span class="no">jqfilter
+</span><span class="si">)</span>
+jq <span class="nt">-r</span> <span class="s2">"</span><span class="nv">$filter</span><span class="s2">"</span> campgrounds.json <span class="o">&gt;</span> location.facts
+
+<span class="c"># campground rv amenities</span>
+<span class="nv">filter</span><span class="o">=</span><span class="si">$(</span><span class="nb">cat</span> <span class="o">&lt;&lt;-</span><span class="no">jqfilter</span><span class="sh">
+    .[]
+  | select(.accessibility.rvAllowed == "1")
+  | [.id,
+     .accessibility.rvMaxLength,
+     .amenities.internetConnectivity,
+     .amenities.cellPhoneReception,
+     .amenities.dumpStation
+     ]
+  | @tsv
+</span><span class="no">jqfilter
+</span><span class="si">)</span>
+jq <span class="nt">-r</span> <span class="s2">"</span><span class="nv">$filter</span><span class="s2">"</span> campgrounds.json <span class="o">&gt;</span> amenities.facts</code></pre></figure>
+
+<h3 id="distances">Distances</h3>
+
+<p>Of course, to plan a realistic road trip it would be best to use actual
+directions from something like OpenStreetMap or Google Maps. But, since I have
+time limitations, I’m just using the <a href="https://en.wikipedia.org/wiki/Haversine_formula">haversine
+formula</a> for now. Luckily, the
+rust ecosystem is plentiful, so this doesn’t take much code. First,
+the types:</p>
+
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">use</span> <span class="nn">geo</span><span class="p">::</span><span class="nn">prelude</span><span class="p">::</span><span class="n">HaversineDistance</span><span class="p">;</span>
+<span class="k">use</span> <span class="nn">geo</span><span class="p">::{</span><span class="n">point</span><span class="p">,</span> <span class="n">Point</span><span class="p">};</span>
+<span class="k">use</span> <span class="nn">serde</span><span class="p">::</span><span class="n">Deserialize</span><span class="p">;</span>
+
+<span class="nd">#[derive(Clone,</span> <span class="nd">Debug,</span> <span class="nd">Deserialize,</span> <span class="nd">PartialEq)]</span>
+<span class="k">struct</span> <span class="n">LocationRow</span> <span class="p">{</span>
+    <span class="n">camp_id</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+    <span class="n">latitude</span><span class="p">:</span> <span class="nb">f64</span><span class="p">,</span>
+    <span class="n">longitude</span><span class="p">:</span> <span class="nb">f64</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="k">impl</span> <span class="n">LocationRow</span> <span class="p">{</span>
+    <span class="k">fn</span> <span class="nf">coordinate</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Point</span><span class="o">&lt;</span><span class="nb">f64</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="nd">point!</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="k">self</span><span class="py">.longitude</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="k">self</span><span class="py">.latitude</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="c">/// Distance to another location in miles</span>
+    <span class="k">pub</span> <span class="k">fn</span> <span class="nf">distance_to</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">LocationRow</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">f64</span> <span class="p">{</span>
+        <span class="k">const</span> <span class="n">MILES_PER_METER</span><span class="p">:</span> <span class="nb">f64</span> <span class="o">=</span> <span class="mf">0.000621371</span><span class="p">;</span>
+        <span class="k">let</span> <span class="n">meters</span> <span class="o">=</span> <span class="k">self</span>
+            <span class="nf">.coordinate</span><span class="p">()</span>
+            <span class="nf">.haversine_distance</span><span class="p">(</span><span class="o">&amp;</span><span class="n">other</span><span class="nf">.coordinate</span><span class="p">());</span>
+        <span class="k">return</span> <span class="n">meters</span> <span class="o">*</span> <span class="n">MILES_PER_METER</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>The <code class="language-plaintext highlighter-rouge">LocationRow</code> is exactly the type of tsv row we piped to <code class="language-plaintext highlighter-rouge">location.facts</code>.
+So, we’ll read each of those campgrounds’ locations, generate all the pairs, and
+write the distances to another facts file:</p>
+
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">use</span> <span class="n">csv</span><span class="p">;</span>
+<span class="k">use</span> <span class="nn">itertools</span><span class="p">::</span><span class="n">Itertools</span><span class="p">;</span>
+
+<span class="c">/// Generate distance.facts from the NPS location.facts file</span>
+<span class="k">fn</span> <span class="nf">generate_distances</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="p">()</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">pairs</span> <span class="o">=</span> <span class="nn">csv</span><span class="p">::</span><span class="nn">ReaderBuilder</span><span class="p">::</span><span class="nf">new</span><span class="p">()</span>
+        <span class="nf">.has_headers</span><span class="p">(</span><span class="k">false</span><span class="p">)</span>
+        <span class="nf">.delimiter</span><span class="p">(</span><span class="n">b</span><span class="sc">'\t'</span><span class="p">)</span>
+        <span class="nf">.from_path</span><span class="p">(</span><span class="s">"data/location.facts"</span><span class="p">)</span><span class="o">?</span>
+        <span class="py">.into_deserialize</span><span class="p">::</span><span class="o">&lt;</span><span class="n">LocationRow</span><span class="o">&gt;</span><span class="p">()</span>
+        <span class="nf">.filter_map</span><span class="p">(|</span><span class="n">x</span><span class="p">|</span> <span class="n">x</span><span class="nf">.ok</span><span class="p">())</span>
+        <span class="nf">.combinations_with_replacement</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">writer</span> <span class="o">=</span> <span class="nn">csv</span><span class="p">::</span><span class="nn">WriterBuilder</span><span class="p">::</span><span class="nf">new</span><span class="p">()</span>
+        <span class="nf">.has_headers</span><span class="p">(</span><span class="k">false</span><span class="p">)</span>
+        <span class="nf">.delimiter</span><span class="p">(</span><span class="n">b</span><span class="sc">'\t'</span><span class="p">)</span>
+        <span class="nf">.from_path</span><span class="p">(</span><span class="s">"data/distance.facts"</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+    <span class="k">for</span> <span class="n">pair</span> <span class="n">in</span> <span class="n">pairs</span> <span class="p">{</span>
+        <span class="n">writer</span><span class="nf">.write_record</span><span class="p">(</span><span class="o">&amp;</span><span class="p">[</span>
+            <span class="o">&amp;</span><span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="py">.camp_id</span><span class="p">,</span>
+            <span class="o">&amp;</span><span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="py">.camp_id</span><span class="p">,</span>
+            <span class="o">&amp;</span><span class="nd">format!</span><span class="p">(</span><span class="s">"{:.2}"</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="nf">.distance_to</span><span class="p">(</span><span class="o">&amp;</span><span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span>
+        <span class="p">])</span><span class="o">?</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nf">Ok</span><span class="p">(())</span>
+<span class="p">}</span></code></pre></figure>
+
+<h2 id="datalog">Datalog</h2>
+
+<p>This road trip planner uses the
+<a href="https://souffle-lang.github.io/index.html">souffle</a> dialect of Datalog.  First,
+I defined some types and let souffle know where to find the relation facts.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">.type ParkId &lt;: symbol
+.type CampId &lt;: symbol
+.type Name &lt;: symbol
+.type Distance &lt;: float
+
+.decl camp<span class="o">(</span>camp:CampId, park: ParkId, name:Name<span class="o">)</span>
+.input camp<span class="o">(</span><span class="nv">filename</span><span class="o">=</span><span class="s2">"campground.facts"</span><span class="o">)</span>
+
+.decl park<span class="o">(</span>park:ParkId, name:Name<span class="o">)</span>
+.input park<span class="o">(</span><span class="nv">filename</span><span class="o">=</span><span class="s2">"park.facts"</span><span class="o">)</span>
+
+.decl distance<span class="o">(</span>camp1:CampId, camp2:CampId, dist:Distance<span class="o">)</span>
+.input distance<span class="o">(</span><span class="nv">filename</span><span class="o">=</span><span class="s2">"distance.facts"</span><span class="o">)</span>
+
+.decl location<span class="o">(</span>camp:CampId, lat:float, long: float<span class="o">)</span>
+.input location<span class="o">(</span><span class="nv">filename</span><span class="o">=</span><span class="s2">"location.facts"</span><span class="o">)</span>
+
+.decl amenities<span class="o">(</span>camp:CampId, rv:number, internet:symbol, cell:symbol, dump:symbol<span class="o">)</span>
+.input amenities<span class="o">(</span><span class="nv">filename</span><span class="o">=</span><span class="s2">"amenities.facts"</span><span class="o">)</span></code></pre></figure>
+
+<p>Next, I made some useful helper relations – restrict our attention to
+campgrounds that actually fit our RV, and have a commutative distance relation:</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="c1">// Campgrounds that fit our RV</span>
+<span class="c1">// Note: some campgrounds just report 0 but allow RVs</span>
+<span class="p">.</span><span class="n">decl</span> <span class="n">rv_camp</span><span class="p">(</span><span class="n">id</span><span class="o">:</span><span class="n">CampId</span><span class="p">)</span>
+<span class="n">rv_camp</span><span class="p">(</span><span class="n">id</span><span class="p">)</span> <span class="o">:-</span> <span class="n">camp</span><span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">),</span>
+  <span class="n">amenities</span><span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="n">rv_len</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">),</span>
+  <span class="p">(</span><span class="n">rv_len</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="n">rv_len</span> <span class="o">&gt;=</span> <span class="mi">34</span><span class="p">).</span>
+
+<span class="c1">// Distances between campgrounds that fit our RV</span>
+<span class="p">.</span><span class="n">decl</span> <span class="n">rv_dist</span><span class="p">(</span><span class="n">camp1</span><span class="o">:</span><span class="n">CampId</span><span class="p">,</span> <span class="n">camp2</span><span class="o">:</span><span class="n">CampId</span><span class="p">,</span> <span class="n">dist</span><span class="o">:</span><span class="n">Distance</span><span class="p">)</span>
+<span class="n">rv_dist</span><span class="p">(</span><span class="n">from</span><span class="p">,</span> <span class="n">to</span><span class="p">,</span> <span class="n">len</span><span class="p">)</span> <span class="o">:-</span>
+  <span class="n">distance</span><span class="p">(</span><span class="n">from</span><span class="p">,</span> <span class="n">to</span><span class="p">,</span> <span class="n">len</span><span class="p">),</span> <span class="n">rv_camp</span><span class="p">(</span><span class="n">from</span><span class="p">),</span> <span class="n">rv_camp</span><span class="p">(</span><span class="n">to</span><span class="p">).</span>
+<span class="n">rv_dist</span><span class="p">(</span><span class="n">to</span><span class="p">,</span> <span class="n">from</span><span class="p">,</span> <span class="n">len</span><span class="p">)</span> <span class="o">:-</span>
+  <span class="n">distance</span><span class="p">(</span><span class="n">from</span><span class="p">,</span> <span class="n">to</span><span class="p">,</span> <span class="n">len</span><span class="p">),</span> <span class="n">rv_camp</span><span class="p">(</span><span class="n">from</span><span class="p">),</span> <span class="n">rv_camp</span><span class="p">(</span><span class="n">to</span><span class="p">).</span></code></pre></figure>
+
+<p>Next I define all possible road trip segments. These exceed 100mi to make useful
+progress between stops, but are limited to 600mi so they can fit easily in one
+weekend. Also, I need to make sure that the direction of these segments is
+oriented in the general direction of the final destination. There’s a few ways
+to do this. We could restrict the segments in the general NW direction; that is,
+make sure that northward progress exceeds eastward, and western progress exceeds
+southward. (For example, it’s okay to backtrack east 100mi if we make 500mi
+progress north.)</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="c1">// Optimized road trip segments</span>
+<span class="c1">// 1. Limit 600mi between stops</span>
+<span class="c1">// 2. Exceed 100mi between stops</span>
+<span class="c1">// 3. Go northwest (generally) to make progress from FL to WA</span>
+<span class="p">.</span><span class="n">decl</span> <span class="n">segment</span><span class="p">(</span><span class="n">camp1</span><span class="o">:</span><span class="n">CampId</span><span class="p">,</span> <span class="n">camp2</span><span class="o">:</span><span class="n">CampId</span><span class="p">,</span> <span class="n">dist</span><span class="o">:</span><span class="n">Distance</span><span class="p">)</span>
+<span class="n">segment</span><span class="p">(</span><span class="n">from</span><span class="p">,</span> <span class="n">to</span><span class="p">,</span> <span class="n">len</span><span class="p">)</span> <span class="o">:-</span>
+  <span class="n">rv_dist</span><span class="p">(</span><span class="n">from</span><span class="p">,</span> <span class="n">to</span><span class="p">,</span> <span class="n">len</span><span class="p">),</span>
+  <span class="mi">100</span> <span class="o">&lt;=</span> <span class="n">len</span><span class="p">,</span> <span class="n">len</span> <span class="o">&lt;=</span> <span class="mi">600</span><span class="p">,</span>
+  <span class="n">location</span><span class="p">(</span><span class="n">from</span><span class="p">,</span> <span class="n">f_lat</span><span class="p">,</span> <span class="n">f_long</span><span class="p">),</span>
+  <span class="n">location</span><span class="p">(</span><span class="n">to</span><span class="p">,</span> <span class="n">t_lat</span><span class="p">,</span> <span class="n">t_long</span><span class="p">),</span>
+  <span class="p">(</span><span class="n">f_long</span> <span class="o">-</span> <span class="n">t_long</span> <span class="o">&gt;</span> <span class="n">f_lat</span> <span class="o">-</span> <span class="n">t_lat</span><span class="p">),</span>
+  <span class="p">(</span><span class="n">t_lat</span> <span class="o">-</span> <span class="n">f_lat</span> <span class="o">&gt;</span> <span class="n">t_long</span> <span class="o">-</span> <span class="n">f_long</span><span class="p">).</span></code></pre></figure>
+
+<p>Another option would be to just make sure that we’re closing in on the final
+destination. For example, let’s say we want to make it to an RV campground near
+Mount Rainier. Then</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="c1">// End location near Mount Rainier</span>
+<span class="p">.</span><span class="n">decl</span> <span class="n">camp_near_seattle</span><span class="p">(</span><span class="n">camp</span><span class="o">:</span><span class="n">CampId</span><span class="p">)</span>
+<span class="n">camp_near_seattle</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">:-</span> <span class="n">camp</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="s">"mora"</span><span class="p">,</span> <span class="s">"Cougar Rock Campground"</span><span class="p">).</span>
+
+<span class="c1">// Optimized road trip segments</span>
+<span class="c1">// 1. Limit 600mi between stops</span>
+<span class="c1">// 2. Exceed 100mi between stops</span>
+<span class="c1">// 3. Make progress towards final destination</span>
+<span class="p">.</span><span class="n">decl</span> <span class="n">segment</span><span class="p">(</span><span class="n">camp1</span><span class="o">:</span><span class="n">CampId</span><span class="p">,</span> <span class="n">camp2</span><span class="o">:</span><span class="n">CampId</span><span class="p">,</span> <span class="n">dist</span><span class="o">:</span><span class="n">Distance</span><span class="p">)</span>
+<span class="n">segment</span><span class="p">(</span><span class="n">from</span><span class="p">,</span> <span class="n">to</span><span class="p">,</span> <span class="n">len</span><span class="p">)</span> <span class="o">:-</span>
+  <span class="n">rv_dist</span><span class="p">(</span><span class="n">from</span><span class="p">,</span> <span class="n">to</span><span class="p">,</span> <span class="n">len</span><span class="p">),</span>
+  <span class="mi">100</span> <span class="o">&lt;=</span> <span class="n">len</span><span class="p">,</span> <span class="n">len</span> <span class="o">&lt;=</span> <span class="mi">600</span><span class="p">,</span>
+  <span class="n">rv_dist</span><span class="p">(</span><span class="n">from</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">dist_from</span><span class="p">),</span>
+  <span class="n">rv_dist</span><span class="p">(</span><span class="n">to</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">dist_to</span><span class="p">),</span>
+  <span class="n">dist_from</span> <span class="o">&gt;</span> <span class="n">dist_to</span><span class="p">,</span>
+  <span class="n">camp_near_seattle</span><span class="p">(</span><span class="n">end</span><span class="p">).</span></code></pre></figure>
+
+<p>is also a reasonable <code class="language-plaintext highlighter-rouge">segment</code> defintion, and is more portable for finding road
+trips to other locations. In addition, having Mount Rainier be a sink of this
+directed graph alleviates the need for a flimsy stopping condition in the road
+trip planner, as souffle can just iterate until the distance to the final
+destination goes to zero.</p>
+
+<p>Finally, the question remains how to assemble these segments into road trip
+plans. There are a few options.</p>
+
+<h4 id="naive-enumeration">Naive Enumeration</h4>
+
+<p>This is perhaps the first obvious solution, essentially the transitive closure
+of this directed graph of segments.</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="p">.</span><span class="n">decl</span> <span class="n">road_trip_segment</span><span class="p">(</span><span class="n">from</span><span class="o">:</span><span class="n">CampId</span><span class="p">,</span> <span class="n">to</span><span class="o">:</span><span class="n">CampId</span><span class="p">,</span> <span class="n">acc</span><span class="o">:</span><span class="n">Distance</span><span class="p">)</span>
+<span class="n">road_trip_segment</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="o">:-</span>
+  <span class="n">camp</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s">"ever"</span><span class="p">,</span> <span class="s">"Flamingo Campground"</span><span class="p">),</span>
+  <span class="n">segment</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">d</span><span class="p">).</span>
+<span class="n">road_trip_segment</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">acc</span><span class="o">+</span><span class="n">d</span><span class="p">)</span> <span class="o">:-</span>
+  <span class="n">road_trip_segment</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">acc</span><span class="p">),</span>
+  <span class="n">segment</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">d</span><span class="p">).</span></code></pre></figure>
+
+<p>This doesn’t generate single road trip plans, but rather generates all
+campgrounds reachable along the segments defined above, starting from the
+Flamingo Campground in the Everglades, and of course stopping at the sink Mount
+Rainier (as long as it can indeed reach Mount Rainier with the segment
+constraints). However, with the definitions thus far, the order of magnitude of
+these combinations is infeasible to compute in souffle, at least on my laptop.</p>
+
+<h4 id="functional-dependencies">Functional Dependencies</h4>
+
+<p>After some digging in the documentation, I found that souffle recently added
+support for <a href="https://souffle-lang.github.io/choice">functional dependencies</a>,
+that is, we can express a dependency <code class="language-plaintext highlighter-rouge">from -&gt; to</code> and non-deterministically
+choose a single <code class="language-plaintext highlighter-rouge">to</code> campground for each <code class="language-plaintext highlighter-rouge">from</code>. This is currently unreleased,
+and requires building souffle from a recent commit. The code is the same as
+above except an extra <code class="language-plaintext highlighter-rouge">choice-domain from</code> clause:</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="c1">// Generate a non-deterministic path</span>
+<span class="p">.</span><span class="n">decl</span> <span class="n">road_trip_segment</span><span class="p">(</span><span class="n">from</span><span class="o">:</span><span class="n">CampId</span><span class="p">,</span> <span class="n">to</span><span class="o">:</span><span class="n">CampId</span><span class="p">,</span> <span class="n">acc</span><span class="o">:</span><span class="n">Distance</span><span class="p">)</span>
+  <span class="n">choice</span><span class="o">-</span><span class="n">domain</span> <span class="n">from</span></code></pre></figure>
+
+<p>The plus side: this does result in a road trip from FL to WA that fits our
+constraints.</p>
+
+<table class="grid-table">
+  <thead>
+    <tr>
+      <th style="text-align: center">Stop</th>
+      <th style="text-align: center">Park Campground</th>
+      <th style="text-align: center">Distance</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">Everglades National Park: Flamingo Campground</td>
+      <td style="text-align: center">0</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">Gulf Islands National Seashore: Fort Pickens Campground Loop A</td>
+      <td style="text-align: center">527.19</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">Ozark National Scenic Riverways: Alley Spring Campground</td>
+      <td style="text-align: center">1056.47</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">4</td>
+      <td style="text-align: center">Lake Meredith National Recreation Area: Blue Creek</td>
+      <td style="text-align: center">1632.46</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">5</td>
+      <td style="text-align: center">Glen Canyon National Recreation Area: Beehives Campground</td>
+      <td style="text-align: center">2185.89</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">6</td>
+      <td style="text-align: center">Great Basin National Park: Baker Creek Campground</td>
+      <td style="text-align: center">2391.80</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">7</td>
+      <td style="text-align: center">Whiskeytown National Recreation Area: Brandy Creek RV</td>
+      <td style="text-align: center">2847.99</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">8</td>
+      <td style="text-align: center">North Cascades National Park: Colonial Creek South Campground</td>
+      <td style="text-align: center">3410.27</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">9</td>
+      <td style="text-align: center">Mount Rainier National Park: Cougar Rock Campground</td>
+      <td style="text-align: center">3546.77</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The downside is that this only results in a <em>single</em> plan; although
+the result is “non-deterministic”, it is not actually <em>random</em>. Repeatedly
+running the souffle planner always outputs the same plan. Thus, we cannot
+perform any optimizations for preferred amenities or total trip length.
+Furthermore, in some ways we just got lucky that this successfully resulted in a
+plan. For instance, suppose this chosen path goes directly northwest for the
+first 7 stops to Bighorn Canyon, but then encounters a northwestward dead end,
+with no other campgrounds within 600mi to the west or north; then there would be
+no more campgrounds to travel to that decrease the distance to the final
+destination, i.e. Bighorn is a leaf in the directed graph of segments. However, it might
+have been possible to avoid this dead end by going straight west a few
+stops earlier.</p>
+
+<h4 id="minmax-choice">Min/Max Choice</h4>
+
+<p>Instead of having souffle choose the next campground non-deterministically, I
+could choose a specific one, for example to minimize the distance between stops.</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="p">.</span><span class="n">decl</span> <span class="n">road_trip_segment</span><span class="p">(</span><span class="n">from</span><span class="o">:</span><span class="n">CampId</span><span class="p">,</span> <span class="n">to</span><span class="o">:</span><span class="n">CampId</span><span class="p">,</span> <span class="n">acc</span><span class="o">:</span><span class="n">Distance</span><span class="p">)</span>
+  <span class="n">choice</span><span class="o">-</span><span class="n">domain</span> <span class="n">from</span>
+
+<span class="n">road_trip_segment</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="o">:-</span>
+  <span class="n">camp</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s">"ever"</span><span class="p">,</span> <span class="s">"Flamingo Campground"</span><span class="p">),</span> <span class="n">segment</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">d</span><span class="p">).</span>
+<span class="n">road_trip_segment</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">acc</span><span class="o">+</span><span class="n">d</span><span class="p">)</span> <span class="o">:-</span>
+  <span class="n">road_trip_segment</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">acc</span><span class="p">),</span>
+  <span class="n">d</span> <span class="o">=</span> <span class="n">min</span> <span class="n">l</span> <span class="o">:</span> <span class="n">segment</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">l</span><span class="p">).</span></code></pre></figure>
+
+<p>This generates the following plan, with many more stops than before:</p>
+
+<table class="grid-table">
+  <thead>
+    <tr>
+      <th style="text-align: center">Stop</th>
+      <th style="text-align: center">Park Campground</th>
+      <th style="text-align: center">Distance</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">Everglades National Park: Flamingo Campground</td>
+      <td style="text-align: center">0</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">Gulf Islands National Seashore: Fort Pickens Campground Loop A</td>
+      <td style="text-align: center">527.19</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">Natchez Trace Parkway: Rocky Springs Campground, Milepost 54.8.</td>
+      <td style="text-align: center">768.80</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">4</td>
+      <td style="text-align: center">Hot Springs National Park: Gulpha Gorge Campground</td>
+      <td style="text-align: center">981.03</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">5</td>
+      <td style="text-align: center">Buffalo National River: Woolum</td>
+      <td style="text-align: center">1081.46</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">6</td>
+      <td style="text-align: center">Lake Meredith National Recreation Area: Cedar Canyon Campground</td>
+      <td style="text-align: center">1549.38</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">7</td>
+      <td style="text-align: center">Bandelier National Monument: Juniper Family Campground</td>
+      <td style="text-align: center">1831.56</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">8</td>
+      <td style="text-align: center">Mesa Verde National Park: Morefield Campground</td>
+      <td style="text-align: center">1989.07</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">9</td>
+      <td style="text-align: center">Curecanti National Recreation Area: Ponderosa Campground</td>
+      <td style="text-align: center">2092.99</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">10</td>
+      <td style="text-align: center">Arches National Park: Devils Garden Campground</td>
+      <td style="text-align: center">2216.85</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">11</td>
+      <td style="text-align: center">Dinosaur National Monument: Split Mountain Group Campground</td>
+      <td style="text-align: center">2333.38</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">12</td>
+      <td style="text-align: center">Grand Teton National Park: Gros Ventre Campground</td>
+      <td style="text-align: center">2564.26</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">13</td>
+      <td style="text-align: center">Craters Of The Moon National Monument &amp; Preserve: Lava Flow Campground</td>
+      <td style="text-align: center">2709.51</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">14</td>
+      <td style="text-align: center">Glacier National Park: Two Medicine</td>
+      <td style="text-align: center">3057.03</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">15</td>
+      <td style="text-align: center">Lake Roosevelt National Recreation Area: North Gorge Campground</td>
+      <td style="text-align: center">3269.73</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">16</td>
+      <td style="text-align: center">North Cascades National Park: Colonial Creek South Campground</td>
+      <td style="text-align: center">3410.73</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">17</td>
+      <td style="text-align: center">Olympic National Park: Heart O’ the Hills Campground</td>
+      <td style="text-align: center">3527.01</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">18</td>
+      <td style="text-align: center">Mount Rainier National Park: Cougar Rock Campground</td>
+      <td style="text-align: center">3643.42</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>However, this suffers from the same drawbacks. To demonstrate, an attempt to
+choose the max distance between stops results in a dead end half-way through the
+trip:</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="p">.</span><span class="n">decl</span> <span class="n">road_trip_segment</span><span class="p">(</span><span class="n">from</span><span class="o">:</span><span class="n">CampId</span><span class="p">,</span> <span class="n">to</span><span class="o">:</span><span class="n">CampId</span><span class="p">,</span> <span class="n">acc</span><span class="o">:</span><span class="n">Distance</span><span class="p">)</span>
+  <span class="n">choice</span><span class="o">-</span><span class="n">domain</span> <span class="n">from</span>
+<span class="n">road_trip_segment</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="o">:-</span>
+  <span class="n">camp</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s">"ever"</span><span class="p">,</span> <span class="s">"Flamingo Campground"</span><span class="p">),</span> <span class="n">segment</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">d</span><span class="p">).</span>
+<span class="n">road_trip_segment</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">acc</span><span class="o">+</span><span class="n">d</span><span class="p">)</span> <span class="o">:-</span>
+  <span class="n">road_trip_segment</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">acc</span><span class="p">),</span>
+  <span class="n">d</span> <span class="o">=</span> <span class="n">max</span> <span class="n">l</span> <span class="o">:</span> <span class="n">segment</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">l</span><span class="p">).</span></code></pre></figure>
+
+<table class="grid-table">
+  <thead>
+    <tr>
+      <th style="text-align: center">Stop</th>
+      <th style="text-align: center">Park Campground</th>
+      <th style="text-align: center">Distance</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">Everglades National Park: Flamingo Campground</td>
+      <td style="text-align: center">0</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">Gulf Islands National Seashore: Fort Pickens Campground Loop A</td>
+      <td style="text-align: center">527.19</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">Ozark National Scenic Riverways: Pulltite Campground</td>
+      <td style="text-align: center">1068.55</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">4</td>
+      <td style="text-align: center">Sleeping Bear Dunes National Lakeshore: D. H. Day Campground</td>
+      <td style="text-align: center">1662.30</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">5</td>
+      <td style="text-align: center">Pictured Rocks National Lakeshore: Hurricane River Campground</td>
+      <td style="text-align: center">1784.65</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="recursive-types">Recursive Types</h4>
+
+<p>The final part of this exploration leverages the souffle type system, which
+allows for arbitrary records, algebraic data types, and recursion. For
+convenience, I’ll define a <code class="language-plaintext highlighter-rouge">Segment</code> representing an ordered pair of campgrounds</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="p">.</span><span class="n">type</span> <span class="n">Segment</span> <span class="o">=</span> <span class="p">[</span><span class="n">from</span><span class="o">:</span><span class="n">CampId</span><span class="p">,</span> <span class="n">to</span><span class="o">:</span><span class="n">CampId</span><span class="p">]</span></code></pre></figure>
+
+<p>and a cons list of them called <code class="language-plaintext highlighter-rouge">Path</code></p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="p">.</span><span class="n">type</span> <span class="n">Path</span> <span class="o">=</span> <span class="p">[</span><span class="n">tail</span><span class="o">:</span><span class="n">Path</span><span class="p">,</span> <span class="n">head</span><span class="o">:</span><span class="n">Segment</span><span class="p">]</span></code></pre></figure>
+
+<p>To demonstrate the utility here, let’s look at the naive enumeration utilizing
+these types:</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="p">.</span><span class="n">decl</span> <span class="n">road_trip</span><span class="p">(</span><span class="n">x</span><span class="o">:</span> <span class="n">Path</span><span class="p">)</span>
+<span class="n">road_trip</span><span class="p">([</span><span class="n">nil</span><span class="p">,</span> <span class="p">[</span><span class="n">f</span><span class="p">,</span> <span class="n">t</span><span class="p">]])</span> <span class="o">:-</span>
+  <span class="n">camp</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s">"ever"</span><span class="p">,</span> <span class="s">"Flamingo Campground"</span><span class="p">),</span>
+  <span class="n">segment</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">_</span><span class="p">).</span>
+<span class="n">road_trip</span><span class="p">([</span><span class="n">tail</span><span class="p">,</span> <span class="p">[</span><span class="n">f</span><span class="p">,</span><span class="n">t</span><span class="p">]])</span> <span class="o">:-</span>
+  <span class="n">road_trip</span><span class="p">(</span><span class="n">tail</span><span class="p">),</span>
+  <span class="n">tail</span><span class="o">=</span><span class="p">[</span><span class="n">tail2</span><span class="p">,</span> <span class="p">[</span><span class="n">start</span><span class="p">,</span> <span class="n">f</span><span class="p">]],</span>
+  <span class="n">segment</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">_</span><span class="p">).</span></code></pre></figure>
+
+<p>Of course, what I mentioned above is still true, as is; this generates way too many
+segments to compute in a timely manner. But, notice the output is much
+cleaner. Instead of a relation filled with arbitrary segments that would be
+annoying to assemble into possible road trips, we actually have a relation that
+is filled with individual road trips of type <code class="language-plaintext highlighter-rouge">Path</code>. Some of them might not make it
+all the way to WA, as was shown in the max choice example above, but we could
+filter those out afterwards, e.g.</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="p">.</span><span class="n">decl</span> <span class="n">successful_road_trip</span><span class="p">(</span><span class="n">x</span><span class="o">:</span> <span class="n">Path</span><span class="p">)</span>
+<span class="p">.</span><span class="n">output</span> <span class="n">successful_road_trip</span><span class="p">(</span><span class="n">IO</span><span class="o">=</span><span class="n">stdout</span><span class="p">)</span>
+<span class="n">successful_road_trip</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">:-</span>
+  <span class="n">road_trip</span><span class="p">(</span><span class="n">path</span><span class="p">),</span>
+  <span class="n">path</span><span class="o">=</span><span class="p">[</span><span class="n">tail</span><span class="p">,</span> <span class="p">[</span><span class="n">f</span><span class="p">,</span> <span class="n">end</span><span class="p">]],</span>
+  <span class="n">camp_near_seattle</span><span class="p">(</span><span class="n">end</span><span class="p">).</span></code></pre></figure>
+
+<p>As a demonstration, the number of plans generated to go from Yellowstone to the
+Badlands totals 29,376, with the first plans being more direct, such as:</p>
+
+<h5 style="text-align: center;">Plan 1</h5>
+
+<table class="grid-table">
+  <thead>
+    <tr>
+      <th style="text-align: center">Stop</th>
+      <th style="text-align: center">Park Campground</th>
+      <th style="text-align: center">Distance</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">Yellowstone National Park: Bridge Bay Campground</td>
+      <td style="text-align: center">0</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">Badlands National Park: Cedar Pass Campground</td>
+      <td style="text-align: center">424.14</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>and proceedingly more winding:</p>
+
+<h5 style="text-align: center;">Plan 100</h5>
+
+<table class="grid-table">
+  <thead>
+    <tr>
+      <th style="text-align: center">Stop</th>
+      <th style="text-align: center">Park Campground</th>
+      <th style="text-align: center">Distance</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">Yellowstone National Park: Mammoth Campground</td>
+      <td style="text-align: center">0</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">Bighorn Canyon National Recreation Area: Horseshoe Bend Campgroun</td>
+      <td style="text-align: center">118.95</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">Badlands National Park: Cedar Pass Campground</td>
+      <td style="text-align: center">441.72</td>
+    </tr>
+  </tbody>
+</table>
+
+<h5 style="text-align: center;">Plan 1000</h5>
+
+<table class="grid-table">
+  <thead>
+    <tr>
+      <th style="text-align: center">Stop</th>
+      <th style="text-align: center">Park Campground</th>
+      <th style="text-align: center">Distance</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">Yellowstone National Park: Bridge Bay Campground</td>
+      <td style="text-align: center">0</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">Dinosaur National Monument: Gates of Lodore Campground</td>
+      <td style="text-align: center">274.63</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">Bighorn Canyon National Recreation Area: Barry’s Landing &amp; Trail Creek Campground</td>
+      <td style="text-align: center">578.70</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">4</td>
+      <td style="text-align: center">Theodore Roosevelt National Park: Juniper Campground</td>
+      <td style="text-align: center">868.24</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">5</td>
+      <td style="text-align: center">Badlands National Park: Cedar Pass Campground</td>
+      <td style="text-align: center">1142.63</td>
+    </tr>
+  </tbody>
+</table>
+
+<h5 style="text-align: center;">Plan 10000</h5>
+
+<table class="grid-table">
+  <thead>
+    <tr>
+      <th style="text-align: center">Stop</th>
+      <th style="text-align: center">Park Campground</th>
+      <th style="text-align: center">Distance</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">Yellowstone National Park: Indian Creek Campground</td>
+      <td style="text-align: center">0</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">Dinosaur National Monument: Split Mountain Group Campground</td>
+      <td style="text-align: center">316.09</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">Yellowstone National Park: Lewis Lake Campground</td>
+      <td style="text-align: center">590.41</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">4</td>
+      <td style="text-align: center">Dinosaur National Monument: Gates of Lodore Campground</td>
+      <td style="text-align: center">851.58</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">5</td>
+      <td style="text-align: center">Yellowstone National Park: Pebble Creek Campground</td>
+      <td style="text-align: center">1147.70</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">5</td>
+      <td style="text-align: center">Theodore Roosevelt National Park: Roundup Group Horse Camp</td>
+      <td style="text-align: center">1496.24</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">5</td>
+      <td style="text-align: center">Badlands National Park: Cedar Pass Campground</td>
+      <td style="text-align: center">1733.97</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>and so on. Clearly the 10,000th plan above is absurd, and the reason is <em>not</em>
+just because I’m using haversine distances. The reason did not become clear to
+me until I looked at these parks on a map. The main problem is the progress
+condition just cares about any nonzero progress towards the destination; if
+you imagine a circle spiraling in towards the final destination at the center,
+you can see how this condition might result in unwanted road trip plans. That
+is, the restriction I defined earlier as <code class="language-plaintext highlighter-rouge">100 &lt;= segment_length &lt;= 600</code> is
+misleading, as it doesn’t actually guarantee 100mi of progress.</p>
+
+<p>And so this motivates the last improvement: rather than ensuring we drive 100mi
+between stops, instead ensure that the next stop is at least 100mi closer to the
+final destination.</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="c1">// Optimized road trip segments</span>
+<span class="c1">// 1. Limit 600mi between stops</span>
+<span class="c1">// 2. Make 100mi progress towards final destination</span>
+<span class="p">.</span><span class="n">decl</span> <span class="n">segment</span><span class="p">(</span><span class="n">camp1</span><span class="o">:</span><span class="n">CampId</span><span class="p">,</span> <span class="n">camp2</span><span class="o">:</span><span class="n">CampId</span><span class="p">,</span> <span class="n">dist</span><span class="o">:</span><span class="n">Distance</span><span class="p">)</span>
+<span class="n">segment</span><span class="p">(</span><span class="n">from</span><span class="p">,</span> <span class="n">to</span><span class="p">,</span> <span class="n">len</span><span class="p">)</span> <span class="o">:-</span>
+  <span class="n">rv_dist</span><span class="p">(</span><span class="n">from</span><span class="p">,</span> <span class="n">to</span><span class="p">,</span> <span class="n">len</span><span class="p">),</span>
+  <span class="n">len</span> <span class="o">&lt;=</span> <span class="mi">600</span><span class="p">,</span>
+  <span class="n">rv_dist</span><span class="p">(</span><span class="n">from</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">dist_from</span><span class="p">),</span>
+  <span class="n">rv_dist</span><span class="p">(</span><span class="n">to</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">dist_to</span><span class="p">),</span>
+  <span class="n">dist_from</span> <span class="o">-</span> <span class="n">dist_to</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">,</span>
+  <span class="n">camp_near_seattle</span><span class="p">(</span><span class="n">end</span><span class="p">).</span></code></pre></figure>
+
+<p>Huzzah! Now, the enumeration only outputs 17 plans, with at most one intermediary
+stop. This is much more reasonable for two parks that are only 500mi from one
+another, and the only reason there are even as many as 17 plans is simply
+because each park has multiple RV campgrounds.</p>
+
+<p>Furthermore, this last improvement allows me to accomplish what I set out to do:
+changing the minimum progress to 400mi allows Souffle to output 3,032 road trip
+plans from the Everglades to Mount Rainier in under a second.</p>
+
+<h2 id="cli-tool">CLI tool</h2>
+
+<p>I’ve parameterized the start and end locations into a small CLI tool to run this
+<a href="https://github.com/samtay/road-trip-planner">road trip planner</a>:</p>
+
+<figure class="highlight"><pre><code class="language-shell" data-lang="shell">❯ road-trip-planner <span class="nt">--help</span>
+road-trip-planner 0.0.1
+Sam Tay, samctay@pm.me
+Generates road trip plans via national parks
+
+USAGE:
+    road-trip-planner <span class="o">[</span>FLAGS] &lt;from&gt; &lt;to&gt;
+
+ARGS:
+    &lt;from&gt;    Starting park code <span class="o">(</span>e.g. ever<span class="o">)</span>
+    &lt;to&gt;      Ending park code <span class="o">(</span>e.g. olym<span class="o">)</span>
+
+FLAGS:
+    <span class="nt">-h</span>, <span class="nt">--help</span>       Prints <span class="nb">help </span>information
+    <span class="nt">-l</span>, <span class="nt">--lucky</span>      Output a single trip
+        <span class="nt">--min</span>        Use minimum distance between stops <span class="o">(</span><span class="k">for</span> <span class="nt">--lucky</span><span class="o">)</span>
+    <span class="nt">-r</span>, <span class="nt">--refresh</span>    Use fresh NPS data
+    <span class="nt">-V</span>, <span class="nt">--version</span>    Prints version information</code></pre></figure>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>This was a fun exercise, but the resulting planner isn’t as useful as it could
+be. The main missing ingredients are ordering and choice. While souffle supports
+a single arbitrary choice from a given domain, what I’d really like to be able
+to do is specify preferences, i.e. first choose from campgrounds with wifi
+service and dump stations, and if there are none, then settle for cell service,
+etc.. Something like Postgres’ <code class="language-plaintext highlighter-rouge">coalesce</code> function would make this planner much
+more useful.</p>
+
+<p>Future improvements I have in mind for this planner are the following:</p>
+
+<ol>
+  <li>Include the cell, internet, and dump amenities in the enumeration output.
+These can then be externally counted, so that plans can be sorted by stops
+with the most cell service, or to filter plans that include at least one dump
+stop every 500mi, etc..</li>
+  <li>A few more things should be parameterized from the CLI, such as the RV
+length, minimum progress and maximum segment distance. The minimum progress
+turns out to be a very important parameter, and makes the difference of
+whether or not the computation finishes in a second or days.</li>
+  <li>Call out to an API for actual driving distance and/or time, instead of using
+the haversine approximation.</li>
+</ol>
+
+          </div>
+
+          
+          <script id="utterances_script"
+                  src="https://utteranc.es/client.js"
+                  repo="samtay/samtay.github.io"
+                  issue-term="pathname"
+                  label="comments"
+                  theme="github-light"
+                  crossorigin="anonymous"
+                  async>
+          </script>
+          <script>
+            // wait for utterances to load and send its first message.
+            addEventListener('message', event => {
+              var tone = localStorage.getItem('theme');
+              if (!tone || event.origin !== 'https://utteranc.es') {
+                return;
+              }
+              const message = {
+                type: 'set-theme',
+                theme: 'github-' + tone
+              };
+              const utterances = document.querySelector('iframe').contentWindow;
+              utterances.postMessage(message, 'https://utteranc.es');
+            });
+          </script>
+          
+
+          
+        </article>
+        <footer class="footer scrollappear">
+  <p>
+  <span>
+  Ramblings ϵ {Mathematics, Statistics, Haskell}.
+    &copy; 2020. All rights reserved.
+    
+      <a href="/feed.xml" rel="noreferrer noopener" target="_blank" title="RSS"
+         width="16px" height="16px">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon-rss">
+  <use href="/assets/rss-541ec5cea9cefd10d2fcfec01888f3f231a8829940249835fa7b7b3a12ae0d0d.svg#icon-rss" xlink:href="/assets/rss-541ec5cea9cefd10d2fcfec01888f3f231a8829940249835fa7b7b3a12ae0d0d.svg#icon-rss"></use>
+</svg>
+
+      </a>
+    
+    <!--<a href="/about" title="About me">Nielsen Ramon</a>. Download it <a href="https://github.com/nielsenramon/chalk" rel="noreferrer noopener" target="_blank" title="Download Chalk">here</a>.-->
+  </span>
+  </p>
+</footer>
+
+      </div>
+    </div>
+  </main>
+  
+
+<script src="/assets/vendor-734ddaa553ebf4e6ca703bd7c567ef4a0e43b0ba799607355e56b81e88781318.js" type="text/javascript"></script>
+
+
+  <script src="/assets/webfonts-96493456d319d1bf419afdf8701552d4d486fee6afd304897d4fd81eb4e0cc0b.js" type="text/javascript"></script>
+
+
+
+  <script src="/assets/scrollappear-e2da8ea567e418637e31266cc5302126eaa79f62a2273739086358b589a89ee6.js" type="text/javascript"></script>
+
+
+<script src="/assets/application-cfde13ac81ddaf4351b2e739603e2baf688d0fcc9aba613fe62bbb1c7b037fb9.js" type="text/javascript"></script>
+
+
+  <script src="/assets/themetoggle-592c116ce4dcad7dc732f6ffd55b682581fae9e8737bca3da323e802faf1367f.js" type="text/javascript"></script>
+
+</body>
+</html>
