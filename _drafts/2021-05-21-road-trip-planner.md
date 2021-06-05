@@ -541,7 +541,7 @@ because each park has multiple RV campgrounds.
 
 Furthermore, this last improvement allows me to accomplish what I set out to do:
 changing the minimum progress to 400mi allows Souffle to output 3032 road trip
-plans from the Everglades to Washington in under a second.
+plans from the Everglades to Mount Rainier in under a second.
 
 ## CLI tool
 
@@ -563,11 +563,11 @@ ARGS:
     <to>      Ending park code (e.g. olym)
 
 FLAGS:
-    -e, --enumerate    Enumerate all trips
-    -h, --help         Prints help information
-        --min          Use minimum distance between stops
-    -r, --refresh      Use fresh NPS data
-    -V, --version      Prints version information
+    -h, --help       Prints help information
+    -l, --lucky      Output a single trip
+        --min        Use minimum distance between stops (for --lucky)
+    -r, --refresh    Use fresh NPS data
+    -V, --version    Prints version information
 {% endhighlight %}
 
 ## Conclusion
@@ -579,28 +579,6 @@ to do is specify preferences, i.e. first choose from campgrounds with wifi
 service and dump stations, and if there are none, then settle for cell service,
 etc.. Something like Postgres' `coalesce` function would make this planner much
 more useful.
-
-At some point in my journey, I did lose faith in souffle and
-looked at other options, such as
-
-1. [Datafrog](https://github.com/rust-lang/datafrog)
-2. [Differential Dataflow](https://github.com/TimelyDataflow/differential-dataflow)
-3. [Crepe](https://github.com/ekzhang/crepe)
-
-I found it hard to evaluate what each library is capable of just from initial
-glances at their documentation, but in the end I chose to explore Crepe because (1)
-Datafrog's documentation is lacking and (2) it seems to me that there is a high
-complexity cost to Differential Dataflow, and the payoff is the performance of
-queries given changes to existing input data, which doesn't apply here.
-
-However, while having datalog embedded within a Rust program is convenient in
-many ways, it quickly became apparent that crepe is (currently) strictly less
-powerful than souffle.  The ability to inline Rust really only comes into play
-when expressing boolean relationships, which souffle can already do. The
-implementation I came up with is on
-[GitHub](https://github.com/samtay/road-trip-planner/blob/main/src/crepe.rs),
-but the code is not worth including here. It looks just like a limited version
-of the souffle planner with different syntax.
 
 Future improvements I have in mind for this planner:
 
