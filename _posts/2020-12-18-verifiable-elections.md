@@ -144,7 +144,7 @@ details. The proof goes as follows:
 Just as we re-encrypted and permuted \\(\mathcal{B}\\) to create \\(\mathcal{B}'\\), do
 this \\(n\\) more times to create encrypted ballot sets \\(\mathcal{B}_1,\ldots,
 \mathcal{B}_n\\). Then generate \\(c_1,\ldots c_n\\) challenge bits (described in the
-following [section](#fiat-shamir-heuristic).
+following [section](#fiat-shamir-heuristic)).
 
 For each \\(i\\) such that \\(c_i = 0\\): reveal the re-encryption and permutation data
 used to create \\(\mathcal{B}_i\\) to show that it is equivalent to \\(\mathcal{B}\\).
