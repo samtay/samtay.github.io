@@ -318,7 +318,8 @@ these combinations is infeasible to compute in souffle, at least on my laptop.
 #### Functional Dependencies
 
 After some digging in the documentation, I found that souffle recently added
-support for [functional dependencies](https://souffle-lang.github.io/choice),
+support for [functional
+dependencies](https://souffle-lang.github.io/relations#choice-domain--functional-dependency-constraint),
 that is, we can express a dependency `from -> to` and non-deterministically
 choose a single `to` campground for each `from`. This is currently unreleased,
 and requires building souffle from a recent commit. The code is the same as
