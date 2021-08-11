@@ -438,7 +438,8 @@ these combinations is infeasible to compute in souffle, at least on my laptop.</
 <h4 id="functional-dependencies">Functional Dependencies</h4>
 
 <p>After some digging in the documentation, I found that souffle recently added
-support for <a href="https://souffle-lang.github.io/choice">functional dependencies</a>,
+support for <a href="https://souffle-lang.github.io/relations#choice-domain--functional-dependency-constraint">functional
+dependencies</a>,
 that is, we can express a dependency <code class="language-plaintext highlighter-rouge">from -&gt; to</code> and non-deterministically
 choose a single <code class="language-plaintext highlighter-rouge">to</code> campground for each <code class="language-plaintext highlighter-rouge">from</code>. This is currently unreleased,
 and requires building souffle from a recent commit. The code is the same as
