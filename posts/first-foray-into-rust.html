@@ -236,7 +236,7 @@ this. Let’s start by using the default value for the <code class="language-pla
                 <span class="nf">.default_value</span><span class="p">(</span><span class="n">config</span><span class="py">.site</span><span class="p">)</span>
                 <span class="nf">.help</span><span class="p">(</span><span class="s">"StackExchange site code to search"</span><span class="p">),</span>
         <span class="p">)</span>
-        <span class="c">// elided, same as above</span>
+        <span class="c1">// elided, same as above</span>
 <span class="p">}</span></code></pre></figure>
 
 <p>Here we run into a n00b Rust issue, but again, the compiler is quite helpful:</p>
@@ -312,7 +312,7 @@ types have <code class="language-plaintext highlighter-rouge">ToString</code> im
 <figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">pub</span> <span class="k">fn</span> <span class="n">mk_app</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="nv">'b</span><span class="o">&gt;</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="n">Config</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">App</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="nv">'b</span><span class="o">&gt;</span> <span class="p">{</span>
     <span class="k">let</span> <span class="n">limit</span> <span class="o">=</span> <span class="n">config</span><span class="py">.limit</span><span class="nf">.to_string</span><span class="p">();</span>
     <span class="nn">App</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="s">"so"</span><span class="p">)</span>
-        <span class="c">// elided site arg</span>
+        <span class="c1">// elided site arg</span>
         <span class="nf">.arg</span><span class="p">(</span>
             <span class="nn">Arg</span><span class="p">::</span><span class="nf">with_name</span><span class="p">(</span><span class="s">"limit"</span><span class="p">)</span>
                 <span class="nf">.long</span><span class="p">(</span><span class="s">"limit"</span><span class="p">)</span>
@@ -322,7 +322,7 @@ types have <code class="language-plaintext highlighter-rouge">ToString</code> im
                 <span class="nf">.default_value</span><span class="p">(</span><span class="o">&amp;</span><span class="n">limit</span><span class="p">)</span>
                 <span class="nf">.help</span><span class="p">(</span><span class="s">"Question limit per site query"</span><span class="p">),</span>
         <span class="p">)</span>
-        <span class="c">// elided query arg</span>
+        <span class="c1">// elided query arg</span>
 <span class="p">}</span></code></pre></figure>
 
 <p>But we’ve run into the same problem as above when we tried to return a reference
@@ -359,7 +359,7 @@ that this library will only be used in the way the authors intended. I’ve sinc
 reorganized my code so that the configuration retrieval and clap argument
 parsing all happen in the same place, as below.</p>
 
-<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="c">/// CLI opts</span>
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="cd">/// CLI opts</span>
 <span class="k">pub</span> <span class="k">struct</span> <span class="n">Opts</span> <span class="p">{</span>
     <span class="k">pub</span> <span class="n">list_sites</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
     <span class="k">pub</span> <span class="n">print_config_path</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
@@ -369,11 +369,11 @@ parsing all happen in the same place, as below.</p>
     <span class="k">pub</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">,</span>
 <span class="p">}</span>
 
-<span class="c">/// Get CLI opts, starting with defaults produced</span>
-<span class="c">/// from `mk_config` and matching args with `get_matches`.</span>
-<span class="k">fn</span> <span class="n">get_opts_with</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">G</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mk_config</span><span class="p">:</span> <span class="n">F</span><span class="p">,</span> <span class="n">get_matches</span><span class="p">:</span> <span class="n">G</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Opts</span><span class="o">&gt;</span>
+<span class="cd">/// Get CLI opts, starting with defaults produced</span>
+<span class="cd">/// from `mk_config` and matching args with `get_matches`.</span>
+<span class="k">fn</span> <span class="n">get_opts_with</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">G</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mk_config</span><span class="p">:</span> <span class="n">F</span><span class="p">,</span> <span class="n">get_matches</span><span class="p">:</span> <span class="n">G</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="n">Opts</span><span class="o">&gt;</span>
 <span class="k">where</span>
-    <span class="n">F</span><span class="p">:</span> <span class="nf">FnOnce</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Config</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="n">F</span><span class="p">:</span> <span class="nf">FnOnce</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="n">Config</span><span class="o">&gt;</span><span class="p">,</span>
     <span class="n">G</span><span class="p">:</span> <span class="k">for</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span> <span class="nf">FnOnce</span><span class="p">(</span><span class="n">App</span><span class="o">&lt;</span><span class="nv">'a</span><span class="p">,</span> <span class="nv">'_</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">ArgMatches</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span><span class="p">,</span>
 <span class="p">{</span>
     <span class="k">let</span> <span class="n">config</span> <span class="o">=</span> <span class="nf">mk_config</span><span class="p">()</span><span class="o">?</span><span class="p">;</span>
@@ -387,21 +387,21 @@ parsing all happen in the same place, as below.</p>
                 <span class="nf">.takes_value</span><span class="p">(</span><span class="k">true</span><span class="p">)</span>
                 <span class="nf">.default_value</span><span class="p">(</span><span class="o">&amp;</span><span class="n">limit</span><span class="p">)</span>
                 <span class="nf">.help</span><span class="p">(</span><span class="s">"Question limit per site query"</span><span class="p">),</span>
-        <span class="p">);</span> <span class="c">// other args elided for the sake of brevity</span>
+        <span class="p">);</span> <span class="c1">// other args elided for the sake of brevity</span>
     <span class="k">let</span> <span class="n">matches</span> <span class="o">=</span> <span class="nf">get_matches</span><span class="p">(</span><span class="n">clapp</span><span class="p">);</span>
     <span class="nf">Ok</span><span class="p">(</span><span class="n">Opts</span> <span class="p">{</span>
         <span class="n">config</span><span class="p">:</span> <span class="n">Config</span> <span class="p">{</span>
             <span class="n">limit</span><span class="p">:</span> <span class="n">matches</span><span class="nf">.value_of</span><span class="p">(</span><span class="s">"limit"</span><span class="p">),</span>
-            <span class="c">// etc.</span>
+            <span class="c1">// etc.</span>
         <span class="p">},</span>
         <span class="n">list_sites</span><span class="p">:</span> <span class="n">matches</span><span class="nf">.is_present</span><span class="p">(</span><span class="s">"list-sites"</span><span class="p">),</span>
-        <span class="c">// etc.</span>
+        <span class="c1">// etc.</span>
     <span class="p">})</span>
 <span class="p">}</span>
 
-<span class="c">/// Get CLI opts with defaults pulled</span>
-<span class="c">/// from user configuration</span>
-<span class="k">pub</span> <span class="k">fn</span> <span class="nf">get_opts</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Opts</span><span class="o">&gt;</span> <span class="p">{</span>
+<span class="cd">/// Get CLI opts with defaults pulled</span>
+<span class="cd">/// from user configuration</span>
+<span class="k">pub</span> <span class="k">fn</span> <span class="nf">get_opts</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="n">Opts</span><span class="o">&gt;</span> <span class="p">{</span>
     <span class="nf">get_opts_with</span><span class="p">(</span><span class="nn">Config</span><span class="p">::</span><span class="n">new</span><span class="p">,</span> <span class="p">|</span><span class="n">a</span><span class="p">|</span> <span class="n">a</span><span class="nf">.get_matches</span><span class="p">())</span>
 <span class="p">}</span></code></pre></figure>
 
@@ -418,8 +418,8 @@ like I wanted.</p>
 
 <figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="nd">#[cfg(test)]</span>
 <span class="k">mod</span> <span class="n">tests</span> <span class="p">{</span>
-    <span class="k">use</span> <span class="nn">super</span><span class="p">::</span><span class="o">*</span><span class="p">;</span>
-    <span class="k">use</span> <span class="nn">crate</span><span class="p">::</span><span class="nn">config</span><span class="p">::</span><span class="n">SearchEngine</span><span class="p">;</span>
+    <span class="k">use</span> <span class="k">super</span><span class="p">::</span><span class="o">*</span><span class="p">;</span>
+    <span class="k">use</span> <span class="k">crate</span><span class="p">::</span><span class="nn">config</span><span class="p">::</span><span class="n">SearchEngine</span><span class="p">;</span>
 
     <span class="k">fn</span> <span class="nf">defaults</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="n">Config</span> <span class="p">{</span>
         <span class="n">Config</span> <span class="p">{</span>
@@ -435,7 +435,7 @@ like I wanted.</p>
         <span class="p">}</span>
     <span class="p">}</span>
 
-    <span class="k">fn</span> <span class="nf">mk_config</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Config</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">fn</span> <span class="nf">mk_config</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="n">Config</span><span class="o">&gt;</span> <span class="p">{</span>
         <span class="nf">Ok</span><span class="p">(</span><span class="nf">defaults</span><span class="p">())</span>
     <span class="p">}</span>
 
@@ -461,7 +461,7 @@ like I wanted.</p>
         <span class="nf">.unwrap</span><span class="p">();</span>
     <span class="p">}</span>
 
-    <span class="c">// etc.</span>
+    <span class="c1">// etc.</span>
 <span class="p">}</span></code></pre></figure>
 
 <h2 id="async">Async</h2>

@@ -280,7 +280,7 @@ the types:</p>
         <span class="nd">point!</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="k">self</span><span class="py">.longitude</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="k">self</span><span class="py">.latitude</span><span class="p">)</span>
     <span class="p">}</span>
 
-    <span class="c">/// Distance to another location in miles</span>
+    <span class="cd">/// Distance to another location in miles</span>
     <span class="k">pub</span> <span class="k">fn</span> <span class="nf">distance_to</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">LocationRow</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">f64</span> <span class="p">{</span>
         <span class="k">const</span> <span class="n">MILES_PER_METER</span><span class="p">:</span> <span class="nb">f64</span> <span class="o">=</span> <span class="mf">0.000621371</span><span class="p">;</span>
         <span class="k">let</span> <span class="n">meters</span> <span class="o">=</span> <span class="k">self</span>
@@ -297,18 +297,18 @@ write the distances to another facts file:</p>
 <figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">use</span> <span class="n">csv</span><span class="p">;</span>
 <span class="k">use</span> <span class="nn">itertools</span><span class="p">::</span><span class="n">Itertools</span><span class="p">;</span>
 
-<span class="c">/// Generate distance.facts from the NPS location.facts file</span>
-<span class="k">fn</span> <span class="nf">generate_distances</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="p">()</span><span class="o">&gt;</span> <span class="p">{</span>
+<span class="cd">/// Generate distance.facts from the NPS location.facts file</span>
+<span class="k">fn</span> <span class="nf">generate_distances</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="p">()</span><span class="o">&gt;</span> <span class="p">{</span>
     <span class="k">let</span> <span class="n">pairs</span> <span class="o">=</span> <span class="nn">csv</span><span class="p">::</span><span class="nn">ReaderBuilder</span><span class="p">::</span><span class="nf">new</span><span class="p">()</span>
         <span class="nf">.has_headers</span><span class="p">(</span><span class="k">false</span><span class="p">)</span>
-        <span class="nf">.delimiter</span><span class="p">(</span><span class="n">b</span><span class="sc">'\t'</span><span class="p">)</span>
+        <span class="nf">.delimiter</span><span class="p">(</span><span class="sc">b'\t'</span><span class="p">)</span>
         <span class="nf">.from_path</span><span class="p">(</span><span class="s">"data/location.facts"</span><span class="p">)</span><span class="o">?</span>
         <span class="py">.into_deserialize</span><span class="p">::</span><span class="o">&lt;</span><span class="n">LocationRow</span><span class="o">&gt;</span><span class="p">()</span>
         <span class="nf">.filter_map</span><span class="p">(|</span><span class="n">x</span><span class="p">|</span> <span class="n">x</span><span class="nf">.ok</span><span class="p">())</span>
         <span class="nf">.combinations_with_replacement</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
     <span class="k">let</span> <span class="k">mut</span> <span class="n">writer</span> <span class="o">=</span> <span class="nn">csv</span><span class="p">::</span><span class="nn">WriterBuilder</span><span class="p">::</span><span class="nf">new</span><span class="p">()</span>
         <span class="nf">.has_headers</span><span class="p">(</span><span class="k">false</span><span class="p">)</span>
-        <span class="nf">.delimiter</span><span class="p">(</span><span class="n">b</span><span class="sc">'\t'</span><span class="p">)</span>
+        <span class="nf">.delimiter</span><span class="p">(</span><span class="sc">b'\t'</span><span class="p">)</span>
         <span class="nf">.from_path</span><span class="p">(</span><span class="s">"data/distance.facts"</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
     <span class="k">for</span> <span class="n">pair</span> <span class="n">in</span> <span class="n">pairs</span> <span class="p">{</span>
         <span class="n">writer</span><span class="nf">.write_record</span><span class="p">(</span><span class="o">&amp;</span><span class="p">[</span>
