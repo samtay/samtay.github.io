@@ -6,7 +6,7 @@
   },
   "dependencies": {
     "jquery": "^3.5.0",
-    "npm": "^7.11.2",
+    "npm": "^8.3.1",
     "retinajs": "^2.1.1",
     "svgxuse": "^1.2.4",
     "webfontloader": "^1.6.28",
