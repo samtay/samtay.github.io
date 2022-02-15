@@ -172,7 +172,7 @@ stack. The issue is that, in most of these places along the application flow, I
 don't particularly care about the `Either e` context and am simply bookkeeping to
 have errors bubble up to a top-level (or nearer-to-top-level) error handler.
 
-There a number of ways for me to avoid this bookkeeping and replace `App (Either
+There are a number of ways for me to avoid this bookkeeping and replace `App (Either
 Error a)`'s with `App a`'s, so as to have a cleaner flow of information.
 Because my errors were really only used closer to the `main` entry point, I
 chose to use exceptions. In particular because I am using asynchronous
