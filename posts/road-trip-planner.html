@@ -310,7 +310,7 @@ write the distances to another facts file:</p>
         <span class="nf">.has_headers</span><span class="p">(</span><span class="k">false</span><span class="p">)</span>
         <span class="nf">.delimiter</span><span class="p">(</span><span class="sc">b'\t'</span><span class="p">)</span>
         <span class="nf">.from_path</span><span class="p">(</span><span class="s">"data/distance.facts"</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
-    <span class="k">for</span> <span class="n">pair</span> <span class="n">in</span> <span class="n">pairs</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="n">pair</span> <span class="k">in</span> <span class="n">pairs</span> <span class="p">{</span>
         <span class="n">writer</span><span class="nf">.write_record</span><span class="p">(</span><span class="o">&amp;</span><span class="p">[</span>
             <span class="o">&amp;</span><span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="py">.camp_id</span><span class="p">,</span>
             <span class="o">&amp;</span><span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="py">.camp_id</span><span class="p">,</span>
