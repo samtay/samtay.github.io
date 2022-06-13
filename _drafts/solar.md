@@ -30,10 +30,10 @@ outlets in the U.S), there's an addendum:
 
 ### Solar Panels
 
-< insert img >
-
 We have eight 400W Aptos (DNA-144-MF23-400W) solar panels for a total of 3200W
-on the roof. These are arranged as a 2s4p array, which means there are four
+on the roof.
+{% include image.html path="solar/panels.jpg" path-detail="solar/panels.jpg" alt="Rooftop solar panels" %}
+These are arranged as a 2s4p array, which means there are four
 pairs of panels, with each pair (a.k.a. _string_) wired in [series](), and the
 four strings wired in [parallel](). In choosing this configuration, there are
 two main considerations.
@@ -45,6 +45,11 @@ In short, wiring in series causes the potential (voltage) to increase, and
 wiring in parallel causes the current (amperage) to increase. Calculating these
 values is important when planning for wire sizes and choosing a charge
 controller.
+
+TODO describe our actual voltage and amperage at STC.
+
+TODO possibly describe fusing requirements and how parallel requires fuses based
+on Nate's explanation.
 
 The second consideration concerns shading. It is important to note that a single
 solar panel consists of individual photovoltaic (sp?) _cells_ wired in series.
@@ -74,6 +79,49 @@ day where no solar power is converted, due to low voltage. On the other hand, if
 wired in series, the combined voltage in ideal conditions is 100V, and reaching
 the threshold voltage of 20V (? find it) is likely to happen soon after sunrise
 and last until close to sunset.
+
+### Solar Charge Controller (SCC)
+
+We have a Victron SmartSolar MPPT Tr VE.Can 150V | 100A Solar Charge Controller.
+In general, you do want an MPPT (Maximum Power Point Tracking) controller as
+they can harvest more energy, however
+they are more expensive than PWM (Pulse Width Modulation) controllers. Our SCC
+can be configured for 12V, 24V, 36V, and 48V battery banks. The important
+decision when it comes to choosing an MPPT SCC for your setup are the two
+numbers above: 150|100.
+
+The first number is the maximum input voltage on the panels. Recall our array
+(in idealized standard conditions) has an open circuit voltage \\(V_{VOC} = 97.1\\). It's
+important to have a firm margin between the controller voltage limit and your
+\\(V_{VOC}\\) since the actual voltage of your panels can increase past this number
+in e.g. cold weather. Notice that I arranged my panels with the _maximum_ series
+connections, as a 3s2p array would put us far too close to the 150V limit. This
+would have been possible had we gotten the `250V | 100A` SCC from Victron.
+
+The second number is the maximum output amperage to the batteries. This is the
+number that determines how much you can harvest from the sun at any given moment.
+The `100A` is the largest SCC that they make, and it is quite expensive! We
+could have paid less for, say a `50A` or `85A`, but as with the rest of our
+solar system, I erred on the size of "go big or go home". Given the number of
+our panels, either way we have an "over-paneled" setup; that is, the maximum
+wattage I will ever see from our SCC is less than the total panel wattage. is
+The max SCC wattage output is its maximum amperage output multiplied
+by the voltage of our battery bank, typically around 27V, for a total of 2700W.
+However, I have seen the value peak over 2900W on a good day. This is fine from
+the SCC's perspective, as any extra potential solar energy simply won't be
+harvested.
+
+Notice the maximum output of the SCC is in terms of _amperage_ and not
+_wattage_. Clever readers will notice that maximum wattage output of a given
+controller could be increased by increasing the voltage! And, this is correct,
+we could have had an equivalent power output with a `150V | 50A` controller and
+a 48V battery bank. In general, you should prefer the highest voltage battery
+bank with which you are comfortable; the higher the volts, the greater
+efficiency all around. However, this being our first solar setup, I was a bit
+paranoid about high voltage systems (and, it's possible my fears were misplaced).
+If I build a stationary solar system next, I will certainly up the voltage.
+
+### Battery Bank
 
 ## Footnotes
 [^1]: Our panels actually have 144 cells in 2p72s, but this detail isn't so important.
